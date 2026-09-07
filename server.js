@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // ---------- Mongoose Schemas & Models with User ID ----------
 const expenseSchema = new mongoose.Schema({
-  id: { type: String, required: true, index: true },
+  id: { type: String, required: true },
   userId: { type: String, required: true, index: true, default: 'usr_default' },
   month: { type: String, required: true, index: true },
   date: { type: String, required: true },
@@ -34,7 +34,7 @@ const budgetSchema = new mongoose.Schema({
 budgetSchema.index({ userId: 1, month: 1 }, { unique: true });
 
 const udhariSchema = new mongoose.Schema({
-  id: { type: String, required: true, index: true },
+  id: { type: String, required: true },
   userId: { type: String, required: true, index: true, default: 'usr_default' },
   type: { type: String, enum: ['lent', 'borrowed'], required: true },
   person: { type: String, required: true },
@@ -101,6 +101,20 @@ mongoose.connect(MONGODB_URI)
       // Drop legacy single unique index month_1 on budgets if it exists
       await mongoose.connection.collection('budgets').dropIndex('month_1');
       console.log('Normalized budget indices: dropped legacy month_1 index in favor of { userId: 1, month: 1 }');
+    } catch (e) {
+      // Index not found or already dropped
+    }
+    try {
+      // Drop legacy single unique index id_1 on expenses if it exists
+      await mongoose.connection.collection('expenses').dropIndex('id_1');
+      console.log('Normalized expense indices: dropped legacy id_1 index in favor of { userId: 1, id: 1 }');
+    } catch (e) {
+      // Index not found or already dropped
+    }
+    try {
+      // Drop legacy single unique index id_1 on udharis if it exists
+      await mongoose.connection.collection('udharis').dropIndex('id_1');
+      console.log('Normalized udhari indices: dropped legacy id_1 index in favor of { userId: 1, id: 1 }');
     } catch (e) {
       // Index not found or already dropped
     }
