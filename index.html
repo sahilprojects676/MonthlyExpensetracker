@@ -7,8 +7,13 @@
   <meta name="theme-color" content="#152840">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>ExpenseTrackr</title>
-  <link rel="icon" type="image/png" href="logo.png">
+  <title>ExpenseTrackr — Monthly Expense Tracker</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" href="logo-icon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -65,15 +70,52 @@
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 6px 10px;
+      margin: -6px -10px;
+      border-radius: 12px;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease;
+      outline: none;
+      user-select: none;
     }
 
+    .brand:hover {
+      background: rgba(21, 40, 64, 0.04);
+      transform: translateY(-1px);
+    }
+
+    .brand:active {
+      transform: translateY(1px) scale(0.985);
+      background: rgba(21, 40, 64, 0.07);
+    }
+
+    .brand:focus-visible {
+      box-shadow: 0 0 0 2.5px var(--brand-green);
+    }
+
+    .brand .brand-logo-img,
     .brand .mark {
-      width: 58px;
-      height: 58px;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
       flex-shrink: 0;
+      object-fit: contain;
+      box-shadow: 0 2px 8px rgba(21, 40, 64, 0.08);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+      background: #FFFFFF;
+    }
+
+    .brand:hover .brand-logo-img,
+    .brand:hover .mark {
+      transform: scale(1.05) rotate(-1.5deg);
+      box-shadow: 0 4px 14px rgba(21, 40, 64, 0.14);
     }
 
     .brand h1 {
@@ -83,6 +125,11 @@
       margin: 0;
       color: var(--navy-deep);
       letter-spacing: 0.2px;
+      transition: color 0.15s ease;
+    }
+
+    .brand:hover h1 {
+      color: var(--navy);
     }
 
     .brand h1 .trackr {
@@ -1552,9 +1599,11 @@
         padding: 12px 10px calc(50px + env(safe-area-inset-bottom, 0px));
       }
 
+      .brand .brand-logo-img,
       .brand .mark {
         width: 44px;
         height: 44px;
+        border-radius: 10px;
       }
 
       .brand h1 {
@@ -1795,38 +1844,13 @@
   <div class="app">
 
     <header class="top">
-      <div class="brand">
-        <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"
-          aria-label="ExpenseTrackr logo">
-          <!-- broken progress ring -->
-          <path d="M 50 6 A 44 44 0 1 0 90.5 61" fill="none" stroke="#152840" stroke-width="4.5"
-            stroke-linecap="round" />
-          <path d="M 50 6 A 44 44 0 0 1 78 21" fill="none" stroke="#2E9B5C" stroke-width="4.5" stroke-linecap="round" />
-          <!-- upward arrow finishing the ring -->
-          <path d="M 68 34 L 82 20 M 82 20 L 71 21 M 82 20 L 81 31" fill="none" stroke="#2E9B5C" stroke-width="4.2"
-            stroke-linecap="round" stroke-linejoin="round" />
-          <!-- bar chart -->
-          <rect x="61" y="48" width="6.5" height="14" rx="1.2" fill="#152840" />
-          <rect x="70" y="41" width="6.5" height="21" rx="1.2" fill="#152840" />
-          <rect x="79" y="34" width="6.5" height="28" rx="1.2" fill="#152840" />
-          <!-- cash fanning out of wallet -->
-          <path d="M 33 40 L 47 22 L 51 26 Z" fill="#2E9B5C" />
-          <path d="M 38 40 L 50 24 L 54 28 Z" fill="#3EB374" />
-          <path d="M 43 40 L 53 27 L 57 31 Z" fill="#2E9B5C" />
-          <!-- wallet body -->
-          <rect x="22" y="40" width="42" height="30" rx="5" fill="#152840" />
-          <path d="M 22 48 h42" stroke="#F4F5F7" stroke-width="1" opacity="0.12" />
-          <circle cx="55" cy="55" r="2.6" fill="#F4F5F7" opacity="0.85" />
-          <!-- rupee badge -->
-          <circle cx="26" cy="68" r="11.5" fill="#2E9B5C" stroke="#F4F5F7" stroke-width="2" />
-          <text x="26" y="73.5" text-anchor="middle" font-family="Fraunces, serif" font-weight="700" font-size="15"
-            fill="#F4F5F7">₹</text>
-        </svg>
+      <a href="#dashboard" class="brand" id="brandLogoBtn" title="ExpenseTrackr — Return to Dashboard" aria-label="ExpenseTrackr Home">
+        <img src="logo-icon.png" class="brand-logo-img" alt="ExpenseTrackr Logo" width="52" height="52">
         <div>
           <h1>Expense<span class="trackr">Trackr</span></h1>
           <div class="sub">Monthly Expense Tracker</div>
         </div>
-      </div>
+      </a>
       <div class="header-actions">
         <div class="db-status-pill" id="dbStatusPill" title="Click to re-check MongoDB connection">
           <span class="db-dot" id="dbDot"></span>
@@ -2867,6 +2891,19 @@
 
       const footerDownloadPdfBtn = document.getElementById('footerDownloadPdfBtn');
       if (footerDownloadPdfBtn) footerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
+
+      const brandLogoBtn = document.getElementById('brandLogoBtn');
+      if (brandLogoBtn) {
+        brandLogoBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const dashTab = document.querySelector('.tab-btn[data-tab="dashboard"]');
+          if (dashTab) {
+            dashTab.click();
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          showToast('🏠 Returned to Dashboard');
+        });
+      }
 
       const footerExportBtn = document.getElementById('footerExportBtn');
       if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
