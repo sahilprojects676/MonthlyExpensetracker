@@ -7,13 +7,96 @@
   <meta name="theme-color" content="#152840">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>ExpenseTrackr — Monthly Expense Tracker</title>
+  <title>ExpenseTrackr — Monthly Expense Tracker, Budget Planner &amp; Udhari Khata</title>
+  
+  <!-- Primary SEO Meta Tags -->
+  <meta name="title" content="ExpenseTrackr — Monthly Expense Tracker, Budget Planner &amp; Udhari Khata">
+  <meta name="description" content="ExpenseTrackr is a modern, privacy-focused monthly expense tracker and budget planner. Manage daily expenses, track borrowing &amp; lending (Udhari Khata), generate PDF statements, and sync with MongoDB.">
+  <meta name="keywords" content="expense tracker, monthly expense tracker, budget planner, udhari khata, money manager, personal finance tracker, borrowing lending ledger, pdf expense report, offline finance tracker, mongodb expense tracker">
+  <meta name="author" content="Sahil (sahilprojects676)">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="http://localhost:3000/">
+
+  <!-- Open Graph / Facebook / WhatsApp Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://localhost:3000/">
+  <meta property="og:site_name" content="ExpenseTrackr">
+  <meta property="og:title" content="ExpenseTrackr — Smart Monthly Expense Tracker &amp; Budget Manager">
+  <meta property="og:description" content="Effortlessly track daily expenses, set monthly spending limits, manage borrowing &amp; lending (Udhari Khata), and export professional PDF statements.">
+  <meta property="og:image" content="logo.png">
+  <meta property="og:image:alt" content="ExpenseTrackr Logo and Financial Dashboard Preview">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ExpenseTrackr — Smart Monthly Expense Tracker &amp; Budget Manager">
+  <meta name="twitter:description" content="Modern, fast expense tracker with budget goals, Udhari khata ledger, offline support, and 1-click PDF statements.">
+  <meta name="twitter:image" content="logo.png">
+  <meta name="twitter:image:alt" content="ExpenseTrackr Brand Emblem">
+
+  <!-- Mobile & Application Meta -->
+  <meta name="application-name" content="ExpenseTrackr">
+  <meta name="apple-mobile-web-app-title" content="ExpenseTrackr">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Favicon & PWA Icons -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="icon" type="image/png" href="logo-icon.png">
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
+
+  <!-- Schema.org JSON-LD Structured Data for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "http://localhost:3000/#webapp",
+        "name": "ExpenseTrackr",
+        "alternateName": "Monthly Expense Tracker",
+        "url": "http://localhost:3000/",
+        "description": "Smart monthly expense and borrowing (udhari) tracker with MongoDB persistence, budget goals, and PDF statements.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All modern web browsers (Chrome, Edge, Safari, Firefox)",
+        "browserRequirements": "Requires JavaScript",
+        "softwareVersion": "2.0.0",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Sahil",
+          "url": "https://github.com/sahilprojects676"
+        },
+        "featureList": [
+          "Monthly budget planning and real-time expense tracking",
+          "Udhari Khata (borrowing and lending ledger with due dates)",
+          "Automated professional PDF financial statement generation",
+          "Full MongoDB cloud and local synchronization with zero data loss",
+          "Unique client account ID and offline-first LocalStorage fallback",
+          "Interactive 6-month visual expense trend breakdown"
+        ]
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://github.com/sahilprojects676/MonthlyExpensetracker/#sourcecode",
+        "name": "ExpenseTrackr Source Code",
+        "programmingLanguage": ["HTML5", "CSS3", "JavaScript", "Node.js", "Express", "MongoDB"],
+        "codeRepository": "https://github.com/sahilprojects676/MonthlyExpensetracker",
+        "license": "https://opensource.org/licenses/MIT"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Google Fonts Preconnect & Styles -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -1917,15 +2000,13 @@
       </div>
     </header>
 
-    <div class="storage-note" id="storageNote">Running without saved storage in this view — your entries will stay
-      visible for this session but won't be remembered next time you open the file.</div>
-
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="tracker">Expense Tracker</button>
       <button class="tab-btn" data-tab="udhari">Borrowing </button>
     </nav>
 
+    <main class="main-content" id="mainContent" role="main">
     <!-- ============ DASHBOARD TAB ============ -->
     <div class="tab-panel active" id="tab-dashboard">
       <section class="summary">
@@ -2199,6 +2280,7 @@
         </label>
       </div>
     </div>
+    </main>
 
     <footer class="foot">
       ExpenseTrackr &middot; All figures in Indian Rupees (INR).<br><br>
@@ -2332,7 +2414,6 @@
 
       const dbStatusPill = document.getElementById('dbStatusPill');
       const dbStatusText = document.getElementById('dbStatusText');
-      const storageNote = document.getElementById('storageNote');
 
       function updateDbStatus(connected, text, title) {
         if (dbStatusPill) {
@@ -2341,20 +2422,6 @@
         }
         if (dbStatusText) {
           dbStatusText.textContent = text;
-        }
-        if (storageNote) {
-          if (connected) {
-            storageNote.style.display = 'block';
-            storageNote.innerHTML = `🟢 <strong>Connected to MongoDB</strong> (<code>mongodb://localhost:27017/expensetracker</code>) — All records are automatically saved under your unique Account ID (<code>${currentUserId}</code>).`;
-          } else {
-            storageNote.style.display = 'block';
-            const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
-            storageNote.innerHTML = isFileOrLiveServer
-              ? `🟠 <strong>Local / Offline Mode</strong> (Server unreachable at <code>http://localhost:3000</code>). Run <code>npm start</code> in your terminal and open <a href="http://localhost:3000" style="color:inherit;font-weight:700;text-decoration:underline;">http://localhost:3000</a> to connect to MongoDB.`
-              : (hasLocalStorage
-                ? `🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage under Account ID <code>${currentUserId}</code>.`
-                : 'Storage isn\u2019t available in this browser (private mode) — entries will only last for this session.');
-          }
         }
       }
 
