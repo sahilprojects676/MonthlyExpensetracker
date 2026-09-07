@@ -609,16 +609,17 @@
 
     .rupee-wrap span {
       position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
+      left: 11px;
+      bottom: 11px;
+      line-height: 1;
       color: var(--ink-soft);
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
+      font-size: 14.5px;
+      pointer-events: none;
     }
 
     .rupee-wrap input {
-      padding-left: 24px;
+      padding-left: 26px;
     }
 
     .submit-btn {
@@ -948,7 +949,8 @@
       white-space: nowrap;
     }
 
-    #ledgerWrap {
+    #ledgerWrap,
+    #udhariWrap {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -1772,79 +1774,19 @@
       }
     }
 
-    /* MongoDB Connection Status Pill */
+    /* Form 2-Column Responsive Layout */
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Header Actions Layout */
     .header-actions {
       display: flex;
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
-    }
-
-    .db-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      background: rgba(46, 155, 92, 0.09);
-      color: #1a6f3e;
-      border: 1px solid rgba(46, 155, 92, 0.28);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
-    }
-
-    .db-status-pill:hover {
-      background: rgba(46, 155, 92, 0.16);
-      box-shadow: 0 2px 8px rgba(46, 155, 92, 0.2);
-      transform: translateY(-1px);
-    }
-
-    .db-status-pill.offline {
-      background: rgba(201, 98, 45, 0.08);
-      color: #ad4b18;
-      border-color: rgba(201, 98, 45, 0.3);
-    }
-
-    .db-status-pill.offline:hover {
-      background: rgba(201, 98, 45, 0.14);
-      box-shadow: 0 2px 8px rgba(201, 98, 45, 0.16);
-      transform: translateY(-1px);
-    }
-
-    .db-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #2E9B5C;
-      box-shadow: 0 0 0 2px rgba(46, 155, 92, 0.25);
-      display: inline-block;
-      animation: dbPulse 2.2s infinite ease-in-out;
-      flex-shrink: 0;
-    }
-
-    .db-status-pill.offline .db-dot {
-      background: #C9622D;
-      box-shadow: 0 0 0 2px rgba(201, 98, 45, 0.25);
-      animation: none;
-    }
-
-    @keyframes dbPulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-
-      50% {
-        transform: scale(1.22);
-        opacity: 0.7;
-      }
     }
 
     .export-btn {
@@ -1906,40 +1848,164 @@
       gap: 14px;
     }
 
+    /* Responsive Breakpoints */
     @media (max-width: 680px) {
       .header-actions {
         width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
         justify-content: space-between;
-        gap: 8px;
+        gap: 10px;
       }
 
-      .db-status-pill {
-        font-size: 11px;
-        padding: 5px 9px;
-        gap: 5px;
+      .header-actions .month-nav {
+        width: 100%;
+        order: 3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+      }
+
+      .user-id-pill {
+        font-size: 11.5px;
+        padding: 6px 12px;
+        gap: 6px;
+        max-width: 52%;
       }
 
       .export-btn {
-        font-size: 11px;
-        padding: 5px 10px;
+        font-size: 11.5px;
+        padding: 6px 12px;
         gap: 5px;
+        white-space: nowrap;
       }
 
       .backup-bar {
         flex-direction: column;
         align-items: stretch !important;
         gap: 14px;
+        padding: 14px 12px;
       }
 
       .backup-bar .backup-actions {
-        display: flex;
-        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
+        width: 100%;
       }
 
       .backup-bar .backup-actions .export-btn {
-        flex: 1;
+        width: 100%;
+        padding: 8px 6px;
+        font-size: 11px;
         justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        box-sizing: border-box;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .form-row-2col {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      .app {
+        padding: 12px 10px calc(50px + env(safe-area-inset-bottom, 0px));
+        overflow-x: hidden;
+      }
+
+      .tab-nav {
+        gap: 3px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 18px;
+      }
+
+      .tab-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 10px 4px;
+        font-size: 12.5px;
+        text-align: center;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .type-segmented {
+        gap: 4px;
+        padding: 3px;
+      }
+
+      .type-btn {
+        padding: 8px 5px;
+        font-size: 11.5px;
+        white-space: nowrap;
+      }
+
+      .filter-pills-row {
+        gap: 5px;
+        margin-bottom: 12px;
+      }
+
+      .udhari-filter-pill {
+        font-size: 11px;
+        padding: 5px 8px;
+      }
+
+      .stat .budget-edit {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .stat .budget-edit input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      #ledgerWrap,
+      #udhariWrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table.ledger {
+        min-width: 420px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .user-id-pill {
+        font-size: 10.5px;
+        padding: 4px 8px;
+      }
+
+      .export-btn {
+        font-size: 10.5px;
+        padding: 5px 8px;
+      }
+
+      .brand h1 {
+        font-size: 19px;
+      }
+
+      .brand .brand-logo-img,
+      .brand .mark {
+        width: 40px;
+        height: 40px;
       }
     }
   </style>
@@ -2165,7 +2231,7 @@
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="form-row-2col">
                 <div class="field">
                   <label for="uDate">Date</label>
                   <input type="date" id="uDate">
@@ -4131,7 +4197,19 @@
           await loadMonth();
           await loadUdhari();
         })();
-      }) ();
+
+        // ---------- Auto-Reload Every 1 Hour (3,600,000 ms) ----------
+        const ONE_HOUR_MS = 60 * 60 * 1000;
+        setInterval(() => {
+          // Prevent reload if user is actively typing or editing a transaction
+          const activeTag = document.activeElement ? document.activeElement.tagName : '';
+          const isUserTyping = activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'TEXTAREA';
+          if (!isUserTyping && !editingId && !udhariEditingId) {
+            console.log('[AutoReload] 1 hour elapsed — refreshing page & syncing latest records...');
+            window.location.reload();
+          }
+        }, ONE_HOUR_MS);
+      })();
   </script>
 
 </body>
