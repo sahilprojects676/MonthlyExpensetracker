@@ -1017,6 +1017,39 @@
       background: #B8862E;
     }
 
+    .user-id-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      background: #FFFFFF;
+      color: var(--navy);
+      border: 1px solid var(--line-strong);
+      cursor: pointer;
+      user-select: none;
+      transition: all .2s ease;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .user-id-pill:hover {
+      background: #F0F4FA;
+      border-color: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.08);
+    }
+
+    .user-id-pill:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .user-id-pill svg {
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+
     /* ---------- Borrowing (Udhari) Section ---------- */
     .type-segmented {
       display: flex;
@@ -1844,20 +1877,36 @@
   <div class="app">
 
     <header class="top">
-      <a href="#dashboard" class="brand" id="brandLogoBtn" title="ExpenseTrackr — Return to Dashboard" aria-label="ExpenseTrackr Home">
+      <a href="#dashboard" class="brand" id="brandLogoBtn" title="ExpenseTrackr — Return to Dashboard"
+        aria-label="ExpenseTrackr Home">
         <img src="logo-icon.png" class="brand-logo-img" alt="ExpenseTrackr Logo" width="52" height="52">
         <div>
-          <h1>Expense<span class="trackr">Trackr</span></h1>
+          <h1>Expense<span class="trackr">Tracker</span></h1>
           <div class="sub">Monthly Expense Tracker</div>
         </div>
       </a>
       <div class="header-actions">
+        <div class="user-id-pill" id="userIdPill" title="Click to copy your unique User ID or switch account">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span id="userIdLabel">ID: usr_…</span>
+        </div>
         <div class="db-status-pill" id="dbStatusPill" title="Click to re-check MongoDB connection">
           <span class="db-dot" id="dbDot"></span>
           <span id="dbStatusText">Checking DB…</span>
         </div>
-        <button type="button" class="export-btn primary" id="headerDownloadPdfBtn" title="Download well-formatted PDF statement for this month">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <button type="button" class="export-btn primary" id="headerDownloadPdfBtn"
+          title="Download well-formatted PDF statement for this month">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <line x1="9" y1="15" x2="15" y2="15" />
+          </svg>
           <span>Download PDF</span>
         </button>
         <div class="month-nav">
@@ -2099,20 +2148,52 @@
         <span style="font-size: 24px; line-height: 1;">📄</span>
         <div>
           <strong style="font-size: 13.5px; color: var(--navy); display: block;">Reports & Device Backup</strong>
-          <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">Download well-formatted PDF statement for this month or manage raw JSON backups.</div>
+          <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">
+            Account ID: <strong id="footerUserId"
+              style="color:var(--navy); font-family: 'IBM Plex Mono', monospace;">usr_…</strong> &middot; Download
+            statements or sync accounts.
+          </div>
         </div>
       </div>
       <div class="backup-actions" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <button type="button" class="export-btn primary" id="footerDownloadPdfBtn" title="Download well-formatted PDF statement for this month">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <button type="button" class="export-btn" id="switchUserBtn"
+          title="Copy your Account ID or switch to an existing ID">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <polyline points="17 11 19 13 23 9" />
+          </svg>
+          <span>Account ID</span>
+        </button>
+        <button type="button" class="export-btn primary" id="footerDownloadPdfBtn"
+          title="Download well-formatted PDF statement for this month">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <line x1="9" y1="15" x2="15" y2="15" />
+          </svg>
           <span>Download PDF Statement</span>
         </button>
-        <button type="button" class="export-btn" id="footerExportBtn" title="Export raw phone localStorage to JSON file">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <button type="button" class="export-btn" id="footerExportBtn"
+          title="Export raw phone localStorage to JSON file">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
           <span>Export JSON</span>
         </button>
         <label class="export-btn" style="cursor: pointer;" title="Import and restore a JSON backup file">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
           <span>Import JSON</span>
           <input type="file" id="importJsonInput" accept=".json,application/json" style="display: none;">
         </label>
@@ -2166,6 +2247,59 @@
         hasLocalStorage = false;
       }
 
+      // ---- Unique User ID Architecture (Auto-assigned on 1st visit, stored persistently) ----
+      const USER_ID_STORAGE_KEY = 'expensetrackr_user_id';
+      let currentUserId = '';
+
+      function getOrInitUserId() {
+        if (currentUserId && currentUserId.trim().length > 0) return currentUserId;
+        try {
+          if (hasLocalStorage) {
+            const stored = window.localStorage.getItem(USER_ID_STORAGE_KEY);
+            if (stored && stored.trim().length > 0) {
+              currentUserId = stored.trim();
+              updateUserIdUI();
+              return currentUserId;
+            }
+          }
+        } catch (e) { }
+
+        // First time user: generate clean unique user ID
+        const ts = Date.now().toString(36);
+        const rand = Math.random().toString(36).substring(2, 8);
+        currentUserId = `usr_${ts}_${rand}`;
+        try {
+          if (hasLocalStorage) {
+            window.localStorage.setItem(USER_ID_STORAGE_KEY, currentUserId);
+          }
+        } catch (e) { }
+        updateUserIdUI();
+        return currentUserId;
+      }
+
+      function updateUserIdUI() {
+        const lbl = document.getElementById('userIdLabel');
+        const foot = document.getElementById('footerUserId');
+        const pill = document.getElementById('userIdPill');
+        const uid = currentUserId || 'usr_loading';
+        const shortId = uid.length > 13 ? (uid.substring(0, 12) + '…') : uid;
+        if (lbl) lbl.textContent = shortId;
+        if (foot) foot.textContent = uid;
+        if (pill) pill.title = `Your Account ID: ${uid} (Click to copy or switch account)`;
+      }
+
+      // Universal API caller that automatically passes current User ID
+      function userFetch(url, options = {}) {
+        const uid = getOrInitUserId();
+        const headers = Object.assign({}, options.headers || {}, {
+          'X-User-Id': uid
+        });
+        return fetch(url, Object.assign({}, options, { headers }));
+      }
+
+      // Initialize User ID immediately
+      getOrInitUserId();
+
       const memoryStore = {};
       let isMongoConnected = false;
 
@@ -2184,11 +2318,11 @@
         if (storageNote) {
           if (connected) {
             storageNote.style.display = 'block';
-            storageNote.innerHTML = '🟢 <strong>Connected to MongoDB</strong> (<code>mongodb://localhost:27017/expensetracker</code>) — All expenses, budgets, and udhari records are automatically synced and persisted.';
+            storageNote.innerHTML = `🟢 <strong>Connected to MongoDB</strong> (<code>mongodb://localhost:27017/expensetracker</code>) — All records are automatically saved under your unique Account ID (<code>${currentUserId}</code>).`;
           } else {
             storageNote.style.display = 'block';
             storageNote.innerHTML = hasLocalStorage
-              ? '🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage and will automatically sync once MongoDB is connected.'
+              ? `🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage under Account ID <code>${currentUserId}</code>.`
               : 'Storage isn\u2019t available in this browser (private mode) — entries will only last for this session.';
           }
         }
@@ -2197,12 +2331,13 @@
       // Check MongoDB status & perform automatic migration of existing localStorage data
       async function checkAndSyncData(showUserFeedback) {
         try {
-          const res = await fetch('/api/status', { cache: 'no-store' });
+          const res = await userFetch('/api/status', { cache: 'no-store' });
           if (res.ok) {
             const data = await res.json();
             if (data.connected) {
               isMongoConnected = true;
-              updateDbStatus(true, 'MongoDB Connected', `Database: ${data.database || 'expensetracker'} · Synced & Persistent`);
+              updateDbStatus(true, 'MongoDB Connected', `Database: ${data.database || 'expensetracker'} · Account: ${data.userId || currentUserId}`);
+              updateUserIdUI();
 
               // Check if we have local data to sync to MongoDB
               await syncLocalDataToMongo();
@@ -2263,15 +2398,16 @@
           }
         }
 
-        const syncMarker = 'et_synced_to_mongodb_v2';
+        const syncMarker = `et_synced_v3_${currentUserId}`;
         const alreadySynced = window.localStorage.getItem(syncMarker);
 
         if (totalItemsFound > 0 && !alreadySynced) {
           try {
-            const resp = await fetch('/api/sync', {
+            const resp = await userFetch('/api/sync', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
+                userId: currentUserId,
                 monthlyExpenses,
                 monthlyBudgets,
                 udhariRecords: udhariRecordsToSync
@@ -2280,7 +2416,7 @@
             if (resp.ok) {
               const resJson = await resp.json();
               window.localStorage.setItem(syncMarker, 'true');
-              showToast(`✨ Synced ${resJson.counts.expenses + resJson.counts.udhari} existing local records to MongoDB!`);
+              showToast(`✨ Synced ${resJson.counts.expenses + resJson.counts.udhari} records to MongoDB for ${currentUserId}!`);
             }
           } catch (syncErr) {
             console.warn('Sync request failed:', syncErr);
@@ -2289,494 +2425,362 @@
       }
 
       if (dbStatusPill) {
-        dbStatusPill.addEventListener('click', async () => {
-          updateDbStatus(isMongoConnected, 'Checking…', 'Re-verifying MongoDB connection');
-          await checkAndSyncData(true);
-          await loadMonth();
-          await loadUdhari();
-        });
-      }
+          dbStatusPill.addEventListener('click', async () => {
+            updateDbStatus(isMongoConnected, 'Checking…', 'Re-verifying MongoDB connection');
+            await checkAndSyncData(true);
+            await loadMonth();
+            await loadUdhari();
+          });
+        }
 
-      // ==========================================
-      // ---------- PHONE & LOCALSTORAGE BACKUP ---
-      // ==========================================
-      function exportLocalStorageToJson() {
-        try {
-          const exportData = {
-            app: 'ExpenseTrackr',
-            version: '2.0',
-            exportedAt: new Date().toISOString(),
-            deviceInfo: {
-              userAgent: navigator.userAgent || 'unknown',
-              platform: navigator.platform || 'unknown',
-              screen: `${window.screen.width}x${window.screen.height}`
-            },
-            summary: {
-              totalKeys: 0,
-              totalExpenses: 0,
-              totalBudgets: 0,
-              totalUdhariRecords: 0
-            },
-            // Complete raw key-value store for 100% loss-free recovery
-            rawLocalStorage: {},
-            // Formatted JSON structure for easy human reading / data analysis
-            parsedData: {
-              expensesByMonth: {},
-              budgetsByMonth: {},
-              udhariRecords: []
-            }
-          };
+        // ==========================================
+        // ---------- PHONE & LOCALSTORAGE BACKUP ---
+        // ==========================================
+        function exportLocalStorageToJson() {
+          try {
+            const exportData = {
+              app: 'ExpenseTrackr',
+              version: '2.0',
+              exportedAt: new Date().toISOString(),
+              deviceInfo: {
+                userAgent: navigator.userAgent || 'unknown',
+                platform: navigator.platform || 'unknown',
+                screen: `${window.screen.width}x${window.screen.height}`
+              },
+              summary: {
+                totalKeys: 0,
+                totalExpenses: 0,
+                totalBudgets: 0,
+                totalUdhariRecords: 0
+              },
+              // Complete raw key-value store for 100% loss-free recovery
+              rawLocalStorage: {},
+              // Formatted JSON structure for easy human reading / data analysis
+              parsedData: {
+                expensesByMonth: {},
+                budgetsByMonth: {},
+                udhariRecords: []
+              }
+            };
 
-          if (hasLocalStorage) {
-            for (let i = 0; i < window.localStorage.length; i++) {
-              const k = window.localStorage.key(i);
-              if (!k) continue;
-              const raw = window.localStorage.getItem(k);
-              exportData.rawLocalStorage[k] = raw;
-              exportData.summary.totalKeys++;
+            if (hasLocalStorage) {
+              for (let i = 0; i < window.localStorage.length; i++) {
+                const k = window.localStorage.key(i);
+                if (!k) continue;
+                const raw = window.localStorage.getItem(k);
+                exportData.rawLocalStorage[k] = raw;
+                exportData.summary.totalKeys++;
 
-              if (k.startsWith(LS_PREFIX)) {
-                const subKey = k.slice(LS_PREFIX.length);
-                try {
-                  const val = JSON.parse(raw);
-                  if (subKey.startsWith('expenses:')) {
-                    const m = subKey.replace('expenses:', '');
-                    exportData.parsedData.expensesByMonth[m] = val;
-                    if (Array.isArray(val)) exportData.summary.totalExpenses += val.length;
-                  } else if (subKey.startsWith('budget:')) {
-                    const m = subKey.replace('budget:', '');
-                    exportData.parsedData.budgetsByMonth[m] = val;
-                    exportData.summary.totalBudgets++;
-                  } else if (subKey === 'udhari:records') {
-                    exportData.parsedData.udhariRecords = val;
-                    if (Array.isArray(val)) exportData.summary.totalUdhariRecords += val.length;
-                  }
-                } catch (pe) {}
+                if (k.startsWith(LS_PREFIX)) {
+                  const subKey = k.slice(LS_PREFIX.length);
+                  try {
+                    const val = JSON.parse(raw);
+                    if (subKey.startsWith('expenses:')) {
+                      const m = subKey.replace('expenses:', '');
+                      exportData.parsedData.expensesByMonth[m] = val;
+                      if (Array.isArray(val)) exportData.summary.totalExpenses += val.length;
+                    } else if (subKey.startsWith('budget:')) {
+                      const m = subKey.replace('budget:', '');
+                      exportData.parsedData.budgetsByMonth[m] = val;
+                      exportData.summary.totalBudgets++;
+                    } else if (subKey === 'udhari:records') {
+                      exportData.parsedData.udhariRecords = val;
+                      if (Array.isArray(val)) exportData.summary.totalUdhariRecords += val.length;
+                    }
+                  } catch (pe) { }
+                }
               }
             }
+
+            // If phone localStorage is empty but we have in-memory/loaded records, include them
+            if (exportData.summary.totalExpenses === 0 && expenses.length > 0) {
+              exportData.parsedData.expensesByMonth[monthKey(current)] = expenses;
+              exportData.summary.totalExpenses += expenses.length;
+            }
+            if (exportData.summary.totalUdhariRecords === 0 && udhariRecords.length > 0) {
+              exportData.parsedData.udhariRecords = udhariRecords;
+              exportData.summary.totalUdhariRecords += udhariRecords.length;
+            }
+
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+            const fileName = `ExpenseTrackr-phone-backup-${dateStr}-${timeStr}.json`;
+
+            const jsonContent = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(blobUrl);
+            }, 600);
+
+            showToast(`📱 Exported ${exportData.summary.totalExpenses} expenses & ${exportData.summary.totalUdhariRecords} udhari items to ${fileName}!`);
+          } catch (err) {
+            console.error('Export error:', err);
+            showToast('Failed to export JSON: ' + err.message, true);
           }
-
-          // If phone localStorage is empty but we have in-memory/loaded records, include them
-          if (exportData.summary.totalExpenses === 0 && expenses.length > 0) {
-            exportData.parsedData.expensesByMonth[monthKey(current)] = expenses;
-            exportData.summary.totalExpenses += expenses.length;
-          }
-          if (exportData.summary.totalUdhariRecords === 0 && udhariRecords.length > 0) {
-            exportData.parsedData.udhariRecords = udhariRecords;
-            exportData.summary.totalUdhariRecords += udhariRecords.length;
-          }
-
-          const now = new Date();
-          const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-          const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
-          const fileName = `ExpenseTrackr-phone-backup-${dateStr}-${timeStr}.json`;
-
-          const jsonContent = JSON.stringify(exportData, null, 2);
-          const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
-          const blobUrl = URL.createObjectURL(blob);
-
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = blobUrl;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-
-          setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(blobUrl);
-          }, 600);
-
-          showToast(`📱 Exported ${exportData.summary.totalExpenses} expenses & ${exportData.summary.totalUdhariRecords} udhari items to ${fileName}!`);
-        } catch (err) {
-          console.error('Export error:', err);
-          showToast('Failed to export JSON: ' + err.message, true);
         }
-      }
 
-      function importLocalStorageFromJson(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async function (e) {
+        function importLocalStorageFromJson(file) {
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = async function (e) {
+            try {
+              const data = JSON.parse(e.target.result);
+              if (!data || (!data.rawLocalStorage && !data.parsedData)) {
+                showToast('Invalid backup file. Missing localStorage data.', true);
+                return;
+              }
+
+              let restoredCount = 0;
+              // 1. Restore raw localStorage keys
+              if (data.rawLocalStorage && typeof data.rawLocalStorage === 'object') {
+                for (const [k, v] of Object.entries(data.rawLocalStorage)) {
+                  if (typeof v === 'string') {
+                    window.localStorage.setItem(k, v);
+                    restoredCount++;
+                  }
+                }
+              }
+
+              // 2. Also restore from parsedData if present
+              if (data.parsedData) {
+                if (data.parsedData.expensesByMonth) {
+                  for (const [m, list] of Object.entries(data.parsedData.expensesByMonth)) {
+                    window.localStorage.setItem(LS_PREFIX + 'expenses:' + m, JSON.stringify(list));
+                  }
+                }
+                if (data.parsedData.budgetsByMonth) {
+                  for (const [m, b] of Object.entries(data.parsedData.budgetsByMonth)) {
+                    window.localStorage.setItem(LS_PREFIX + 'budget:' + m, JSON.stringify(b));
+                  }
+                }
+                if (data.parsedData.udhariRecords) {
+                  window.localStorage.setItem(LS_PREFIX + 'udhari:records', JSON.stringify(data.parsedData.udhariRecords));
+                }
+              }
+
+              // Force resync to MongoDB if connected
+              window.localStorage.removeItem('et_synced_to_mongodb_v2');
+              await checkAndSyncData(false);
+              await loadMonth();
+              await loadUdhari();
+
+              showToast('🎉 Successfully imported backup into phone storage!');
+            } catch (err) {
+              console.error('Import parse error:', err);
+              showToast('Error reading backup file: ' + err.message, true);
+            }
+          };
+          reader.readAsText(file);
+        }
+
+        // ==========================================
+        // ---------- WELL-FORMATTED PDF STATEMENT --
+        // ==========================================
+        function renderPdfTable(doc, options) {
+          if (typeof doc.autoTable === 'function') {
+            doc.autoTable(options);
+          } else if (window.jspdf && typeof window.jspdf.autoTable === 'function') {
+            window.jspdf.autoTable(doc, options);
+          } else if (typeof window.autoTable === 'function') {
+            window.autoTable(doc, options);
+          }
+        }
+
+        async function ensureJsPdfLoaded() {
+          let jspdfModule = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+          if (jspdfModule) return jspdfModule;
+
+          showToast('Loading PDF generator…');
+          await new Promise((resolve) => {
+            const s1 = document.createElement('script');
+            s1.src = 'libs/jspdf.umd.min.js';
+            s1.onload = () => {
+              const s2 = document.createElement('script');
+              s2.src = 'libs/jspdf.plugin.autotable.min.js';
+              s2.onload = () => resolve();
+              s2.onerror = () => resolve();
+              document.head.appendChild(s2);
+            };
+            s1.onerror = () => {
+              const c1 = document.createElement('script');
+              c1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+              c1.onload = () => {
+                const c2 = document.createElement('script');
+                c2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+                c2.onload = () => resolve();
+                c2.onerror = () => resolve();
+                document.head.appendChild(c2);
+              };
+              c1.onerror = () => resolve();
+              document.head.appendChild(c1);
+            };
+            document.head.appendChild(s1);
+          });
+
+          return window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+        }
+
+        async function downloadMonthlyPdfStatement(e) {
+          const triggerBtn = e && e.currentTarget ? e.currentTarget : null;
+          let originalHtml = '';
+          if (triggerBtn) {
+            originalHtml = triggerBtn.innerHTML;
+            triggerBtn.disabled = true;
+            triggerBtn.style.opacity = '0.75';
+            triggerBtn.innerHTML = '<span>⏳ Downloading…</span>';
+          }
+
           try {
-            const data = JSON.parse(e.target.result);
-            if (!data || (!data.rawLocalStorage && !data.parsedData)) {
-              showToast('Invalid backup file. Missing localStorage data.', true);
+            const jspdfModule = await ensureJsPdfLoaded();
+            if (!jspdfModule) {
+              showToast('Unable to load PDF generator library. Please check your connection.', true);
+              if (triggerBtn) {
+                triggerBtn.innerHTML = originalHtml;
+                triggerBtn.disabled = false;
+                triggerBtn.style.opacity = '';
+              }
               return;
             }
 
-            let restoredCount = 0;
-            // 1. Restore raw localStorage keys
-            if (data.rawLocalStorage && typeof data.rawLocalStorage === 'object') {
-              for (const [k, v] of Object.entries(data.rawLocalStorage)) {
-                if (typeof v === 'string') {
-                  window.localStorage.setItem(k, v);
-                  restoredCount++;
-                }
-              }
-            }
+            showToast('Generating and downloading statement PDF…');
+            const doc = new jspdfModule({
+              orientation: 'portrait',
+              unit: 'pt',
+              format: 'a4'
+            });
 
-            // 2. Also restore from parsedData if present
-            if (data.parsedData) {
-              if (data.parsedData.expensesByMonth) {
-                for (const [m, list] of Object.entries(data.parsedData.expensesByMonth)) {
-                  window.localStorage.setItem(LS_PREFIX + 'expenses:' + m, JSON.stringify(list));
-                }
-              }
-              if (data.parsedData.budgetsByMonth) {
-                for (const [m, b] of Object.entries(data.parsedData.budgetsByMonth)) {
-                  window.localStorage.setItem(LS_PREFIX + 'budget:' + m, JSON.stringify(b));
-                }
-              }
-              if (data.parsedData.udhariRecords) {
-                window.localStorage.setItem(LS_PREFIX + 'udhari:records', JSON.stringify(data.parsedData.udhariRecords));
-              }
-            }
+            const pageWidth = doc.internal.pageSize.getWidth(); // 595.28 pt
+            const pageHeight = doc.internal.pageSize.getHeight(); // 841.89 pt
+            const margin = 36;
+            const contentWidth = pageWidth - margin * 2;
 
-            // Force resync to MongoDB if connected
-            window.localStorage.removeItem('et_synced_to_mongodb_v2');
-            await checkAndSyncData(false);
-            await loadMonth();
-            await loadUdhari();
+            const monthLabelStr = fmtMonthLabel(current);
+            const monthKeyStr = monthKey(current);
 
-            showToast('🎉 Successfully imported backup into phone storage!');
-          } catch (err) {
-            console.error('Import parse error:', err);
-            showToast('Error reading backup file: ' + err.message, true);
-          }
-        };
-        reader.readAsText(file);
-      }
+            // --- 1. TOP HEADER BANNER ---
+            doc.setFillColor(21, 40, 64); // Navy deep #152840
+            doc.rect(0, 0, pageWidth, 74, 'F');
 
-      // ==========================================
-      // ---------- WELL-FORMATTED PDF STATEMENT --
-      // ==========================================
-      function renderPdfTable(doc, options) {
-        if (typeof doc.autoTable === 'function') {
-          doc.autoTable(options);
-        } else if (window.jspdf && typeof window.jspdf.autoTable === 'function') {
-          window.jspdf.autoTable(doc, options);
-        } else if (typeof window.autoTable === 'function') {
-          window.autoTable(doc, options);
-        }
-      }
+            // Accent Green Line
+            doc.setFillColor(46, 155, 92); // Emerald #2E9B5C
+            doc.rect(0, 74, pageWidth, 4, 'F');
 
-      async function ensureJsPdfLoaded() {
-        let jspdfModule = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-        if (jspdfModule) return jspdfModule;
+            // Brand Name & Title
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.text('ExpenseTrackr', margin, 38);
 
-        showToast('Loading PDF generator…');
-        await new Promise((resolve) => {
-          const s1 = document.createElement('script');
-          s1.src = 'libs/jspdf.umd.min.js';
-          s1.onload = () => {
-            const s2 = document.createElement('script');
-            s2.src = 'libs/jspdf.plugin.autotable.min.js';
-            s2.onload = () => resolve();
-            s2.onerror = () => resolve();
-            document.head.appendChild(s2);
-          };
-          s1.onerror = () => {
-            const c1 = document.createElement('script');
-            c1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-            c1.onload = () => {
-              const c2 = document.createElement('script');
-              c2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
-              c2.onload = () => resolve();
-              c2.onerror = () => resolve();
-              document.head.appendChild(c2);
-            };
-            c1.onerror = () => resolve();
-            document.head.appendChild(c1);
-          };
-          document.head.appendChild(s1);
-        });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(190, 205, 225);
+            doc.text('MONTHLY EXPENSE STATEMENT & FINANCIAL REPORT', margin, 54);
 
-        return window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-      }
+            // Right Header: Month & Generated Date
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.setTextColor(255, 255, 255);
+            doc.text(monthLabelStr.toUpperCase(), pageWidth - margin, 38, { align: 'right' });
 
-      async function downloadMonthlyPdfStatement(e) {
-        const triggerBtn = e && e.currentTarget ? e.currentTarget : null;
-        let originalHtml = '';
-        if (triggerBtn) {
-          originalHtml = triggerBtn.innerHTML;
-          triggerBtn.disabled = true;
-          triggerBtn.style.opacity = '0.75';
-          triggerBtn.innerHTML = '<span>⏳ Downloading…</span>';
-        }
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(190, 205, 225);
+            const genDate = new Date().toLocaleDateString('en-IN', {
+              day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+            doc.text(`Generated: ${genDate}`, pageWidth - margin, 54, { align: 'right' });
 
-        try {
-          const jspdfModule = await ensureJsPdfLoaded();
-          if (!jspdfModule) {
-            showToast('Unable to load PDF generator library. Please check your connection.', true);
-            if (triggerBtn) {
-              triggerBtn.innerHTML = originalHtml;
-              triggerBtn.disabled = false;
-              triggerBtn.style.opacity = '';
-            }
-            return;
-          }
+            let currentY = 98;
 
-          showToast('Generating and downloading statement PDF…');
-          const doc = new jspdfModule({
-            orientation: 'portrait',
-            unit: 'pt',
-            format: 'a4'
-          });
+            // --- 2. EXECUTIVE SUMMARY METRIC CARDS ---
+            const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+            const remaining = budget > 0 ? (budget - totalSpent) : 0;
+            const isOver = budget > 0 && totalSpent > budget;
 
-          const pageWidth = doc.internal.pageSize.getWidth(); // 595.28 pt
-          const pageHeight = doc.internal.pageSize.getHeight(); // 841.89 pt
-          const margin = 36;
-          const contentWidth = pageWidth - margin * 2;
+            const cardWidth = (contentWidth - 16) / 3;
+            const cardHeight = 52;
 
-          const monthLabelStr = fmtMonthLabel(current);
-          const monthKeyStr = monthKey(current);
+            // Card 1: Monthly Budget
+            doc.setFillColor(245, 247, 250);
+            doc.setDrawColor(218, 224, 233);
+            doc.roundedRect(margin, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(91, 100, 114);
+            doc.text('MONTHLY BUDGET', margin + 12, currentY + 18);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13.5);
+            doc.setTextColor(31, 58, 95);
+            doc.text(budget > 0 ? `Rs. ${budget.toLocaleString('en-IN')}` : 'Not Set', margin + 12, currentY + 38);
 
-          // --- 1. TOP HEADER BANNER ---
-          doc.setFillColor(21, 40, 64); // Navy deep #152840
-          doc.rect(0, 0, pageWidth, 74, 'F');
+            // Card 2: Total Spent
+            const c2X = margin + cardWidth + 8;
+            doc.setFillColor(245, 247, 250);
+            doc.setDrawColor(218, 224, 233);
+            doc.roundedRect(c2X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(91, 100, 114);
+            doc.text('TOTAL SPENT (' + expenses.length + ' TXNS)', c2X + 12, currentY + 18);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13.5);
+            doc.setTextColor(isOver ? 160 : 31, isOver ? 30 : 58, isOver ? 30 : 95);
+            doc.text(`Rs. ${totalSpent.toLocaleString('en-IN')}`, c2X + 12, currentY + 38);
 
-          // Accent Green Line
-          doc.setFillColor(46, 155, 92); // Emerald #2E9B5C
-          doc.rect(0, 74, pageWidth, 4, 'F');
+            // Card 3: Remaining Balance / Savings
+            const c3X = margin + (cardWidth + 8) * 2;
+            doc.setFillColor(isOver ? 254 : (budget > 0 ? 242 : 245), isOver ? 242 : (budget > 0 ? 249 : 247), isOver ? 242 : (budget > 0 ? 244 : 250));
+            doc.setDrawColor(isOver ? 230 : (budget > 0 ? 180 : 218), isOver ? 160 : (budget > 0 ? 220 : 224), isOver ? 160 : (budget > 0 ? 195 : 233));
+            doc.roundedRect(c3X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(isOver ? 160 : (budget > 0 ? 30 : 91), isOver ? 30 : (budget > 0 ? 120 : 100), isOver ? 30 : (budget > 0 ? 60 : 114));
+            doc.text(budget > 0 ? (isOver ? 'OVER BUDGET BY' : 'REMAINING SAVINGS') : 'REMAINING STATUS', c3X + 12, currentY + 18);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13.5);
+            doc.setTextColor(isOver ? 160 : (budget > 0 ? 46 : 91), isOver ? 30 : (budget > 0 ? 130 : 100), isOver ? 30 : (budget > 0 ? 70 : 114));
+            const remText = budget > 0 ? `Rs. ${Math.abs(remaining).toLocaleString('en-IN')}` : 'No Budget Set';
+            doc.text(remText, c3X + 12, currentY + 38);
 
-          // Brand Name & Title
-          doc.setTextColor(255, 255, 255);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(20);
-          doc.text('ExpenseTrackr', margin, 38);
+            currentY += cardHeight + 18;
 
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(9);
-          doc.setTextColor(190, 205, 225);
-          doc.text('MONTHLY EXPENSE STATEMENT & FINANCIAL REPORT', margin, 54);
-
-          // Right Header: Month & Generated Date
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(14);
-          doc.setTextColor(255, 255, 255);
-          doc.text(monthLabelStr.toUpperCase(), pageWidth - margin, 38, { align: 'right' });
-
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(8.5);
-          doc.setTextColor(190, 205, 225);
-          const genDate = new Date().toLocaleDateString('en-IN', {
-            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-          });
-          doc.text(`Generated: ${genDate}`, pageWidth - margin, 54, { align: 'right' });
-
-          let currentY = 98;
-
-          // --- 2. EXECUTIVE SUMMARY METRIC CARDS ---
-          const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-          const remaining = budget > 0 ? (budget - totalSpent) : 0;
-          const isOver = budget > 0 && totalSpent > budget;
-
-          const cardWidth = (contentWidth - 16) / 3;
-          const cardHeight = 52;
-
-          // Card 1: Monthly Budget
-          doc.setFillColor(245, 247, 250);
-          doc.setDrawColor(218, 224, 233);
-          doc.roundedRect(margin, currentY, cardWidth, cardHeight, 4, 4, 'FD');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(7.5);
-          doc.setTextColor(91, 100, 114);
-          doc.text('MONTHLY BUDGET', margin + 12, currentY + 18);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(13.5);
-          doc.setTextColor(31, 58, 95);
-          doc.text(budget > 0 ? `Rs. ${budget.toLocaleString('en-IN')}` : 'Not Set', margin + 12, currentY + 38);
-
-          // Card 2: Total Spent
-          const c2X = margin + cardWidth + 8;
-          doc.setFillColor(245, 247, 250);
-          doc.setDrawColor(218, 224, 233);
-          doc.roundedRect(c2X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(7.5);
-          doc.setTextColor(91, 100, 114);
-          doc.text('TOTAL SPENT (' + expenses.length + ' TXNS)', c2X + 12, currentY + 18);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(13.5);
-          doc.setTextColor(isOver ? 160 : 31, isOver ? 30 : 58, isOver ? 30 : 95);
-          doc.text(`Rs. ${totalSpent.toLocaleString('en-IN')}`, c2X + 12, currentY + 38);
-
-          // Card 3: Remaining Balance / Savings
-          const c3X = margin + (cardWidth + 8) * 2;
-          doc.setFillColor(isOver ? 254 : (budget > 0 ? 242 : 245), isOver ? 242 : (budget > 0 ? 249 : 247), isOver ? 242 : (budget > 0 ? 244 : 250));
-          doc.setDrawColor(isOver ? 230 : (budget > 0 ? 180 : 218), isOver ? 160 : (budget > 0 ? 220 : 224), isOver ? 160 : (budget > 0 ? 195 : 233));
-          doc.roundedRect(c3X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(7.5);
-          doc.setTextColor(isOver ? 160 : (budget > 0 ? 30 : 91), isOver ? 30 : (budget > 0 ? 120 : 100), isOver ? 30 : (budget > 0 ? 60 : 114));
-          doc.text(budget > 0 ? (isOver ? 'OVER BUDGET BY' : 'REMAINING SAVINGS') : 'REMAINING STATUS', c3X + 12, currentY + 18);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(13.5);
-          doc.setTextColor(isOver ? 160 : (budget > 0 ? 46 : 91), isOver ? 30 : (budget > 0 ? 130 : 100), isOver ? 30 : (budget > 0 ? 70 : 114));
-          const remText = budget > 0 ? `Rs. ${Math.abs(remaining).toLocaleString('en-IN')}` : 'No Budget Set';
-          doc.text(remText, c3X + 12, currentY + 38);
-
-          currentY += cardHeight + 18;
-
-          // --- 3. CATEGORY SPENDING BREAKDOWN TABLE ---
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(10.5);
-          doc.setTextColor(21, 40, 64);
-          doc.text('Spending by Category', margin, currentY);
-          currentY += 6;
-
-          const catTotals = {};
-          expenses.forEach(e => {
-            catTotals[e.category] = (catTotals[e.category] || 0) + Number(e.amount);
-          });
-          const catSorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
-
-          const catTableBody = catSorted.length > 0 ? catSorted.map(([cat, amt]) => {
-            const pct = totalSpent > 0 ? ((amt / totalSpent) * 100).toFixed(1) + '%' : '0%';
-            return [cat, `Rs. ${amt.toLocaleString('en-IN')}`, pct];
-          }) : [['No expenses recorded for this month', 'Rs. 0', '0%']];
-
-          renderPdfTable(doc, {
-            startY: currentY,
-            head: [['Category', 'Amount (INR)', '% of Total']],
-            body: catTableBody,
-            theme: 'grid',
-            headStyles: {
-              fillColor: [31, 58, 95],
-              textColor: [255, 255, 255],
-              fontStyle: 'bold',
-              fontSize: 8
-            },
-            styles: {
-              fontSize: 7.5,
-              cellPadding: 4,
-              textColor: [30, 40, 55],
-              lineColor: [225, 230, 238]
-            },
-            columnStyles: {
-              0: { cellWidth: 240 },
-              1: { halign: 'right', fontStyle: 'bold', cellWidth: 140 },
-              2: { halign: 'right', cellWidth: 143.28 }
-            },
-            margin: { left: margin, right: margin }
-          });
-
-          currentY = doc.lastAutoTable.finalY + 20;
-
-          // --- 4. DETAILED TRANSACTION LEDGER ---
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(10.5);
-          doc.setTextColor(21, 40, 64);
-          doc.text(`Transaction Ledger (${expenses.length} items)`, margin, currentY);
-          currentY += 6;
-
-          const sortedExpenses = expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
-          const ledgerRows = sortedExpenses.length > 0 ? sortedExpenses.map((e, idx) => {
-            const d = new Date(e.date + 'T00:00:00');
-            const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : e.date;
-            return [
-              idx + 1,
-              dStr,
-              CATEGORY_LABELS[e.category] || e.category || 'Other',
-              e.description || '',
-              `Rs. ${Number(e.amount).toLocaleString('en-IN')}`
-            ];
-          }) : [['-', '-', 'No transactions', 'No entries logged this month', 'Rs. 0']];
-
-          renderPdfTable(doc, {
-            startY: currentY,
-            head: [['#', 'Date', 'Category', 'Description', 'Amount (INR)']],
-            body: ledgerRows,
-            foot: [['', '', '', 'Total Expenditure', `Rs. ${totalSpent.toLocaleString('en-IN')}`]],
-            theme: 'striped',
-            headStyles: {
-              fillColor: [21, 40, 64],
-              textColor: [255, 255, 255],
-              fontStyle: 'bold',
-              fontSize: 8
-            },
-            footStyles: {
-              fillColor: [240, 243, 248],
-              textColor: [21, 40, 64],
-              fontStyle: 'bold',
-              fontSize: 8.5,
-              halign: 'right'
-            },
-            styles: {
-              fontSize: 7.5,
-              cellPadding: 4.5,
-              textColor: [30, 40, 55],
-              lineColor: [230, 234, 240]
-            },
-            alternateRowStyles: {
-              fillColor: [250, 251, 253]
-            },
-            columnStyles: {
-              0: { halign: 'center', cellWidth: 26 },
-              1: { cellWidth: 74 },
-              2: { cellWidth: 95 },
-              3: { cellWidth: 228.28 },
-              4: { halign: 'right', fontStyle: 'bold', cellWidth: 100 }
-            },
-            margin: { left: margin, right: margin }
-          });
-
-          currentY = doc.lastAutoTable.finalY + 20;
-
-          // --- 5. BORROWING & LENDING (UDHARI) SECTION ---
-          if (udhariRecords && udhariRecords.length > 0) {
-            if (currentY > pageHeight - 140) {
-              doc.addPage();
-              currentY = 40;
-            }
-
+            // --- 3. CATEGORY SPENDING BREAKDOWN TABLE ---
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(10.5);
             doc.setTextColor(21, 40, 64);
-            doc.text(`Borrowing & Lending Khata (Udhari - ${udhariRecords.length} records)`, margin, currentY);
+            doc.text('Spending by Category', margin, currentY);
             currentY += 6;
 
-            let totalLent = 0;
-            let totalBorrowed = 0;
-            const udhariRows = udhariRecords.map((u, idx) => {
-              const amt = Number(u.amount);
-              if (u.type === 'lent') totalLent += amt;
-              else totalBorrowed += amt;
-              const typeLabel = u.type === 'lent' ? 'Lent (To Receive)' : 'Borrowed (To Pay)';
-              const statusLabel = u.settled ? 'Settled' : 'Pending';
-              const d = new Date(u.date + 'T00:00:00');
-              const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : u.date;
-              return [
-                idx + 1,
-                dStr,
-                u.person,
-                typeLabel,
-                u.notes || '-',
-                statusLabel,
-                (u.type === 'lent' ? '+Rs. ' : '-Rs. ') + amt.toLocaleString('en-IN')
-              ];
+            const catTotals = {};
+            expenses.forEach(e => {
+              catTotals[e.category] = (catTotals[e.category] || 0) + Number(e.amount);
             });
+            const catSorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
 
-            const netUdhari = totalLent - totalBorrowed;
+            const catTableBody = catSorted.length > 0 ? catSorted.map(([cat, amt]) => {
+              const pct = totalSpent > 0 ? ((amt / totalSpent) * 100).toFixed(1) + '%' : '0%';
+              return [cat, `Rs. ${amt.toLocaleString('en-IN')}`, pct];
+            }) : [['No expenses recorded for this month', 'Rs. 0', '0%']];
 
             renderPdfTable(doc, {
               startY: currentY,
-              head: [['#', 'Date', 'Person', 'Type', 'Notes', 'Status', 'Amount (INR)']],
-              body: udhariRows,
-              foot: [
-                ['', '', '', '', 'Total Lent: Rs. ' + totalLent.toLocaleString('en-IN') + '  |  Borrowed: Rs. ' + totalBorrowed.toLocaleString('en-IN'), 'Net Balance:', (netUdhari >= 0 ? '+Rs. ' : '-Rs. ') + Math.abs(netUdhari).toLocaleString('en-IN')]
-              ],
+              head: [['Category', 'Amount (INR)', '% of Total']],
+              body: catTableBody,
               theme: 'grid',
               headStyles: {
-                fillColor: [47, 111, 94],
+                fillColor: [31, 58, 95],
                 textColor: [255, 255, 255],
-                fontStyle: 'bold',
-                fontSize: 8
-              },
-              footStyles: {
-                fillColor: [240, 245, 242],
-                textColor: [21, 40, 64],
                 fontStyle: 'bold',
                 fontSize: 8
               },
@@ -2784,1070 +2788,1236 @@
                 fontSize: 7.5,
                 cellPadding: 4,
                 textColor: [30, 40, 55],
-                lineColor: [225, 230, 235]
+                lineColor: [225, 230, 238]
               },
               columnStyles: {
-                0: { halign: 'center', cellWidth: 24 },
-                1: { cellWidth: 64 },
-                2: { cellWidth: 80, fontStyle: 'bold' },
-                3: { cellWidth: 90 },
-                4: { cellWidth: 135.28 },
-                5: { cellWidth: 50, halign: 'center' },
-                6: { halign: 'right', fontStyle: 'bold', cellWidth: 80 }
+                0: { cellWidth: 240 },
+                1: { halign: 'right', fontStyle: 'bold', cellWidth: 140 },
+                2: { halign: 'right', cellWidth: 143.28 }
               },
               margin: { left: margin, right: margin }
             });
-          }
 
-          // --- RUNNING FOOTER ON ALL PAGES ---
-          const totalPages = doc.internal.getNumberOfPages();
-          for (let i = 1; i <= totalPages; i++) {
-            doc.setPage(i);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
-            doc.setTextColor(140, 150, 165);
-            doc.text(
-              `ExpenseTrackr Statement · All figures in Indian Rupees (INR) · Confidential`,
-              margin,
-              pageHeight - 16
-            );
-            doc.text(
-              `Page ${i} of ${totalPages}`,
-              pageWidth - margin,
-              pageHeight - 16,
-              { align: 'right' }
-            );
-            doc.setDrawColor(226, 229, 234);
-            doc.line(margin, pageHeight - 24, pageWidth - margin, pageHeight - 24);
-          }
+            currentY = doc.lastAutoTable.finalY + 20;
 
-          const fileName = `ExpenseTrackr-Statement-${monthKeyStr}.pdf`;
+            // --- 4. DETAILED TRANSACTION LEDGER ---
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10.5);
+            doc.setTextColor(21, 40, 64);
+            doc.text(`Transaction Ledger (${expenses.length} items)`, margin, currentY);
+            currentY += 6;
 
-          // Automatic download:
-          // 1. Generate Blob from jsPDF output
-          let pdfBlob;
-          try {
-            pdfBlob = doc.output('blob');
-          } catch (blobErr) {
-            const arrBuffer = doc.output('arraybuffer');
-            pdfBlob = new Blob([arrBuffer], { type: 'application/pdf' });
-          }
+            const sortedExpenses = expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
+            const ledgerRows = sortedExpenses.length > 0 ? sortedExpenses.map((e, idx) => {
+              const d = new Date(e.date + 'T00:00:00');
+              const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : e.date;
+              return [
+                idx + 1,
+                dStr,
+                CATEGORY_LABELS[e.category] || e.category || 'Other',
+                e.description || '',
+                `Rs. ${Number(e.amount).toLocaleString('en-IN')}`
+              ];
+            }) : [['-', '-', 'No transactions', 'No entries logged this month', 'Rs. 0']];
 
-          // 2. Trigger instant direct browser download via synthetic anchor click
-          let autoDownloaded = false;
-          if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
-            try {
-              const blobUrl = URL.createObjectURL(pdfBlob);
-              const downloadLink = document.createElement('a');
-              downloadLink.href = blobUrl;
-              downloadLink.download = fileName;
-              downloadLink.setAttribute('download', fileName);
-              downloadLink.style.display = 'none';
-              document.body.appendChild(downloadLink);
+            renderPdfTable(doc, {
+              startY: currentY,
+              head: [['#', 'Date', 'Category', 'Description', 'Amount (INR)']],
+              body: ledgerRows,
+              foot: [['', '', '', 'Total Expenditure', `Rs. ${totalSpent.toLocaleString('en-IN')}`]],
+              theme: 'striped',
+              headStyles: {
+                fillColor: [21, 40, 64],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 8
+              },
+              footStyles: {
+                fillColor: [240, 243, 248],
+                textColor: [21, 40, 64],
+                fontStyle: 'bold',
+                fontSize: 8.5,
+                halign: 'right'
+              },
+              styles: {
+                fontSize: 7.5,
+                cellPadding: 4.5,
+                textColor: [30, 40, 55],
+                lineColor: [230, 234, 240]
+              },
+              alternateRowStyles: {
+                fillColor: [250, 251, 253]
+              },
+              columnStyles: {
+                0: { halign: 'center', cellWidth: 26 },
+                1: { cellWidth: 74 },
+                2: { cellWidth: 95 },
+                3: { cellWidth: 228.28 },
+                4: { halign: 'right', fontStyle: 'bold', cellWidth: 100 }
+              },
+              margin: { left: margin, right: margin }
+            });
 
-              // Immediate synthetic click to trigger automatic download
-              downloadLink.click();
-              autoDownloaded = true;
+            currentY = doc.lastAutoTable.finalY + 20;
 
-              setTimeout(() => {
-                if (downloadLink.parentNode) {
-                  downloadLink.parentNode.removeChild(downloadLink);
-                }
-                URL.revokeObjectURL(blobUrl);
-              }, 2500);
-            } catch (anchorErr) {
-              console.warn('Anchor auto-download failed, fallback to doc.save:', anchorErr);
+            // --- 5. BORROWING & LENDING (UDHARI) SECTION ---
+            if (udhariRecords && udhariRecords.length > 0) {
+              if (currentY > pageHeight - 140) {
+                doc.addPage();
+                currentY = 40;
+              }
+
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(10.5);
+              doc.setTextColor(21, 40, 64);
+              doc.text(`Borrowing & Lending Khata (Udhari - ${udhariRecords.length} records)`, margin, currentY);
+              currentY += 6;
+
+              let totalLent = 0;
+              let totalBorrowed = 0;
+              const udhariRows = udhariRecords.map((u, idx) => {
+                const amt = Number(u.amount);
+                if (u.type === 'lent') totalLent += amt;
+                else totalBorrowed += amt;
+                const typeLabel = u.type === 'lent' ? 'Lent (To Receive)' : 'Borrowed (To Pay)';
+                const statusLabel = u.settled ? 'Settled' : 'Pending';
+                const d = new Date(u.date + 'T00:00:00');
+                const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : u.date;
+                return [
+                  idx + 1,
+                  dStr,
+                  u.person,
+                  typeLabel,
+                  u.notes || '-',
+                  statusLabel,
+                  (u.type === 'lent' ? '+Rs. ' : '-Rs. ') + amt.toLocaleString('en-IN')
+                ];
+              });
+
+              const netUdhari = totalLent - totalBorrowed;
+
+              renderPdfTable(doc, {
+                startY: currentY,
+                head: [['#', 'Date', 'Person', 'Type', 'Notes', 'Status', 'Amount (INR)']],
+                body: udhariRows,
+                foot: [
+                  ['', '', '', '', 'Total Lent: Rs. ' + totalLent.toLocaleString('en-IN') + '  |  Borrowed: Rs. ' + totalBorrowed.toLocaleString('en-IN'), 'Net Balance:', (netUdhari >= 0 ? '+Rs. ' : '-Rs. ') + Math.abs(netUdhari).toLocaleString('en-IN')]
+                ],
+                theme: 'grid',
+                headStyles: {
+                  fillColor: [47, 111, 94],
+                  textColor: [255, 255, 255],
+                  fontStyle: 'bold',
+                  fontSize: 8
+                },
+                footStyles: {
+                  fillColor: [240, 245, 242],
+                  textColor: [21, 40, 64],
+                  fontStyle: 'bold',
+                  fontSize: 8
+                },
+                styles: {
+                  fontSize: 7.5,
+                  cellPadding: 4,
+                  textColor: [30, 40, 55],
+                  lineColor: [225, 230, 235]
+                },
+                columnStyles: {
+                  0: { halign: 'center', cellWidth: 24 },
+                  1: { cellWidth: 64 },
+                  2: { cellWidth: 80, fontStyle: 'bold' },
+                  3: { cellWidth: 90 },
+                  4: { cellWidth: 135.28 },
+                  5: { cellWidth: 50, halign: 'center' },
+                  6: { halign: 'right', fontStyle: 'bold', cellWidth: 80 }
+                },
+                margin: { left: margin, right: margin }
+              });
             }
-          }
 
-          // 3. Fallback to doc.save if anchor creation was blocked
-          if (!autoDownloaded) {
-            doc.save(fileName);
-          }
+            // --- RUNNING FOOTER ON ALL PAGES ---
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+              doc.setPage(i);
+              doc.setFont('helvetica', 'normal');
+              doc.setFontSize(7.5);
+              doc.setTextColor(140, 150, 165);
+              doc.text(
+                `ExpenseTrackr Statement · All figures in Indian Rupees (INR) · Confidential`,
+                margin,
+                pageHeight - 16
+              );
+              doc.text(
+                `Page ${i} of ${totalPages}`,
+                pageWidth - margin,
+                pageHeight - 16,
+                { align: 'right' }
+              );
+              doc.setDrawColor(226, 229, 234);
+              doc.line(margin, pageHeight - 24, pageWidth - margin, pageHeight - 24);
+            }
 
-          if (triggerBtn) {
-            triggerBtn.innerHTML = '<span>✓ Downloaded!</span>';
-            setTimeout(() => {
+            const fileName = `ExpenseTrackr-Statement-${monthKeyStr}.pdf`;
+
+            // Automatic download:
+            // 1. Generate Blob from jsPDF output
+            let pdfBlob;
+            try {
+              pdfBlob = doc.output('blob');
+            } catch (blobErr) {
+              const arrBuffer = doc.output('arraybuffer');
+              pdfBlob = new Blob([arrBuffer], { type: 'application/pdf' });
+            }
+
+            // 2. Trigger instant direct browser download via synthetic anchor click
+            let autoDownloaded = false;
+            if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+              try {
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = blobUrl;
+                downloadLink.download = fileName;
+                downloadLink.setAttribute('download', fileName);
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+
+                // Immediate synthetic click to trigger automatic download
+                downloadLink.click();
+                autoDownloaded = true;
+
+                setTimeout(() => {
+                  if (downloadLink.parentNode) {
+                    downloadLink.parentNode.removeChild(downloadLink);
+                  }
+                  URL.revokeObjectURL(blobUrl);
+                }, 2500);
+              } catch (anchorErr) {
+                console.warn('Anchor auto-download failed, fallback to doc.save:', anchorErr);
+              }
+            }
+
+            // 3. Fallback to doc.save if anchor creation was blocked
+            if (!autoDownloaded) {
+              doc.save(fileName);
+            }
+
+            if (triggerBtn) {
+              triggerBtn.innerHTML = '<span>✓ Downloaded!</span>';
+              setTimeout(() => {
+                triggerBtn.innerHTML = originalHtml;
+                triggerBtn.disabled = false;
+                triggerBtn.style.opacity = '';
+              }, 2000);
+            }
+
+            showToast(`📄 Automatically downloaded ${fileName}!`);
+          } catch (err) {
+            console.error('PDF Generation Error:', err);
+            showToast('Failed to generate PDF: ' + err.message, true);
+            if (triggerBtn) {
               triggerBtn.innerHTML = originalHtml;
               triggerBtn.disabled = false;
               triggerBtn.style.opacity = '';
-            }, 2000);
-          }
-
-          showToast(`📄 Automatically downloaded ${fileName}!`);
-        } catch (err) {
-          console.error('PDF Generation Error:', err);
-          showToast('Failed to generate PDF: ' + err.message, true);
-          if (triggerBtn) {
-            triggerBtn.innerHTML = originalHtml;
-            triggerBtn.disabled = false;
-            triggerBtn.style.opacity = '';
-          }
-        }
-      }
-
-      const headerDownloadPdfBtn = document.getElementById('headerDownloadPdfBtn');
-      if (headerDownloadPdfBtn) headerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
-
-      const footerDownloadPdfBtn = document.getElementById('footerDownloadPdfBtn');
-      if (footerDownloadPdfBtn) footerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
-
-      const brandLogoBtn = document.getElementById('brandLogoBtn');
-      if (brandLogoBtn) {
-        brandLogoBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          const dashTab = document.querySelector('.tab-btn[data-tab="dashboard"]');
-          if (dashTab) {
-            dashTab.click();
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          showToast('🏠 Returned to Dashboard');
-        });
-      }
-
-      const footerExportBtn = document.getElementById('footerExportBtn');
-      if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
-
-      const importJsonInput = document.getElementById('importJsonInput');
-      if (importJsonInput) {
-        importJsonInput.addEventListener('change', (e) => {
-          if (e.target.files && e.target.files[0]) {
-            importLocalStorageFromJson(e.target.files[0]);
-            e.target.value = '';
-          }
-        });
-      }
-
-      async function storageGet(key) {
-        // 1. Try MongoDB API if connected
-        if (isMongoConnected) {
-          try {
-            if (key.startsWith('expenses:')) {
-              const m = key.replace('expenses:', '');
-              const res = await fetch('/api/expenses/' + encodeURIComponent(m));
-              if (res.ok) {
-                const data = await res.json();
-                const str = JSON.stringify(data.expenses || []);
-                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
-                return { value: str };
-              }
-            } else if (key.startsWith('budget:')) {
-              const m = key.replace('budget:', '');
-              const res = await fetch('/api/budget/' + encodeURIComponent(m));
-              if (res.ok) {
-                const data = await res.json();
-                const str = JSON.stringify(data.budget || 0);
-                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
-                return { value: str };
-              }
-            } else if (key === 'udhari:records') {
-              const res = await fetch('/api/udhari');
-              if (res.ok) {
-                const data = await res.json();
-                const str = JSON.stringify(data.records || []);
-                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
-                return { value: str };
-              }
             }
-          } catch (e) {
-            console.warn('API get error, falling back to local cache', e);
           }
         }
 
-        // 2. Fallback to Claude window.storage if present
-        if (hasRealStorage) {
-          try { return await window.storage.get(key); } catch (e) { return null; }
-        }
+        const headerDownloadPdfBtn = document.getElementById('headerDownloadPdfBtn');
+        if (headerDownloadPdfBtn) headerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
 
-        // 3. Fallback to localStorage
-        if (hasLocalStorage) {
-          const raw = window.localStorage.getItem(LS_PREFIX + key);
-          return raw !== null ? { value: raw } : null;
-        }
+        const footerDownloadPdfBtn = document.getElementById('footerDownloadPdfBtn');
+        if (footerDownloadPdfBtn) footerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
 
-        return Object.prototype.hasOwnProperty.call(memoryStore, key) ? { value: memoryStore[key] } : null;
-      }
-
-      async function storageSet(key, value) {
-        // 1. Keep local storage up to date for instant offline fallback
-        if (hasLocalStorage) {
-          try { window.localStorage.setItem(LS_PREFIX + key, value); } catch (e) { }
-        }
-        memoryStore[key] = value;
-
-        if (hasRealStorage) {
-          try { await window.storage.set(key, value); } catch (e) { }
-        }
-
-        // 2. Persist to MongoDB API if connected
-        if (isMongoConnected) {
-          try {
-            if (key.startsWith('expenses:')) {
-              const m = key.replace('expenses:', '');
-              const parsed = JSON.parse(value);
-              const res = await fetch('/api/expenses/' + encodeURIComponent(m), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ expenses: parsed })
-              });
-              return res.ok;
-            } else if (key.startsWith('budget:')) {
-              const m = key.replace('budget:', '');
-              const parsed = JSON.parse(value);
-              const res = await fetch('/api/budget/' + encodeURIComponent(m), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: parsed })
-              });
-              return res.ok;
-            } else if (key === 'udhari:records') {
-              const parsed = JSON.parse(value);
-              const res = await fetch('/api/udhari', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ records: parsed })
-              });
-              return res.ok;
+        const brandLogoBtn = document.getElementById('brandLogoBtn');
+        if (brandLogoBtn) {
+          brandLogoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const dashTab = document.querySelector('.tab-btn[data-tab="dashboard"]');
+            if (dashTab) {
+              dashTab.click();
             }
-          } catch (e) {
-            console.warn('API set error, saved to local cache', e);
-            return true;
-          }
-        }
-
-        return true;
-      }
-
-      let current = new Date();
-      current.setDate(1);
-      let expenses = [];
-      let budget = 0;
-      let selectedCategory = null;
-      let searchTerm = '';
-      let sortState = { field: 'date', dir: 'desc' };
-      let editingId = null;
-
-      const monthLabel = document.getElementById('monthLabel');
-      const statSpent = document.getElementById('statSpent');
-      const statBudget = document.getElementById('statBudget');
-      const statRemaining = document.getElementById('statRemaining');
-      const progressFill = document.getElementById('progressFill');
-      const ledgerWrap = document.getElementById('ledgerWrap');
-      const catBreakdown = document.getElementById('catBreakdown');
-      const recentList = document.getElementById('recentList');
-      const budgetInput = document.getElementById('budgetInput');
-      const formError = document.getElementById('formError');
-      const activeFilterRow = document.getElementById('activeFilterRow');
-      const trendBars = document.getElementById('trendBars');
-      const toastStack = document.getElementById('toastStack');
-      const searchInput = document.getElementById('searchInput');
-
-      function monthKey(d) {
-        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-      }
-      function localDateStr(d) {
-        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-      }
-      function fmtINR(n) {
-        n = Math.round(n || 0);
-        return '₹' + n.toLocaleString('en-IN');
-      }
-      function fmtMonthLabel(d) {
-        return d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
-      }
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-      function showToast(msg, isError) {
-        const t = document.createElement('div');
-        t.className = 'toast' + (isError ? ' error' : '');
-        t.textContent = msg;
-        toastStack.appendChild(t);
-        setTimeout(() => {
-          t.classList.add('leaving');
-          setTimeout(() => t.remove(), 200);
-        }, 2200);
-      }
-
-      function animateValue(el, from, to, prefix) {
-        from = isNaN(from) ? 0 : from;
-        const duration = 450;
-        const start = performance.now();
-        function step(now) {
-          const p = Math.min(1, (now - start) / duration);
-          const eased = 1 - Math.pow(1 - p, 3);
-          const val = Math.round(from + (to - from) * eased);
-          el.textContent = prefix + val.toLocaleString('en-IN');
-          if (p < 1) requestAnimationFrame(step);
-          else el.textContent = prefix + to.toLocaleString('en-IN');
-        }
-        requestAnimationFrame(step);
-      }
-
-      // ---------- Tabs ----------
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
-      });
-      function switchTab(name) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === name));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
-        if (name === 'udhari') renderUdhari(true);
-      }
-      document.getElementById('gotoExpenses').addEventListener('click', () => switchTab('tracker'));
-
-      // ---------- Data loading ----------
-      async function loadMonth() {
-        ledgerWrap.innerHTML = '<div class="loading-note">Loading your ledger…</div>';
-        catBreakdown.innerHTML = '<div class="loading-note">Loading…</div>';
-        recentList.innerHTML = '<div class="loading-note">Loading…</div>';
-        trendBars.innerHTML = '<div class="loading-note">Loading trend…</div>';
-        monthLabel.textContent = fmtMonthLabel(current);
-        selectedCategory = null;
-        searchTerm = '';
-        searchInput.value = '';
-        editingId = null;
-        const key = monthKey(current);
-
-        const expRes = await storageGet('expenses:' + key);
-        expenses = expRes ? (JSON.parse(expRes.value) || []) : [];
-
-        const budRes = await storageGet('budget:' + key);
-        budget = budRes ? (JSON.parse(budRes.value) || 0) : 0;
-
-        const today = new Date();
-        const dateField = document.getElementById('fDate');
-        if (today.getFullYear() === current.getFullYear() && today.getMonth() === current.getMonth()) {
-          dateField.value = localDateStr(today);
-        } else {
-          dateField.value = localDateStr(current);
-        }
-
-        render(true);
-        loadTrend();
-      }
-
-      async function loadTrend() {
-        const months = [];
-        for (let i = 5; i >= 0; i--) {
-          const d = new Date(current.getFullYear(), current.getMonth() - i, 1);
-          months.push(d);
-        }
-        const results = await Promise.all(months.map(async d => {
-          const key = monthKey(d);
-          const res = await storageGet('expenses:' + key);
-          const arr = res ? (JSON.parse(res.value) || []) : [];
-          return arr.reduce((s, e) => s + e.amount, 0);
-        }));
-        const max = Math.max(1, ...results);
-        trendBars.innerHTML = months.map((d, i) => {
-          const isCurrent = monthKey(d) === monthKey(current);
-          const h = Math.max(4, Math.round((results[i] / max) * 54));
-          return '<div class="trend-bar-col ' + (isCurrent ? 'current' : '') + '">' +
-            '<div class="trend-bar" style="height:' + h + 'px;"><span class="trend-amt">' + fmtINR(results[i]) + '</span></div>' +
-            '<div class="trend-month">' + d.toLocaleDateString('en-IN', { month: 'short' }) + '</div>' +
-            '</div>';
-        }).join('');
-
-        trendBars.querySelectorAll('.trend-bar-col').forEach(col => {
-          col.addEventListener('click', (ev) => {
-            const wasActive = col.classList.contains('active');
-            trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
-            if (!wasActive) col.classList.add('active');
-            ev.stopPropagation();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('🏠 Returned to Dashboard');
           });
-        });
-      }
-
-      async function saveExpenses() {
-        const ok = await storageSet('expenses:' + monthKey(current), JSON.stringify(expenses));
-        if (!ok && hasRealStorage) showToast('Could not save. Please try again.', true);
-      }
-
-      async function saveBudgetValue(val) {
-        const ok = await storageSet('budget:' + monthKey(current), JSON.stringify(val));
-        if (ok) {
-          budget = val;
-          render();
-          showToast('Budget updated');
-        } else {
-          showToast('Could not save budget.', true);
-        }
-      }
-
-      function getFilteredSorted() {
-        let list = expenses.slice();
-        if (selectedCategory) list = list.filter(e => e.category === selectedCategory);
-        if (searchTerm) {
-          const s = searchTerm.toLowerCase();
-          list = list.filter(e => e.description.toLowerCase().includes(s) || (CATEGORY_LABELS[e.category] || e.category).toLowerCase().includes(s));
-        }
-        list.sort((a, b) => {
-          let av, bv;
-          if (sortState.field === 'amount') { av = a.amount; bv = b.amount; }
-          else { av = a.date; bv = b.date; }
-          if (av < bv) return sortState.dir === 'asc' ? -1 : 1;
-          if (av > bv) return sortState.dir === 'asc' ? 1 : -1;
-          return 0;
-        });
-        return list;
-      }
-
-      function buildDonut(catEntries, total) {
-        if (catEntries.length === 0) {
-          catBreakdown.innerHTML = '<div class="cat-empty">No expenses logged yet this month.</div>';
-          return;
-        }
-        const cx = 75, cy = 75, r = 62, rInner = 38;
-        let angle = -90;
-        const paths = catEntries.map(([cat, amt]) => {
-          const frac = amt / total;
-          const sweep = frac * 360;
-          const largeArc = sweep > 180 ? 1 : 0;
-          const startRad = angle * Math.PI / 180;
-          const endRad = (angle + sweep) * Math.PI / 180;
-          const x1 = cx + r * Math.cos(startRad), y1 = cy + r * Math.sin(startRad);
-          const x2 = cx + r * Math.cos(endRad), y2 = cy + r * Math.sin(endRad);
-          const ix1 = cx + rInner * Math.cos(startRad), iy1 = cy + rInner * Math.sin(startRad);
-          const ix2 = cx + rInner * Math.cos(endRad), iy2 = cy + rInner * Math.sin(endRad);
-          const d = 'M ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' L ' + ix2 + ' ' + iy2 + ' A ' + rInner + ' ' + rInner + ' 0 ' + largeArc + ' 0 ' + ix1 + ' ' + iy1 + ' Z';
-          angle += sweep;
-          const color = CATEGORY_COLORS[cat] || '#8A8F98';
-          const isSelected = selectedCategory === cat;
-          const isDimmed = selectedCategory && selectedCategory !== cat;
-          return '<path d="' + d + '" fill="' + color + '" data-cat="' + escapeHtml(cat) + '" class="' + (isSelected ? 'selected' : '') + ' ' + (isDimmed ? 'dimmed' : '') + '"><title>' + (CATEGORY_LABELS[cat] || cat) + ': ' + fmtINR(amt) + '</title></path>';
-        }).join('');
-
-        const legend = catEntries.map(([cat, amt]) => {
-          const pct = Math.round((amt / total) * 100);
-          const isSelected = selectedCategory === cat;
-          return '<div class="legend-row ' + (isSelected ? 'selected' : '') + '" data-cat="' + escapeHtml(cat) + '">' +
-            '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[cat] || '#8A8F98') + '"></span>' +
-            '<span class="legend-name">' + (CATEGORY_LABELS[cat] || cat) + '</span>' +
-            '<span class="legend-amt">' + fmtINR(amt) + ' · ' + pct + '%</span>' +
-            '</div>';
-        }).join('');
-
-        const centerAmt = selectedCategory ? (catEntries.find(c => c[0] === selectedCategory) || [null, 0])[1] : total;
-
-        catBreakdown.innerHTML =
-          '<div class="donut-wrap">' +
-          '<div class="donut-svg-wrap">' +
-          '<svg viewBox="0 0 150 150">' + paths + '</svg>' +
-          '<div class="donut-center">' +
-          '<div class="dc-label">' + (selectedCategory ? (CATEGORY_LABELS[selectedCategory] || selectedCategory) : 'Total') + '</div>' +
-          '<div class="dc-value">' + fmtINR(centerAmt) + '</div>' +
-          '</div>' +
-          '</div>' +
-          '<div class="legend">' + legend + '</div>' +
-          '</div>' +
-          (selectedCategory ? '<span class="filter-clear" id="clearCatFilter">Clear category filter</span>' : '');
-
-        catBreakdown.querySelectorAll('[data-cat]').forEach(el => {
-          el.addEventListener('click', () => {
-            const cat = el.getAttribute('data-cat');
-            selectedCategory = (selectedCategory === cat) ? null : cat;
-            render();
-          });
-        });
-        const clearBtn = document.getElementById('clearCatFilter');
-        if (clearBtn) clearBtn.addEventListener('click', () => { selectedCategory = null; render(); });
-      }
-
-      function buildRecentList() {
-        const recent = expenses.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
-        if (recent.length === 0) {
-          recentList.innerHTML = '<div class="cat-empty">No transactions yet this month.</div>';
-          return;
-        }
-        recentList.innerHTML = recent.map(e => {
-          const d = new Date(e.date + 'T00:00:00');
-          const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-          return '<div class="legend-row" style="cursor:default;">' +
-            '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[e.category] || '#8A8F98') + '"></span>' +
-            '<span class="legend-name">' + escapeHtml(e.description) + '<br><span style="color:var(--ink-soft); font-size:11px;">' + dLabel + ' · ' + (CATEGORY_LABELS[e.category] || e.category) + '</span></span>' +
-            '<span class="legend-amt">' + fmtINR(e.amount) + '</span>' +
-            '</div>';
-        }).join('');
-      }
-
-      function render(skipAnimate) {
-        const total = expenses.reduce((s, e) => s + e.amount, 0);
-        const prevSpent = parseInt((statSpent.textContent || '0').replace(/[^\d]/g, ''), 10) || 0;
-        if (skipAnimate) { statSpent.textContent = fmtINR(total); }
-        else animateValue(statSpent, prevSpent, total, '₹');
-
-        statBudget.textContent = budget > 0 ? fmtINR(budget) : '—';
-        budgetInput.value = budget > 0 ? budget : '';
-
-        const remaining = budget - total;
-        statRemaining.textContent = budget > 0 ? fmtINR(remaining) : '—';
-        statRemaining.classList.remove('over', 'ok');
-        if (budget > 0) {
-          statRemaining.classList.add(remaining < 0 ? 'over' : 'ok');
-          const pct = Math.min(100, (total / budget) * 100);
-          progressFill.style.width = pct + '%';
-          progressFill.classList.toggle('over', total > budget);
-        } else {
-          progressFill.style.width = '0%';
-          progressFill.classList.remove('over');
         }
 
-        const byCat = {};
-        expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
-        const catEntries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
-        buildDonut(catEntries, total);
-        buildRecentList();
+        async function handleAccountAction() {
+          const uid = getOrInitUserId();
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(uid);
+              showToast(`📋 Copied Account ID: ${uid}!`);
+            }
+          } catch (e) { }
 
-        if (selectedCategory || searchTerm) {
-          const parts = [];
-          if (selectedCategory) parts.push('Category: ' + (CATEGORY_LABELS[selectedCategory] || selectedCategory));
-          if (searchTerm) parts.push('Search: "' + escapeHtml(searchTerm) + '"');
-          activeFilterRow.innerHTML = '<div class="active-filter-pill">' + parts.join(' &nbsp;·&nbsp; ') + ' <button id="clearAllFilters" aria-label="Clear filters">✕</button></div>';
-          document.getElementById('clearAllFilters').addEventListener('click', () => {
-            selectedCategory = null; searchTerm = ''; searchInput.value = ''; render();
-          });
-        } else {
-          activeFilterRow.innerHTML = '';
-        }
-
-        const filtered = getFilteredSorted();
-        if (expenses.length === 0) {
-          ledgerWrap.innerHTML = '<div class="ledger-empty">No transactions yet. Add your first expense from the left panel.</div>';
-          return;
-        }
-        if (filtered.length === 0) {
-          ledgerWrap.innerHTML = '<div class="ledger-empty">No transactions match your filters.</div>';
-          return;
-        }
-
-        const filteredTotal = filtered.reduce((s, e) => s + e.amount, 0);
-        const arrow = function (field) { return sortState.field === field ? (sortState.dir === 'asc' ? '▲' : '▼') : '▲'; };
-
-        const rows = filtered.map(e => {
-          if (editingId === e.id) {
-            const options = Object.keys(CATEGORY_LABELS).map(c => '<option value="' + c + '" ' + (c === e.category ? 'selected' : '') + '>' + CATEGORY_LABELS[c] + '</option>').join('');
-            return '<tr class="edit-row"><td colspan="4">' +
-              '<div class="edit-grid">' +
-              '<input type="date" class="edit-date" value="' + e.date + '">' +
-              '<input type="text" class="edit-desc" value="' + escapeHtml(e.description) + '">' +
-              '<select class="edit-cat">' + options + '</select>' +
-              '<input type="number" class="edit-amount-input" value="' + e.amount + '" min="1">' +
-              '<div class="edit-actions">' +
-              '<button class="row-btn save-edit" data-id="' + e.id + '" aria-label="Save">&#10003;</button>' +
-              '<button class="row-btn cancel-edit" aria-label="Cancel">&#10005;</button>' +
-              '</div>' +
-              '</div>' +
-              '</td></tr>';
-          }
-          const d = new Date(e.date + 'T00:00:00');
-          const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-          return '<tr>' +
-            '<td class="date">' + dLabel + '</td>' +
-            '<td class="desc">' + escapeHtml(e.description) + '<div class="cat-tag">' + (CATEGORY_LABELS[e.category] || e.category) + '</div></td>' +
-            '<td class="num">' + fmtINR(e.amount) + '</td>' +
-            '<td class="actions">' +
-            '<button class="row-btn edit-btn" data-id="' + e.id + '" aria-label="Edit expense">&#9998;</button>' +
-            '<button class="row-btn del-btn" data-id="' + e.id + '" aria-label="Delete expense">&#10005;</button>' +
-            '</td>' +
-            '</tr>';
-        }).join('');
-
-        ledgerWrap.innerHTML =
-          '<table class="ledger">' +
-          '<thead><tr>' +
-          '<th data-field="date" class="' + (sortState.field === 'date' ? 'active' : '') + '">Date <span class="sort-arrow">' + arrow('date') + '</span></th>' +
-          '<th>Description</th>' +
-          '<th data-field="amount" class="num ' + (sortState.field === 'amount' ? 'active' : '') + '">Amount <span class="sort-arrow">' + arrow('amount') + '</span></th>' +
-          '<th></th>' +
-          '</tr></thead>' +
-          '<tbody>' + rows + '</tbody>' +
-          '<tfoot><tr><td class="label" colspan="2">' + (filtered.length === expenses.length ? 'Total' : 'Filtered total') + '</td><td class="num" style="text-align:right; padding-right:10px;">' + fmtINR(filteredTotal) + '</td><td></td></tr></tfoot>' +
-          '</table>';
-
-        ledgerWrap.querySelectorAll('thead th[data-field]').forEach(th => {
-          th.addEventListener('click', () => {
-            const field = th.getAttribute('data-field');
-            if (sortState.field === field) sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-            else { sortState.field = field; sortState.dir = 'desc'; }
-            render(true);
-          });
-        });
-
-        ledgerWrap.querySelectorAll('.del-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const id = btn.getAttribute('data-id');
-            expenses = expenses.filter(e => String(e.id) !== id);
-            await saveExpenses();
-            render();
-            loadTrend();
-            showToast('Expense deleted');
-          });
-        });
-        ledgerWrap.querySelectorAll('.edit-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            editingId = btn.getAttribute('data-id');
-            render(true);
-          });
-        });
-        const cancelBtn = ledgerWrap.querySelector('.cancel-edit');
-        if (cancelBtn) cancelBtn.addEventListener('click', () => { editingId = null; render(true); });
-        const saveBtn = ledgerWrap.querySelector('.save-edit');
-        if (saveBtn) saveBtn.addEventListener('click', async () => {
-          const id = saveBtn.getAttribute('data-id');
-          const row = saveBtn.closest('tr');
-          const date = row.querySelector('.edit-date').value;
-          const desc = row.querySelector('.edit-desc').value.trim();
-          const cat = row.querySelector('.edit-cat').value;
-          const amt = parseFloat(row.querySelector('.edit-amount-input').value);
-          if (!date || !desc || isNaN(amt) || amt <= 0) {
-            showToast('Please fill all fields with a valid amount.', true);
-            return;
-          }
-          if (date.slice(0, 7) !== monthKey(current)) {
-            showToast('Date must fall within the selected month.', true);
-            return;
-          }
-          const idx = expenses.findIndex(e => String(e.id) === id);
-          if (idx > -1) {
-            expenses[idx] = Object.assign({}, expenses[idx], { date: date, description: desc, category: cat, amount: amt });
-            await saveExpenses();
-          }
-          editingId = null;
-          render();
-          loadTrend();
-          showToast('Expense updated');
-        });
-      }
-
-      document.getElementById('prevMonth').addEventListener('click', () => {
-        current.setMonth(current.getMonth() - 1);
-        loadMonth();
-      });
-      document.getElementById('nextMonth').addEventListener('click', () => {
-        current.setMonth(current.getMonth() + 1);
-        loadMonth();
-      });
-
-      document.getElementById('saveBudget').addEventListener('click', () => {
-        const val = parseFloat(budgetInput.value);
-        if (isNaN(val) || val < 0) {
-          formError.textContent = 'Enter a valid budget amount.';
-          return;
-        }
-        formError.textContent = '';
-        saveBudgetValue(val);
-      });
-
-      searchInput.addEventListener('input', (e) => {
-        searchTerm = e.target.value;
-        render(true);
-      });
-
-      async function addExpense() {
-        formError.textContent = '';
-        const date = document.getElementById('fDate').value;
-        const category = document.getElementById('fCategory').value;
-        const desc = document.getElementById('fDesc').value.trim();
-        const amount = parseFloat(document.getElementById('fAmount').value);
-
-        if (!date || !category || !desc || isNaN(amount) || amount <= 0) {
-          formError.textContent = 'Please fill all fields with a valid amount.';
-          return;
-        }
-
-        const entryMonth = date.slice(0, 7);
-        if (entryMonth !== monthKey(current)) {
-          formError.textContent = 'Date must fall within the selected month (' + fmtMonthLabel(current) + ').';
-          return;
-        }
-
-        expenses.push({
-          id: Date.now() + Math.random().toString(16).slice(2),
-          date: date, category: category, description: desc, amount: amount
-        });
-        await saveExpenses();
-        document.getElementById('fDesc').value = '';
-        document.getElementById('fAmount').value = '';
-        render();
-        loadTrend();
-        showToast('Expense added');
-      }
-
-      document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
-      ['fDesc', 'fAmount'].forEach(id => {
-        document.getElementById(id).addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') { e.preventDefault(); addExpense(); }
-        });
-      });
-
-      document.addEventListener('click', () => {
-        trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
-      });
-
-      // ==========================================
-      // ---------- UDHARI (BORROWING) LOGIC ------
-      // ==========================================
-      let udhariRecords = [];
-      let udhariFilter = 'all';
-      let udhariSearch = '';
-      let udhariEditingId = null;
-
-      const statUdhariLent = document.getElementById('statUdhariLent');
-      const statUdhariBorrowed = document.getElementById('statUdhariBorrowed');
-      const statUdhariNet = document.getElementById('statUdhariNet');
-      const statUdhariNetSub = document.getElementById('statUdhariNetSub');
-      const udhariWrap = document.getElementById('udhariWrap');
-      const udhariSearchInput = document.getElementById('udhariSearchInput');
-      const udhariFormError = document.getElementById('udhariFormError');
-      const uType = document.getElementById('uType');
-      const btnTypeLent = document.getElementById('btnTypeLent');
-      const btnTypeBorrowed = document.getElementById('btnTypeBorrowed');
-      const uPerson = document.getElementById('uPerson');
-      const uAmount = document.getElementById('uAmount');
-      const uDate = document.getElementById('uDate');
-      const uDueDate = document.getElementById('uDueDate');
-      const uNotes = document.getElementById('uNotes');
-      const addUdhariBtn = document.getElementById('addUdhariBtn');
-      const personSuggestions = document.getElementById('personSuggestions');
-      const countAll = document.getElementById('countAll');
-      const countPending = document.getElementById('countPending');
-      const countLent = document.getElementById('countLent');
-      const countBorrowed = document.getElementById('countBorrowed');
-      const countSettled = document.getElementById('countSettled');
-
-      async function saveUdhari() {
-        const ok = await storageSet('udhari:records', JSON.stringify(udhariRecords));
-        if (!ok && hasRealStorage) showToast('Could not save udhari records.', true);
-        updatePersonSuggestions();
-      }
-
-      function updatePersonSuggestions() {
-        if (!personSuggestions) return;
-        const names = Array.from(new Set(udhariRecords.map(r => r.person).filter(Boolean)));
-        personSuggestions.innerHTML = names.map(n => '<option value="' + escapeHtml(n) + '">').join('');
-      }
-
-      async function loadUdhari() {
-        if (!udhariWrap) return;
-        const res = await storageGet('udhari:records');
-        udhariRecords = res ? (JSON.parse(res.value) || []) : [];
-        const today = new Date();
-        if (uDate && !uDate.value) uDate.value = localDateStr(today);
-        updatePersonSuggestions();
-        renderUdhari();
-      }
-
-      function renderUdhari(skipAnimate) {
-        if (!udhariWrap) return;
-
-        const pendingLent = udhariRecords
-          .filter(r => r.type === 'lent' && !r.settled)
-          .reduce((sum, r) => sum + r.amount, 0);
-
-        const pendingBorrowed = udhariRecords
-          .filter(r => r.type === 'borrowed' && !r.settled)
-          .reduce((sum, r) => sum + r.amount, 0);
-
-        const net = pendingLent - pendingBorrowed;
-
-        if (countAll) countAll.textContent = udhariRecords.length;
-        if (countPending) countPending.textContent = udhariRecords.filter(r => !r.settled).length;
-        if (countLent) countLent.textContent = udhariRecords.filter(r => r.type === 'lent' && !r.settled).length;
-        if (countBorrowed) countBorrowed.textContent = udhariRecords.filter(r => r.type === 'borrowed' && !r.settled).length;
-        if (countSettled) countSettled.textContent = udhariRecords.filter(r => r.settled).length;
-
-        if (statUdhariLent) statUdhariLent.textContent = fmtINR(pendingLent);
-        if (statUdhariBorrowed) statUdhariBorrowed.textContent = fmtINR(pendingBorrowed);
-        if (statUdhariNet) {
-          if (net > 0) {
-            statUdhariNet.textContent = '+' + fmtINR(net);
-            statUdhariNet.style.color = 'var(--green)';
-            if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net surplus (you are owed)';
-          } else if (net < 0) {
-            statUdhariNet.textContent = '-' + fmtINR(Math.abs(net));
-            statUdhariNet.style.color = 'var(--maroon)';
-            if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net deficit (you owe)';
-          } else {
-            statUdhariNet.textContent = '₹0';
-            statUdhariNet.style.color = 'var(--navy-deep)';
-            if (statUdhariNetSub) statUdhariNetSub.textContent = 'All dues clear';
-          }
-        }
-
-        let filtered = udhariRecords.slice();
-        if (udhariFilter === 'pending') {
-          filtered = filtered.filter(r => !r.settled);
-        } else if (udhariFilter === 'lent') {
-          filtered = filtered.filter(r => r.type === 'lent' && !r.settled);
-        } else if (udhariFilter === 'borrowed') {
-          filtered = filtered.filter(r => r.type === 'borrowed' && !r.settled);
-        } else if (udhariFilter === 'settled') {
-          filtered = filtered.filter(r => r.settled);
-        }
-
-        if (udhariSearch) {
-          const s = udhariSearch.toLowerCase();
-          filtered = filtered.filter(r =>
-            (r.person && r.person.toLowerCase().includes(s)) ||
-            (r.notes && r.notes.toLowerCase().includes(s))
+          const input = window.prompt(
+            `Your Unique Device Account ID is:\n${uid}\n\n(Copied to clipboard)\n\nTo link another phone/laptop or restore an account, paste the Account ID here (or Cancel to keep current):`,
+            uid
           );
-        }
 
-        filtered.sort((a, b) => {
-          if (a.settled !== b.settled) return a.settled ? 1 : -1;
-          return b.date.localeCompare(a.date);
-        });
-
-        if (udhariRecords.length === 0) {
-          udhariWrap.innerHTML = '<div class="ledger-empty">No borrowing or lending records yet. Add your first entry from the left panel.</div>';
-          return;
-        }
-
-        if (filtered.length === 0) {
-          udhariWrap.innerHTML = '<div class="ledger-empty">No records match your selected filter or search.</div>';
-          return;
-        }
-
-        const todayStr = localDateStr(new Date());
-
-        const rows = filtered.map(r => {
-          if (udhariEditingId === r.id) {
-            return '<tr class="edit-row"><td colspan="4">' +
-              '<div class="udhari-edit-grid">' +
-              '<input type="text" class="edit-person" value="' + escapeHtml(r.person) + '" placeholder="Person name">' +
-              '<select class="edit-type">' +
-              '<option value="lent" ' + (r.type === 'lent' ? 'selected' : '') + '>Lent (Given)</option>' +
-              '<option value="borrowed" ' + (r.type === 'borrowed' ? 'selected' : '') + '>Borrowed (Taken)</option>' +
-              '</select>' +
-              '<input type="number" class="edit-amount" value="' + r.amount + '" min="1" placeholder="Amount">' +
-              '<input type="date" class="edit-date" value="' + r.date + '">' +
-              '<input type="date" class="edit-duedate" value="' + (r.dueDate || '') + '" title="Due date">' +
-              '<input type="text" class="edit-notes" value="' + escapeHtml(r.notes || '') + '" placeholder="Notes">' +
-              '<div class="edit-actions">' +
-              '<button class="row-btn save-u-edit" data-id="' + r.id + '" aria-label="Save">&#10003;</button>' +
-              '<button class="row-btn cancel-u-edit" aria-label="Cancel">&#10005;</button>' +
-              '</div>' +
-              '</div>' +
-              '</td></tr>';
+          if (input && input.trim() && input.trim() !== uid) {
+            const newId = input.trim();
+            currentUserId = newId;
+            try {
+              window.localStorage.setItem(USER_ID_STORAGE_KEY, newId);
+            } catch (e) { }
+            updateUserIdUI();
+            showToast(`Switched to Account: ${newId}. Loading data…`);
+            await checkAndSyncData(false);
+            await loadMonth();
+            await loadUdhari();
           }
+        }
 
-          const d = new Date(r.date + 'T00:00:00');
-          const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-          const isLent = r.type === 'lent';
-          const typeLabel = isLent ? '↗ Lent' : '↙ Borrowed';
-          const typeClass = isLent ? 'lent' : 'borrowed';
+        const userIdPill = document.getElementById('userIdPill');
+        if (userIdPill) userIdPill.addEventListener('click', handleAccountAction);
 
-          let dueHtml = '';
-          if (r.dueDate) {
-            const dueD = new Date(r.dueDate + 'T00:00:00');
-            const dueLabel = dueD.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-            const isOverdue = !r.settled && r.dueDate < todayStr;
-            dueHtml = '<span class="badge-due ' + (isOverdue ? 'overdue' : '') + '">' +
-              (isOverdue ? '⚠️ Overdue (' + dueLabel + ')' : 'Due: ' + dueLabel) +
-              '</span>';
-          }
+        const switchUserBtn = document.getElementById('switchUserBtn');
+        if (switchUserBtn) switchUserBtn.addEventListener('click', handleAccountAction);
 
-          const statusBadge = r.settled
-            ? '<span class="badge-status settled">Settled</span>'
-            : '<span class="badge-status pending">Pending</span>';
+        const footerExportBtn = document.getElementById('footerExportBtn');
+        if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
 
-          const settleBtnTitle = r.settled ? 'Mark as pending' : 'Mark as settled';
-          const settleIcon = r.settled ? '↺' : '✓';
-          const settleBtnClass = r.settled ? 'unsettle-btn' : 'settle-btn';
-
-          return '<tr class="' + (r.settled ? 'settled-row' : '') + '">' +
-            '<td class="date">' + dLabel + '</td>' +
-            '<td class="desc">' +
-            '<div>' +
-            '<span class="person-name">' + escapeHtml(r.person) + '</span> ' +
-            '<span class="badge-type ' + typeClass + '">' + typeLabel + '</span> ' +
-            statusBadge +
-            '</div>' +
-            (r.notes ? '<div class="person-notes">' + escapeHtml(r.notes) + '</div>' : '') +
-            dueHtml +
-            '</td>' +
-            '<td class="num" style="color:' + (isLent ? 'var(--green)' : 'var(--maroon)') + ';">' +
-            (isLent ? '+' : '-') + fmtINR(r.amount) +
-            '</td>' +
-            '<td class="actions">' +
-            '<button class="row-btn ' + settleBtnClass + '" data-id="' + r.id + '" title="' + settleBtnTitle + '" aria-label="' + settleBtnTitle + '">' + settleIcon + '</button>' +
-            '<button class="row-btn edit-u-btn" data-id="' + r.id + '" title="Edit record" aria-label="Edit record">&#9998;</button>' +
-            '<button class="row-btn del-u-btn del-btn" data-id="' + r.id + '" title="Delete record" aria-label="Delete record">&#10005;</button>' +
-            '</td>' +
-            '</tr>';
-        }).join('');
-
-        udhariWrap.innerHTML =
-          '<table class="ledger">' +
-          '<thead><tr>' +
-          '<th>Date</th>' +
-          '<th>Person & Details</th>' +
-          '<th class="num">Amount</th>' +
-          '<th></th>' +
-          '</tr></thead>' +
-          '<tbody>' + rows + '</tbody>' +
-          '</table>';
-
-        udhariWrap.querySelectorAll('.settle-btn, .unsettle-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const id = btn.getAttribute('data-id');
-            const item = udhariRecords.find(r => r.id === id);
-            if (item) {
-              item.settled = !item.settled;
-              item.settledDate = item.settled ? localDateStr(new Date()) : null;
-              await saveUdhari();
-              renderUdhari();
-              showToast(item.settled ? 'Marked as settled' : 'Marked as pending');
+        const importJsonInput = document.getElementById('importJsonInput');
+        if (importJsonInput) {
+          importJsonInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+              importLocalStorageFromJson(e.target.files[0]);
+              e.target.value = '';
             }
           });
-        });
+        }
 
-        udhariWrap.querySelectorAll('.del-u-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const id = btn.getAttribute('data-id');
-            udhariRecords = udhariRecords.filter(r => r.id !== id);
-            await saveUdhari();
-            renderUdhari();
-            showToast('Record deleted');
-          });
-        });
+        async function storageGet(key) {
+          // 1. Try MongoDB API if connected
+          if (isMongoConnected) {
+            try {
+              if (key.startsWith('expenses:')) {
+                const m = key.replace('expenses:', '');
+                const res = await userFetch('/api/expenses/' + encodeURIComponent(m));
+                if (res.ok) {
+                  const data = await res.json();
+                  const str = JSON.stringify(data.expenses || []);
+                  if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                  return { value: str };
+                }
+              } else if (key.startsWith('budget:')) {
+                const m = key.replace('budget:', '');
+                const res = await userFetch('/api/budget/' + encodeURIComponent(m));
+                if (res.ok) {
+                  const data = await res.json();
+                  const str = JSON.stringify(data.budget || 0);
+                  if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                  return { value: str };
+                }
+              } else if (key === 'udhari:records') {
+                const res = await userFetch('/api/udhari');
+                if (res.ok) {
+                  const data = await res.json();
+                  const str = JSON.stringify(data.records || []);
+                  if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                  return { value: str };
+                }
+              }
+            } catch (e) {
+              console.warn('API get error, falling back to local cache', e);
+            }
+          }
 
-        udhariWrap.querySelectorAll('.edit-u-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            udhariEditingId = btn.getAttribute('data-id');
-            renderUdhari(true);
-          });
-        });
+          // 2. Fallback to Claude window.storage if present
+          if (hasRealStorage) {
+            try { return await window.storage.get(key); } catch (e) { return null; }
+          }
 
-        const cancelUBtn = udhariWrap.querySelector('.cancel-u-edit');
-        if (cancelUBtn) {
-          cancelUBtn.addEventListener('click', () => {
-            udhariEditingId = null;
-            renderUdhari(true);
+          // 3. Fallback to localStorage
+          if (hasLocalStorage) {
+            const raw = window.localStorage.getItem(LS_PREFIX + key);
+            return raw !== null ? { value: raw } : null;
+          }
+
+          return Object.prototype.hasOwnProperty.call(memoryStore, key) ? { value: memoryStore[key] } : null;
+        }
+
+        async function storageSet(key, value) {
+          // 1. Keep local storage up to date for instant offline fallback
+          if (hasLocalStorage) {
+            try { window.localStorage.setItem(LS_PREFIX + key, value); } catch (e) { }
+          }
+          memoryStore[key] = value;
+
+          if (hasRealStorage) {
+            try { await window.storage.set(key, value); } catch (e) { }
+          }
+
+          // 2. Persist to MongoDB API if connected
+          if (isMongoConnected) {
+            try {
+              if (key.startsWith('expenses:')) {
+                const m = key.replace('expenses:', '');
+                const parsed = JSON.parse(value);
+                const res = await userFetch('/api/expenses/' + encodeURIComponent(m), {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: currentUserId, expenses: parsed })
+                });
+                return res.ok;
+              } else if (key.startsWith('budget:')) {
+                const m = key.replace('budget:', '');
+                const parsed = JSON.parse(value);
+                const res = await userFetch('/api/budget/' + encodeURIComponent(m), {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: currentUserId, amount: parsed })
+                });
+                return res.ok;
+              } else if (key === 'udhari:records') {
+                const parsed = JSON.parse(value);
+                const res = await userFetch('/api/udhari', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: currentUserId, records: parsed })
+                });
+                return res.ok;
+              }
+            } catch (e) {
+              console.warn('API set error, saved to local cache', e);
+              return true;
+            }
+          }
+
+          return true;
+        }
+
+        let current = new Date();
+        current.setDate(1);
+        let expenses = [];
+        let budget = 0;
+        let selectedCategory = null;
+        let searchTerm = '';
+        let sortState = { field: 'date', dir: 'desc' };
+        let editingId = null;
+
+        const monthLabel = document.getElementById('monthLabel');
+        const statSpent = document.getElementById('statSpent');
+        const statBudget = document.getElementById('statBudget');
+        const statRemaining = document.getElementById('statRemaining');
+        const progressFill = document.getElementById('progressFill');
+        const ledgerWrap = document.getElementById('ledgerWrap');
+        const catBreakdown = document.getElementById('catBreakdown');
+        const recentList = document.getElementById('recentList');
+        const budgetInput = document.getElementById('budgetInput');
+        const formError = document.getElementById('formError');
+        const activeFilterRow = document.getElementById('activeFilterRow');
+        const trendBars = document.getElementById('trendBars');
+        const toastStack = document.getElementById('toastStack');
+        const searchInput = document.getElementById('searchInput');
+
+        function monthKey(d) {
+          return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        }
+        function localDateStr(d) {
+          return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        function fmtINR(n) {
+          n = Math.round(n || 0);
+          return '₹' + n.toLocaleString('en-IN');
+        }
+        function fmtMonthLabel(d) {
+          return d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+        }
+        function escapeHtml(str) {
+          const div = document.createElement('div');
+          div.textContent = str;
+          return div.innerHTML;
+        }
+        function showToast(msg, isError) {
+          const t = document.createElement('div');
+          t.className = 'toast' + (isError ? ' error' : '');
+          t.textContent = msg;
+          toastStack.appendChild(t);
+          setTimeout(() => {
+            t.classList.add('leaving');
+            setTimeout(() => t.remove(), 200);
+          }, 2200);
+        }
+
+        function animateValue(el, from, to, prefix) {
+          from = isNaN(from) ? 0 : from;
+          const duration = 450;
+          const start = performance.now();
+          function step(now) {
+            const p = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - p, 3);
+            const val = Math.round(from + (to - from) * eased);
+            el.textContent = prefix + val.toLocaleString('en-IN');
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = prefix + to.toLocaleString('en-IN');
+          }
+          requestAnimationFrame(step);
+        }
+
+        // ---------- Tabs ----------
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+        });
+        function switchTab(name) {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === name));
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+          if (name === 'udhari') renderUdhari(true);
+        }
+        document.getElementById('gotoExpenses').addEventListener('click', () => switchTab('tracker'));
+
+        // ---------- Data loading ----------
+        async function loadMonth() {
+          ledgerWrap.innerHTML = '<div class="loading-note">Loading your ledger…</div>';
+          catBreakdown.innerHTML = '<div class="loading-note">Loading…</div>';
+          recentList.innerHTML = '<div class="loading-note">Loading…</div>';
+          trendBars.innerHTML = '<div class="loading-note">Loading trend…</div>';
+          monthLabel.textContent = fmtMonthLabel(current);
+          selectedCategory = null;
+          searchTerm = '';
+          searchInput.value = '';
+          editingId = null;
+          const key = monthKey(current);
+
+          const expRes = await storageGet('expenses:' + key);
+          expenses = expRes ? (JSON.parse(expRes.value) || []) : [];
+
+          const budRes = await storageGet('budget:' + key);
+          budget = budRes ? (JSON.parse(budRes.value) || 0) : 0;
+
+          const today = new Date();
+          const dateField = document.getElementById('fDate');
+          if (today.getFullYear() === current.getFullYear() && today.getMonth() === current.getMonth()) {
+            dateField.value = localDateStr(today);
+          } else {
+            dateField.value = localDateStr(current);
+          }
+
+          render(true);
+          loadTrend();
+        }
+
+        async function loadTrend() {
+          const months = [];
+          for (let i = 5; i >= 0; i--) {
+            const d = new Date(current.getFullYear(), current.getMonth() - i, 1);
+            months.push(d);
+          }
+          const results = await Promise.all(months.map(async d => {
+            const key = monthKey(d);
+            const res = await storageGet('expenses:' + key);
+            const arr = res ? (JSON.parse(res.value) || []) : [];
+            return arr.reduce((s, e) => s + e.amount, 0);
+          }));
+          const max = Math.max(1, ...results);
+          trendBars.innerHTML = months.map((d, i) => {
+            const isCurrent = monthKey(d) === monthKey(current);
+            const h = Math.max(4, Math.round((results[i] / max) * 54));
+            return '<div class="trend-bar-col ' + (isCurrent ? 'current' : '') + '">' +
+              '<div class="trend-bar" style="height:' + h + 'px;"><span class="trend-amt">' + fmtINR(results[i]) + '</span></div>' +
+              '<div class="trend-month">' + d.toLocaleDateString('en-IN', { month: 'short' }) + '</div>' +
+              '</div>';
+          }).join('');
+
+          trendBars.querySelectorAll('.trend-bar-col').forEach(col => {
+            col.addEventListener('click', (ev) => {
+              const wasActive = col.classList.contains('active');
+              trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
+              if (!wasActive) col.classList.add('active');
+              ev.stopPropagation();
+            });
           });
         }
 
-        const saveUBtn = udhariWrap.querySelector('.save-u-edit');
-        if (saveUBtn) {
-          saveUBtn.addEventListener('click', async () => {
-            const id = saveUBtn.getAttribute('data-id');
-            const row = saveUBtn.closest('tr');
-            const person = row.querySelector('.edit-person').value.trim();
-            const type = row.querySelector('.edit-type').value;
-            const amount = parseFloat(row.querySelector('.edit-amount').value);
-            const date = row.querySelector('.edit-date').value;
-            const dueDate = row.querySelector('.edit-duedate').value;
-            const notes = row.querySelector('.edit-notes').value.trim();
+        async function saveExpenses() {
+          const ok = await storageSet('expenses:' + monthKey(current), JSON.stringify(expenses));
+          if (!ok && hasRealStorage) showToast('Could not save. Please try again.', true);
+        }
 
-            if (!person || !date || isNaN(amount) || amount <= 0) {
-              showToast('Please provide person name, date, and a valid amount.', true);
+        async function saveBudgetValue(val) {
+          const ok = await storageSet('budget:' + monthKey(current), JSON.stringify(val));
+          if (ok) {
+            budget = val;
+            render();
+            showToast('Budget updated');
+          } else {
+            showToast('Could not save budget.', true);
+          }
+        }
+
+        function getFilteredSorted() {
+          let list = expenses.slice();
+          if (selectedCategory) list = list.filter(e => e.category === selectedCategory);
+          if (searchTerm) {
+            const s = searchTerm.toLowerCase();
+            list = list.filter(e => e.description.toLowerCase().includes(s) || (CATEGORY_LABELS[e.category] || e.category).toLowerCase().includes(s));
+          }
+          list.sort((a, b) => {
+            let av, bv;
+            if (sortState.field === 'amount') { av = a.amount; bv = b.amount; }
+            else { av = a.date; bv = b.date; }
+            if (av < bv) return sortState.dir === 'asc' ? -1 : 1;
+            if (av > bv) return sortState.dir === 'asc' ? 1 : -1;
+            return 0;
+          });
+          return list;
+        }
+
+        function buildDonut(catEntries, total) {
+          if (catEntries.length === 0) {
+            catBreakdown.innerHTML = '<div class="cat-empty">No expenses logged yet this month.</div>';
+            return;
+          }
+          const cx = 75, cy = 75, r = 62, rInner = 38;
+          let angle = -90;
+          const paths = catEntries.map(([cat, amt]) => {
+            const frac = amt / total;
+            const sweep = frac * 360;
+            const largeArc = sweep > 180 ? 1 : 0;
+            const startRad = angle * Math.PI / 180;
+            const endRad = (angle + sweep) * Math.PI / 180;
+            const x1 = cx + r * Math.cos(startRad), y1 = cy + r * Math.sin(startRad);
+            const x2 = cx + r * Math.cos(endRad), y2 = cy + r * Math.sin(endRad);
+            const ix1 = cx + rInner * Math.cos(startRad), iy1 = cy + rInner * Math.sin(startRad);
+            const ix2 = cx + rInner * Math.cos(endRad), iy2 = cy + rInner * Math.sin(endRad);
+            const d = 'M ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' L ' + ix2 + ' ' + iy2 + ' A ' + rInner + ' ' + rInner + ' 0 ' + largeArc + ' 0 ' + ix1 + ' ' + iy1 + ' Z';
+            angle += sweep;
+            const color = CATEGORY_COLORS[cat] || '#8A8F98';
+            const isSelected = selectedCategory === cat;
+            const isDimmed = selectedCategory && selectedCategory !== cat;
+            return '<path d="' + d + '" fill="' + color + '" data-cat="' + escapeHtml(cat) + '" class="' + (isSelected ? 'selected' : '') + ' ' + (isDimmed ? 'dimmed' : '') + '"><title>' + (CATEGORY_LABELS[cat] || cat) + ': ' + fmtINR(amt) + '</title></path>';
+          }).join('');
+
+          const legend = catEntries.map(([cat, amt]) => {
+            const pct = Math.round((amt / total) * 100);
+            const isSelected = selectedCategory === cat;
+            return '<div class="legend-row ' + (isSelected ? 'selected' : '') + '" data-cat="' + escapeHtml(cat) + '">' +
+              '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[cat] || '#8A8F98') + '"></span>' +
+              '<span class="legend-name">' + (CATEGORY_LABELS[cat] || cat) + '</span>' +
+              '<span class="legend-amt">' + fmtINR(amt) + ' · ' + pct + '%</span>' +
+              '</div>';
+          }).join('');
+
+          const centerAmt = selectedCategory ? (catEntries.find(c => c[0] === selectedCategory) || [null, 0])[1] : total;
+
+          catBreakdown.innerHTML =
+            '<div class="donut-wrap">' +
+            '<div class="donut-svg-wrap">' +
+            '<svg viewBox="0 0 150 150">' + paths + '</svg>' +
+            '<div class="donut-center">' +
+            '<div class="dc-label">' + (selectedCategory ? (CATEGORY_LABELS[selectedCategory] || selectedCategory) : 'Total') + '</div>' +
+            '<div class="dc-value">' + fmtINR(centerAmt) + '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="legend">' + legend + '</div>' +
+            '</div>' +
+            (selectedCategory ? '<span class="filter-clear" id="clearCatFilter">Clear category filter</span>' : '');
+
+          catBreakdown.querySelectorAll('[data-cat]').forEach(el => {
+            el.addEventListener('click', () => {
+              const cat = el.getAttribute('data-cat');
+              selectedCategory = (selectedCategory === cat) ? null : cat;
+              render();
+            });
+          });
+          const clearBtn = document.getElementById('clearCatFilter');
+          if (clearBtn) clearBtn.addEventListener('click', () => { selectedCategory = null; render(); });
+        }
+
+        function buildRecentList() {
+          const recent = expenses.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+          if (recent.length === 0) {
+            recentList.innerHTML = '<div class="cat-empty">No transactions yet this month.</div>';
+            return;
+          }
+          recentList.innerHTML = recent.map(e => {
+            const d = new Date(e.date + 'T00:00:00');
+            const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            return '<div class="legend-row" style="cursor:default;">' +
+              '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[e.category] || '#8A8F98') + '"></span>' +
+              '<span class="legend-name">' + escapeHtml(e.description) + '<br><span style="color:var(--ink-soft); font-size:11px;">' + dLabel + ' · ' + (CATEGORY_LABELS[e.category] || e.category) + '</span></span>' +
+              '<span class="legend-amt">' + fmtINR(e.amount) + '</span>' +
+              '</div>';
+          }).join('');
+        }
+
+        function render(skipAnimate) {
+          const total = expenses.reduce((s, e) => s + e.amount, 0);
+          const prevSpent = parseInt((statSpent.textContent || '0').replace(/[^\d]/g, ''), 10) || 0;
+          if (skipAnimate) { statSpent.textContent = fmtINR(total); }
+          else animateValue(statSpent, prevSpent, total, '₹');
+
+          statBudget.textContent = budget > 0 ? fmtINR(budget) : '—';
+          budgetInput.value = budget > 0 ? budget : '';
+
+          const remaining = budget - total;
+          statRemaining.textContent = budget > 0 ? fmtINR(remaining) : '—';
+          statRemaining.classList.remove('over', 'ok');
+          if (budget > 0) {
+            statRemaining.classList.add(remaining < 0 ? 'over' : 'ok');
+            const pct = Math.min(100, (total / budget) * 100);
+            progressFill.style.width = pct + '%';
+            progressFill.classList.toggle('over', total > budget);
+          } else {
+            progressFill.style.width = '0%';
+            progressFill.classList.remove('over');
+          }
+
+          const byCat = {};
+          expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+          const catEntries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+          buildDonut(catEntries, total);
+          buildRecentList();
+
+          if (selectedCategory || searchTerm) {
+            const parts = [];
+            if (selectedCategory) parts.push('Category: ' + (CATEGORY_LABELS[selectedCategory] || selectedCategory));
+            if (searchTerm) parts.push('Search: "' + escapeHtml(searchTerm) + '"');
+            activeFilterRow.innerHTML = '<div class="active-filter-pill">' + parts.join(' &nbsp;·&nbsp; ') + ' <button id="clearAllFilters" aria-label="Clear filters">✕</button></div>';
+            document.getElementById('clearAllFilters').addEventListener('click', () => {
+              selectedCategory = null; searchTerm = ''; searchInput.value = ''; render();
+            });
+          } else {
+            activeFilterRow.innerHTML = '';
+          }
+
+          const filtered = getFilteredSorted();
+          if (expenses.length === 0) {
+            ledgerWrap.innerHTML = '<div class="ledger-empty">No transactions yet. Add your first expense from the left panel.</div>';
+            return;
+          }
+          if (filtered.length === 0) {
+            ledgerWrap.innerHTML = '<div class="ledger-empty">No transactions match your filters.</div>';
+            return;
+          }
+
+          const filteredTotal = filtered.reduce((s, e) => s + e.amount, 0);
+          const arrow = function (field) { return sortState.field === field ? (sortState.dir === 'asc' ? '▲' : '▼') : '▲'; };
+
+          const rows = filtered.map(e => {
+            if (editingId === e.id) {
+              const options = Object.keys(CATEGORY_LABELS).map(c => '<option value="' + c + '" ' + (c === e.category ? 'selected' : '') + '>' + CATEGORY_LABELS[c] + '</option>').join('');
+              return '<tr class="edit-row"><td colspan="4">' +
+                '<div class="edit-grid">' +
+                '<input type="date" class="edit-date" value="' + e.date + '">' +
+                '<input type="text" class="edit-desc" value="' + escapeHtml(e.description) + '">' +
+                '<select class="edit-cat">' + options + '</select>' +
+                '<input type="number" class="edit-amount-input" value="' + e.amount + '" min="1">' +
+                '<div class="edit-actions">' +
+                '<button class="row-btn save-edit" data-id="' + e.id + '" aria-label="Save">&#10003;</button>' +
+                '<button class="row-btn cancel-edit" aria-label="Cancel">&#10005;</button>' +
+                '</div>' +
+                '</div>' +
+                '</td></tr>';
+            }
+            const d = new Date(e.date + 'T00:00:00');
+            const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            return '<tr>' +
+              '<td class="date">' + dLabel + '</td>' +
+              '<td class="desc">' + escapeHtml(e.description) + '<div class="cat-tag">' + (CATEGORY_LABELS[e.category] || e.category) + '</div></td>' +
+              '<td class="num">' + fmtINR(e.amount) + '</td>' +
+              '<td class="actions">' +
+              '<button class="row-btn edit-btn" data-id="' + e.id + '" aria-label="Edit expense">&#9998;</button>' +
+              '<button class="row-btn del-btn" data-id="' + e.id + '" aria-label="Delete expense">&#10005;</button>' +
+              '</td>' +
+              '</tr>';
+          }).join('');
+
+          ledgerWrap.innerHTML =
+            '<table class="ledger">' +
+            '<thead><tr>' +
+            '<th data-field="date" class="' + (sortState.field === 'date' ? 'active' : '') + '">Date <span class="sort-arrow">' + arrow('date') + '</span></th>' +
+            '<th>Description</th>' +
+            '<th data-field="amount" class="num ' + (sortState.field === 'amount' ? 'active' : '') + '">Amount <span class="sort-arrow">' + arrow('amount') + '</span></th>' +
+            '<th></th>' +
+            '</tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+            '<tfoot><tr><td class="label" colspan="2">' + (filtered.length === expenses.length ? 'Total' : 'Filtered total') + '</td><td class="num" style="text-align:right; padding-right:10px;">' + fmtINR(filteredTotal) + '</td><td></td></tr></tfoot>' +
+            '</table>';
+
+          ledgerWrap.querySelectorAll('thead th[data-field]').forEach(th => {
+            th.addEventListener('click', () => {
+              const field = th.getAttribute('data-field');
+              if (sortState.field === field) sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+              else { sortState.field = field; sortState.dir = 'desc'; }
+              render(true);
+            });
+          });
+
+          ledgerWrap.querySelectorAll('.del-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const id = btn.getAttribute('data-id');
+              expenses = expenses.filter(e => String(e.id) !== id);
+              await saveExpenses();
+              render();
+              loadTrend();
+              showToast('Expense deleted');
+            });
+          });
+          ledgerWrap.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              editingId = btn.getAttribute('data-id');
+              render(true);
+            });
+          });
+          const cancelBtn = ledgerWrap.querySelector('.cancel-edit');
+          if (cancelBtn) cancelBtn.addEventListener('click', () => { editingId = null; render(true); });
+          const saveBtn = ledgerWrap.querySelector('.save-edit');
+          if (saveBtn) saveBtn.addEventListener('click', async () => {
+            const id = saveBtn.getAttribute('data-id');
+            const row = saveBtn.closest('tr');
+            const date = row.querySelector('.edit-date').value;
+            const desc = row.querySelector('.edit-desc').value.trim();
+            const cat = row.querySelector('.edit-cat').value;
+            const amt = parseFloat(row.querySelector('.edit-amount-input').value);
+            if (!date || !desc || isNaN(amt) || amt <= 0) {
+              showToast('Please fill all fields with a valid amount.', true);
               return;
             }
-
-            const idx = udhariRecords.findIndex(r => r.id === id);
-            if (idx > -1) {
-              udhariRecords[idx] = Object.assign({}, udhariRecords[idx], {
-                person: person,
-                type: type,
-                amount: amount,
-                date: date,
-                dueDate: dueDate,
-                notes: notes
-              });
-              await saveUdhari();
+            if (date.slice(0, 7) !== monthKey(current)) {
+              showToast('Date must fall within the selected month.', true);
+              return;
             }
-            udhariEditingId = null;
-            renderUdhari();
-            showToast('Record updated');
+            const idx = expenses.findIndex(e => String(e.id) === id);
+            if (idx > -1) {
+              expenses[idx] = Object.assign({}, expenses[idx], { date: date, description: desc, category: cat, amount: amt });
+              await saveExpenses();
+            }
+            editingId = null;
+            render();
+            loadTrend();
+            showToast('Expense updated');
           });
         }
-      }
 
-      async function addUdhariRecord() {
-        udhariFormError.textContent = '';
-        const person = uPerson.value.trim();
-        const type = uType.value;
-        const amount = parseFloat(uAmount.value);
-        const date = uDate.value;
-        const dueDate = uDueDate.value;
-        const notes = uNotes.value.trim();
+        document.getElementById('prevMonth').addEventListener('click', () => {
+          current.setMonth(current.getMonth() - 1);
+          loadMonth();
+        });
+        document.getElementById('nextMonth').addEventListener('click', () => {
+          current.setMonth(current.getMonth() + 1);
+          loadMonth();
+        });
 
-        if (!person || !date || isNaN(amount) || amount <= 0) {
-          udhariFormError.textContent = 'Please fill person name, amount, and date.';
-          return;
+        document.getElementById('saveBudget').addEventListener('click', () => {
+          const val = parseFloat(budgetInput.value);
+          if (isNaN(val) || val < 0) {
+            formError.textContent = 'Enter a valid budget amount.';
+            return;
+          }
+          formError.textContent = '';
+          saveBudgetValue(val);
+        });
+
+        searchInput.addEventListener('input', (e) => {
+          searchTerm = e.target.value;
+          render(true);
+        });
+
+        async function addExpense() {
+          formError.textContent = '';
+          const date = document.getElementById('fDate').value;
+          const category = document.getElementById('fCategory').value;
+          const desc = document.getElementById('fDesc').value.trim();
+          const amount = parseFloat(document.getElementById('fAmount').value);
+
+          if (!date || !category || !desc || isNaN(amount) || amount <= 0) {
+            formError.textContent = 'Please fill all fields with a valid amount.';
+            return;
+          }
+
+          const entryMonth = date.slice(0, 7);
+          if (entryMonth !== monthKey(current)) {
+            formError.textContent = 'Date must fall within the selected month (' + fmtMonthLabel(current) + ').';
+            return;
+          }
+
+          expenses.push({
+            id: Date.now() + Math.random().toString(16).slice(2),
+            date: date, category: category, description: desc, amount: amount
+          });
+          await saveExpenses();
+          document.getElementById('fDesc').value = '';
+          document.getElementById('fAmount').value = '';
+          render();
+          loadTrend();
+          showToast('Expense added');
         }
 
-        udhariRecords.push({
-          id: 'u_' + Date.now() + Math.random().toString(16).slice(2),
-          type: type,
-          person: person,
-          amount: amount,
-          date: date,
-          dueDate: dueDate || '',
-          notes: notes,
-          settled: false,
-          createdAt: new Date().toISOString()
+        document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
+        ['fDesc', 'fAmount'].forEach(id => {
+          document.getElementById(id).addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); addExpense(); }
+          });
         });
 
-        await saveUdhari();
-        uPerson.value = '';
-        uAmount.value = '';
-        uNotes.value = '';
-        if (uDueDate) uDueDate.value = '';
-        renderUdhari();
-        showToast('Record added to Khata');
-      }
-
-      if (btnTypeLent && btnTypeBorrowed) {
-        btnTypeLent.addEventListener('click', () => {
-          btnTypeLent.classList.add('active');
-          btnTypeBorrowed.classList.remove('active');
-          uType.value = 'lent';
+        document.addEventListener('click', () => {
+          trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
         });
-        btnTypeBorrowed.addEventListener('click', () => {
-          btnTypeBorrowed.classList.add('active');
-          btnTypeLent.classList.remove('active');
-          uType.value = 'borrowed';
-        });
-      }
 
-      document.querySelectorAll('.udhari-filter-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          document.querySelectorAll('.udhari-filter-pill').forEach(p => p.classList.remove('active'));
-          pill.classList.add('active');
-          udhariFilter = pill.getAttribute('data-filter');
-          renderUdhari(true);
-        });
-      });
+        // ==========================================
+        // ---------- UDHARI (BORROWING) LOGIC ------
+        // ==========================================
+        let udhariRecords = [];
+        let udhariFilter = 'all';
+        let udhariSearch = '';
+        let udhariEditingId = null;
 
-      if (udhariSearchInput) {
-        udhariSearchInput.addEventListener('input', (e) => {
-          udhariSearch = e.target.value;
-          renderUdhari(true);
-        });
-      }
+        const statUdhariLent = document.getElementById('statUdhariLent');
+        const statUdhariBorrowed = document.getElementById('statUdhariBorrowed');
+        const statUdhariNet = document.getElementById('statUdhariNet');
+        const statUdhariNetSub = document.getElementById('statUdhariNetSub');
+        const udhariWrap = document.getElementById('udhariWrap');
+        const udhariSearchInput = document.getElementById('udhariSearchInput');
+        const udhariFormError = document.getElementById('udhariFormError');
+        const uType = document.getElementById('uType');
+        const btnTypeLent = document.getElementById('btnTypeLent');
+        const btnTypeBorrowed = document.getElementById('btnTypeBorrowed');
+        const uPerson = document.getElementById('uPerson');
+        const uAmount = document.getElementById('uAmount');
+        const uDate = document.getElementById('uDate');
+        const uDueDate = document.getElementById('uDueDate');
+        const uNotes = document.getElementById('uNotes');
+        const addUdhariBtn = document.getElementById('addUdhariBtn');
+        const personSuggestions = document.getElementById('personSuggestions');
+        const countAll = document.getElementById('countAll');
+        const countPending = document.getElementById('countPending');
+        const countLent = document.getElementById('countLent');
+        const countBorrowed = document.getElementById('countBorrowed');
+        const countSettled = document.getElementById('countSettled');
 
-      if (addUdhariBtn) {
-        addUdhariBtn.addEventListener('click', addUdhariRecord);
-      }
-      ['uPerson', 'uAmount', 'uNotes'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); addUdhariRecord(); }
+        async function saveUdhari() {
+          const ok = await storageSet('udhari:records', JSON.stringify(udhariRecords));
+          if (!ok && hasRealStorage) showToast('Could not save udhari records.', true);
+          updatePersonSuggestions();
+        }
+
+        function updatePersonSuggestions() {
+          if (!personSuggestions) return;
+          const names = Array.from(new Set(udhariRecords.map(r => r.person).filter(Boolean)));
+          personSuggestions.innerHTML = names.map(n => '<option value="' + escapeHtml(n) + '">').join('');
+        }
+
+        async function loadUdhari() {
+          if (!udhariWrap) return;
+          const res = await storageGet('udhari:records');
+          udhariRecords = res ? (JSON.parse(res.value) || []) : [];
+          const today = new Date();
+          if (uDate && !uDate.value) uDate.value = localDateStr(today);
+          updatePersonSuggestions();
+          renderUdhari();
+        }
+
+        function renderUdhari(skipAnimate) {
+          if (!udhariWrap) return;
+
+          const pendingLent = udhariRecords
+            .filter(r => r.type === 'lent' && !r.settled)
+            .reduce((sum, r) => sum + r.amount, 0);
+
+          const pendingBorrowed = udhariRecords
+            .filter(r => r.type === 'borrowed' && !r.settled)
+            .reduce((sum, r) => sum + r.amount, 0);
+
+          const net = pendingLent - pendingBorrowed;
+
+          if (countAll) countAll.textContent = udhariRecords.length;
+          if (countPending) countPending.textContent = udhariRecords.filter(r => !r.settled).length;
+          if (countLent) countLent.textContent = udhariRecords.filter(r => r.type === 'lent' && !r.settled).length;
+          if (countBorrowed) countBorrowed.textContent = udhariRecords.filter(r => r.type === 'borrowed' && !r.settled).length;
+          if (countSettled) countSettled.textContent = udhariRecords.filter(r => r.settled).length;
+
+          if (statUdhariLent) statUdhariLent.textContent = fmtINR(pendingLent);
+          if (statUdhariBorrowed) statUdhariBorrowed.textContent = fmtINR(pendingBorrowed);
+          if (statUdhariNet) {
+            if (net > 0) {
+              statUdhariNet.textContent = '+' + fmtINR(net);
+              statUdhariNet.style.color = 'var(--green)';
+              if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net surplus (you are owed)';
+            } else if (net < 0) {
+              statUdhariNet.textContent = '-' + fmtINR(Math.abs(net));
+              statUdhariNet.style.color = 'var(--maroon)';
+              if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net deficit (you owe)';
+            } else {
+              statUdhariNet.textContent = '₹0';
+              statUdhariNet.style.color = 'var(--navy-deep)';
+              if (statUdhariNetSub) statUdhariNetSub.textContent = 'All dues clear';
+            }
+          }
+
+          let filtered = udhariRecords.slice();
+          if (udhariFilter === 'pending') {
+            filtered = filtered.filter(r => !r.settled);
+          } else if (udhariFilter === 'lent') {
+            filtered = filtered.filter(r => r.type === 'lent' && !r.settled);
+          } else if (udhariFilter === 'borrowed') {
+            filtered = filtered.filter(r => r.type === 'borrowed' && !r.settled);
+          } else if (udhariFilter === 'settled') {
+            filtered = filtered.filter(r => r.settled);
+          }
+
+          if (udhariSearch) {
+            const s = udhariSearch.toLowerCase();
+            filtered = filtered.filter(r =>
+              (r.person && r.person.toLowerCase().includes(s)) ||
+              (r.notes && r.notes.toLowerCase().includes(s))
+            );
+          }
+
+          filtered.sort((a, b) => {
+            if (a.settled !== b.settled) return a.settled ? 1 : -1;
+            return b.date.localeCompare(a.date);
+          });
+
+          if (udhariRecords.length === 0) {
+            udhariWrap.innerHTML = '<div class="ledger-empty">No borrowing or lending records yet. Add your first entry from the left panel.</div>';
+            return;
+          }
+
+          if (filtered.length === 0) {
+            udhariWrap.innerHTML = '<div class="ledger-empty">No records match your selected filter or search.</div>';
+            return;
+          }
+
+          const todayStr = localDateStr(new Date());
+
+          const rows = filtered.map(r => {
+            if (udhariEditingId === r.id) {
+              return '<tr class="edit-row"><td colspan="4">' +
+                '<div class="udhari-edit-grid">' +
+                '<input type="text" class="edit-person" value="' + escapeHtml(r.person) + '" placeholder="Person name">' +
+                '<select class="edit-type">' +
+                '<option value="lent" ' + (r.type === 'lent' ? 'selected' : '') + '>Lent (Given)</option>' +
+                '<option value="borrowed" ' + (r.type === 'borrowed' ? 'selected' : '') + '>Borrowed (Taken)</option>' +
+                '</select>' +
+                '<input type="number" class="edit-amount" value="' + r.amount + '" min="1" placeholder="Amount">' +
+                '<input type="date" class="edit-date" value="' + r.date + '">' +
+                '<input type="date" class="edit-duedate" value="' + (r.dueDate || '') + '" title="Due date">' +
+                '<input type="text" class="edit-notes" value="' + escapeHtml(r.notes || '') + '" placeholder="Notes">' +
+                '<div class="edit-actions">' +
+                '<button class="row-btn save-u-edit" data-id="' + r.id + '" aria-label="Save">&#10003;</button>' +
+                '<button class="row-btn cancel-u-edit" aria-label="Cancel">&#10005;</button>' +
+                '</div>' +
+                '</div>' +
+                '</td></tr>';
+            }
+
+            const d = new Date(r.date + 'T00:00:00');
+            const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            const isLent = r.type === 'lent';
+            const typeLabel = isLent ? '↗ Lent' : '↙ Borrowed';
+            const typeClass = isLent ? 'lent' : 'borrowed';
+
+            let dueHtml = '';
+            if (r.dueDate) {
+              const dueD = new Date(r.dueDate + 'T00:00:00');
+              const dueLabel = dueD.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+              const isOverdue = !r.settled && r.dueDate < todayStr;
+              dueHtml = '<span class="badge-due ' + (isOverdue ? 'overdue' : '') + '">' +
+                (isOverdue ? '⚠️ Overdue (' + dueLabel + ')' : 'Due: ' + dueLabel) +
+                '</span>';
+            }
+
+            const statusBadge = r.settled
+              ? '<span class="badge-status settled">Settled</span>'
+              : '<span class="badge-status pending">Pending</span>';
+
+            const settleBtnTitle = r.settled ? 'Mark as pending' : 'Mark as settled';
+            const settleIcon = r.settled ? '↺' : '✓';
+            const settleBtnClass = r.settled ? 'unsettle-btn' : 'settle-btn';
+
+            return '<tr class="' + (r.settled ? 'settled-row' : '') + '">' +
+              '<td class="date">' + dLabel + '</td>' +
+              '<td class="desc">' +
+              '<div>' +
+              '<span class="person-name">' + escapeHtml(r.person) + '</span> ' +
+              '<span class="badge-type ' + typeClass + '">' + typeLabel + '</span> ' +
+              statusBadge +
+              '</div>' +
+              (r.notes ? '<div class="person-notes">' + escapeHtml(r.notes) + '</div>' : '') +
+              dueHtml +
+              '</td>' +
+              '<td class="num" style="color:' + (isLent ? 'var(--green)' : 'var(--maroon)') + ';">' +
+              (isLent ? '+' : '-') + fmtINR(r.amount) +
+              '</td>' +
+              '<td class="actions">' +
+              '<button class="row-btn ' + settleBtnClass + '" data-id="' + r.id + '" title="' + settleBtnTitle + '" aria-label="' + settleBtnTitle + '">' + settleIcon + '</button>' +
+              '<button class="row-btn edit-u-btn" data-id="' + r.id + '" title="Edit record" aria-label="Edit record">&#9998;</button>' +
+              '<button class="row-btn del-u-btn del-btn" data-id="' + r.id + '" title="Delete record" aria-label="Delete record">&#10005;</button>' +
+              '</td>' +
+              '</tr>';
+          }).join('');
+
+          udhariWrap.innerHTML =
+            '<table class="ledger">' +
+            '<thead><tr>' +
+            '<th>Date</th>' +
+            '<th>Person & Details</th>' +
+            '<th class="num">Amount</th>' +
+            '<th></th>' +
+            '</tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+            '</table>';
+
+          udhariWrap.querySelectorAll('.settle-btn, .unsettle-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const id = btn.getAttribute('data-id');
+              const item = udhariRecords.find(r => r.id === id);
+              if (item) {
+                item.settled = !item.settled;
+                item.settledDate = item.settled ? localDateStr(new Date()) : null;
+                await saveUdhari();
+                renderUdhari();
+                showToast(item.settled ? 'Marked as settled' : 'Marked as pending');
+              }
+            });
+          });
+
+          udhariWrap.querySelectorAll('.del-u-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const id = btn.getAttribute('data-id');
+              udhariRecords = udhariRecords.filter(r => r.id !== id);
+              await saveUdhari();
+              renderUdhari();
+              showToast('Record deleted');
+            });
+          });
+
+          udhariWrap.querySelectorAll('.edit-u-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              udhariEditingId = btn.getAttribute('data-id');
+              renderUdhari(true);
+            });
+          });
+
+          const cancelUBtn = udhariWrap.querySelector('.cancel-u-edit');
+          if (cancelUBtn) {
+            cancelUBtn.addEventListener('click', () => {
+              udhariEditingId = null;
+              renderUdhari(true);
+            });
+          }
+
+          const saveUBtn = udhariWrap.querySelector('.save-u-edit');
+          if (saveUBtn) {
+            saveUBtn.addEventListener('click', async () => {
+              const id = saveUBtn.getAttribute('data-id');
+              const row = saveUBtn.closest('tr');
+              const person = row.querySelector('.edit-person').value.trim();
+              const type = row.querySelector('.edit-type').value;
+              const amount = parseFloat(row.querySelector('.edit-amount').value);
+              const date = row.querySelector('.edit-date').value;
+              const dueDate = row.querySelector('.edit-duedate').value;
+              const notes = row.querySelector('.edit-notes').value.trim();
+
+              if (!person || !date || isNaN(amount) || amount <= 0) {
+                showToast('Please provide person name, date, and a valid amount.', true);
+                return;
+              }
+
+              const idx = udhariRecords.findIndex(r => r.id === id);
+              if (idx > -1) {
+                udhariRecords[idx] = Object.assign({}, udhariRecords[idx], {
+                  person: person,
+                  type: type,
+                  amount: amount,
+                  date: date,
+                  dueDate: dueDate,
+                  notes: notes
+                });
+                await saveUdhari();
+              }
+              udhariEditingId = null;
+              renderUdhari();
+              showToast('Record updated');
+            });
+          }
+        }
+
+        async function addUdhariRecord() {
+          udhariFormError.textContent = '';
+          const person = uPerson.value.trim();
+          const type = uType.value;
+          const amount = parseFloat(uAmount.value);
+          const date = uDate.value;
+          const dueDate = uDueDate.value;
+          const notes = uNotes.value.trim();
+
+          if (!person || !date || isNaN(amount) || amount <= 0) {
+            udhariFormError.textContent = 'Please fill person name, amount, and date.';
+            return;
+          }
+
+          udhariRecords.push({
+            id: 'u_' + Date.now() + Math.random().toString(16).slice(2),
+            type: type,
+            person: person,
+            amount: amount,
+            date: date,
+            dueDate: dueDate || '',
+            notes: notes,
+            settled: false,
+            createdAt: new Date().toISOString()
+          });
+
+          await saveUdhari();
+          uPerson.value = '';
+          uAmount.value = '';
+          uNotes.value = '';
+          if (uDueDate) uDueDate.value = '';
+          renderUdhari();
+          showToast('Record added to Khata');
+        }
+
+        if (btnTypeLent && btnTypeBorrowed) {
+          btnTypeLent.addEventListener('click', () => {
+            btnTypeLent.classList.add('active');
+            btnTypeBorrowed.classList.remove('active');
+            uType.value = 'lent';
+          });
+          btnTypeBorrowed.addEventListener('click', () => {
+            btnTypeBorrowed.classList.add('active');
+            btnTypeLent.classList.remove('active');
+            uType.value = 'borrowed';
           });
         }
-      });
 
-      // Startup: check MongoDB connection, auto-sync localStorage data, then load views
-      (async function init() {
-        await checkAndSyncData();
-        await loadMonth();
-        await loadUdhari();
-      })();
-    })();
+        document.querySelectorAll('.udhari-filter-pill').forEach(pill => {
+          pill.addEventListener('click', () => {
+            document.querySelectorAll('.udhari-filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            udhariFilter = pill.getAttribute('data-filter');
+            renderUdhari(true);
+          });
+        });
+
+        if (udhariSearchInput) {
+          udhariSearchInput.addEventListener('input', (e) => {
+            udhariSearch = e.target.value;
+            renderUdhari(true);
+          });
+        }
+
+        if (addUdhariBtn) {
+          addUdhariBtn.addEventListener('click', addUdhariRecord);
+        }
+        ['uPerson', 'uAmount', 'uNotes'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') { e.preventDefault(); addUdhariRecord(); }
+            });
+          }
+        });
+
+        // Startup: check MongoDB connection, auto-sync localStorage data, then load views
+        (async function init() {
+          await checkAndSyncData();
+          await loadMonth();
+          await loadUdhari();
+        })();
+      }) ();
   </script>
 
 </body>
