@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#152840">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>ExpenseTrackr</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -347,12 +350,14 @@
       background: var(--maroon);
     }
 
-    .trend-bar-col:hover .trend-bar {
+    .trend-bar-col:hover .trend-bar,
+    .trend-bar-col.active .trend-bar {
       transform: scaleY(1.03);
       background: var(--navy);
     }
 
-    .trend-bar-col.current:hover .trend-bar {
+    .trend-bar-col.current:hover .trend-bar,
+    .trend-bar-col.current.active .trend-bar {
       background: var(--maroon);
     }
 
@@ -373,9 +378,11 @@
       left: 50%;
       transform: translateX(-50%);
       white-space: nowrap;
+      pointer-events: none;
     }
 
-    .trend-bar-col:hover .trend-amt {
+    .trend-bar-col:hover .trend-amt,
+    .trend-bar-col.active .trend-amt {
       opacity: 1;
     }
 
@@ -811,9 +818,15 @@
       white-space: nowrap;
     }
 
+    #ledgerWrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     table.ledger td.actions {
       text-align: right;
-      width: 64px;
+      width: 76px;
       white-space: nowrap;
     }
 
@@ -822,10 +835,17 @@
       border: none;
       cursor: pointer;
       color: var(--ink-soft);
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1;
-      padding: 5px 6px;
-      border-radius: 4px;
+      padding: 6px 8px;
+      border-radius: 5px;
+      min-width: 32px;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+      transition: background .15s ease, color .15s ease;
     }
 
     .row-btn:hover {
@@ -839,17 +859,39 @@
     }
 
     .edit-row td {
-      padding: 8px 6px;
+      padding: 10px 8px;
+      background: #F8F9FA;
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr 0.9fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
     }
 
     .edit-row input,
     .edit-row select {
       width: 100%;
-      padding: 6px 7px;
+      padding: 7px 8px;
       border: 1px solid var(--line-strong);
       border-radius: 5px;
-      font-size: 12.5px;
+      font-size: 13px;
       font-family: 'IBM Plex Sans', sans-serif;
+      background: #fff;
+    }
+
+    .edit-row input:focus,
+    .edit-row select:focus {
+      outline: 2px solid var(--gold);
+      outline-offset: 1px;
+      border-color: var(--gold);
     }
 
     .edit-amount-input {
@@ -880,6 +922,177 @@
       text-align: center;
       color: var(--ink-soft);
       font-size: 13.5px;
+    }
+
+    /* ---------- Borrowing (Udhari) Section ---------- */
+    .type-segmented {
+      display: flex;
+      gap: 6px;
+      background: #F0F2F5;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
+    .type-btn {
+      flex: 1;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all .15s ease;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    .type-btn:hover {
+      color: var(--ink);
+    }
+
+    .type-btn[data-type="lent"].active {
+      background: #EBF7EE;
+      color: var(--green);
+      border-color: #BDE4C9;
+      box-shadow: 0 1px 4px rgba(46, 155, 92, 0.12);
+    }
+
+    .type-btn[data-type="borrowed"].active {
+      background: var(--danger-bg);
+      color: var(--maroon);
+      border-color: #F1C5C5;
+      box-shadow: 0 1px 4px rgba(122, 46, 46, 0.12);
+    }
+
+    .filter-pills-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .udhari-filter-pill {
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+      transition: all .15s ease;
+    }
+
+    .udhari-filter-pill:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    .udhari-filter-pill.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .badge-type {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-type.lent {
+      background: #EBF7EE;
+      color: var(--green);
+    }
+
+    .badge-type.borrowed {
+      background: var(--danger-bg);
+      color: var(--maroon);
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-status.pending {
+      background: #FFF5E5;
+      color: #A06400;
+    }
+
+    .badge-status.settled {
+      background: #EEF1F5;
+      color: var(--ink-soft);
+    }
+
+    .badge-due {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .badge-due.overdue {
+      color: var(--maroon);
+      font-weight: 600;
+    }
+
+    tr.settled-row td {
+      opacity: 0.6;
+    }
+
+    tr.settled-row td.desc .person-name {
+      text-decoration: line-through;
+    }
+
+    .person-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .person-notes {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .row-btn.settle-btn {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .row-btn.settle-btn:hover {
+      background: #EBF7EE;
+    }
+
+    .row-btn.unsettle-btn {
+      color: #A06400;
+    }
+
+    .row-btn.unsettle-btn:hover {
+      background: #FFF5E5;
+    }
+
+    .udhari-edit-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr auto;
+      gap: 8px;
+      align-items: center;
     }
 
     .loading-note {
@@ -979,37 +1192,372 @@
       }
     }
 
-    @media (max-width: 760px) {
+    /* ---------- Responsive Styles ---------- */
+    @media (max-width: 768px) {
+      .app {
+        padding: 18px 14px calc(60px + env(safe-area-inset-bottom, 0px));
+      }
+
+      header.top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+      }
+
+      .brand {
+        justify-content: flex-start;
+      }
+
+      .month-nav {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .month-nav button {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+        border-radius: 8px;
+      }
+
+      .month-label {
+        font-size: 18px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .tab-nav {
+        width: 100%;
+        gap: 4px;
+        margin-bottom: 20px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 12px 8px;
+        font-size: 14.5px;
+      }
 
       .grid,
       .dash-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
       }
 
       .summary {
         grid-template-columns: 1fr;
+        gap: 12px;
       }
 
-      table.ledger {
-        font-size: 12.5px;
+      .stat {
+        padding: 16px 18px;
       }
 
-      table.ledger td.desc .cat-tag {
-        display: block;
-        margin-top: 5px;
+      .stat .budget-edit {
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .stat .budget-edit input {
+        flex: 1;
+        min-width: 120px;
+        padding: 8px 10px;
+        font-size: 16px;
+      }
+
+      .stat .budget-edit button {
+        padding: 8px 16px;
+        font-size: 13px;
+        min-height: 38px;
+      }
+
+      .field input,
+      .field select,
+      .search-box input {
+        font-size: 16px;
+        min-height: 44px;
+        padding: 9px 12px;
+      }
+
+      .rupee-wrap span {
+        font-size: 16px;
+      }
+
+      .rupee-wrap input {
+        padding-left: 28px;
+      }
+
+      .submit-btn {
+        min-height: 46px;
+        font-size: 15px;
+      }
+
+      .donut-wrap {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .donut-svg-wrap {
+        margin: 0 auto;
+      }
+
+      .legend {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .legend-row {
+        padding: 8px 10px;
+        font-size: 13.5px;
+        min-height: 36px;
+      }
+
+      .ledger-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .ledger-controls {
+        width: 100%;
+      }
+
+      .search-box {
+        width: 100%;
       }
 
       .search-box input {
-        width: 130px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      table.ledger {
+        font-size: 13px;
+        min-width: 440px;
+      }
+
+      table.ledger td.desc .cat-tag {
+        display: inline-block;
+        margin-top: 4px;
+      }
+
+      .row-btn {
+        min-width: 36px;
+        min-height: 36px;
+        font-size: 16px;
+      }
+
+      /* Responsive edit row */
+      .edit-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .edit-grid .edit-desc {
+        order: 1;
+        grid-column: 1 / -1;
+      }
+
+      .edit-grid .edit-date {
+        order: 2;
+        grid-column: 1 / 2;
+      }
+
+      .edit-grid .edit-cat {
+        order: 3;
+        grid-column: 2 / 3;
+      }
+
+      .edit-grid .edit-amount-input {
+        order: 4;
+        grid-column: 1 / 2;
+      }
+
+      .edit-grid .edit-actions {
+        order: 5;
+        grid-column: 2 / 3;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .edit-grid input,
+      .edit-grid select {
+        font-size: 16px;
+        padding: 8px 10px;
+        min-height: 42px;
+      }
+
+      .edit-grid .save-edit,
+      .edit-grid .cancel-edit {
+        min-width: 42px;
+        min-height: 42px;
+        font-size: 16px;
+        border-radius: 6px;
+      }
+
+      .edit-grid .save-edit {
+        background: var(--green);
+        color: #fff;
+      }
+
+      .edit-grid .cancel-edit {
+        background: #E2E5EA;
+        color: var(--ink);
+      }
+
+      .toast-stack {
+        left: 14px;
+        right: 14px;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+      }
+
+      .toast {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
       }
 
       .trend-bars {
         gap: 8px;
       }
 
-      .tab-btn {
-        padding: 10px 14px;
-        font-size: 14px;
+      .udhari-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .udhari-edit-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .udhari-edit-grid .edit-person {
+        grid-column: 1 / -1;
+        order: 1;
+      }
+
+      .udhari-edit-grid .edit-type {
+        grid-column: 1 / 2;
+        order: 2;
+      }
+
+      .udhari-edit-grid .edit-amount {
+        grid-column: 2 / 3;
+        order: 3;
+      }
+
+      .udhari-edit-grid .edit-date {
+        grid-column: 1 / 2;
+        order: 4;
+      }
+
+      .udhari-edit-grid .edit-duedate {
+        grid-column: 2 / 3;
+        order: 5;
+      }
+
+      .udhari-edit-grid .edit-notes {
+        grid-column: 1 / -1;
+        order: 6;
+      }
+
+      .udhari-edit-grid .edit-actions {
+        grid-column: 1 / -1;
+        order: 7;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .udhari-edit-grid input,
+      .udhari-edit-grid select {
+        font-size: 16px;
+        padding: 8px 10px;
+        min-height: 42px;
+      }
+
+      .udhari-edit-grid .save-edit,
+      .udhari-edit-grid .cancel-edit {
+        min-width: 42px;
+        min-height: 42px;
+        font-size: 16px;
+        border-radius: 6px;
+      }
+
+      .udhari-edit-grid .save-edit {
+        background: var(--green);
+        color: #fff;
+      }
+
+      .udhari-edit-grid .cancel-edit {
+        background: #E2E5EA;
+        color: var(--ink);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 12px 10px calc(50px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .brand .mark {
+        width: 44px;
+        height: 44px;
+      }
+
+      .brand h1 {
+        font-size: 21px;
+      }
+
+      .month-label {
+        font-size: 16px;
+      }
+
+      .stat {
+        padding: 14px 14px;
+      }
+
+      .stat .value {
+        font-size: 26px;
+      }
+
+      .panel {
+        padding: 16px 14px;
+      }
+
+      .trend-panel {
+        padding: 14px 14px 10px;
+      }
+
+      .trend-bars {
+        gap: 6px;
+      }
+
+      .trend-amt {
+        font-size: 9px;
+      }
+
+      .social-links {
+        gap: 14px;
+      }
+
+      table.ledger td {
+        padding: 10px 6px;
+      }
+
+      table.ledger td.date {
+        font-size: 11.5px;
+      }
+
+      table.ledger thead th {
+        padding: 0 6px 8px;
+        font-size: 10.5px;
       }
     }
   </style>
@@ -1065,6 +1613,7 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="tracker">Expense Tracker</button>
+      <button class="tab-btn" data-tab="udhari">Borrowing (Udhari)</button>
     </nav>
 
     <!-- ============ DASHBOARD TAB ============ -->
@@ -1176,19 +1725,116 @@
       </div>
     </div>
 
+    <!-- ============ BORROWING (UDHARI) TAB ============ -->
+    <div class="tab-panel" id="tab-udhari">
+      <section class="summary udhari-summary">
+        <div class="stat">
+          <div class="label">You will get (Lent)</div>
+          <div class="value" id="statUdhariLent" style="color:var(--green);">₹0</div>
+          <div style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">Pending from friends / others</div>
+        </div>
+        <div class="stat">
+          <div class="label">You will give (Borrowed)</div>
+          <div class="value" id="statUdhariBorrowed" style="color:var(--maroon);">₹0</div>
+          <div style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">Pending to repay to others</div>
+        </div>
+        <div class="stat">
+          <div class="label">Net balance</div>
+          <div class="value" id="statUdhariNet">₹0</div>
+          <div id="statUdhariNetSub" style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">All dues clear</div>
+        </div>
+      </section>
+
+      <div class="grid">
+        <div class="left-col" style="display:flex; flex-direction:column; gap:22px;">
+          <div class="panel">
+            <h2>Add borrowing / loan</h2>
+            <div class="add-expense" id="udhariForm">
+              <div class="field">
+                <label>Transaction Type</label>
+                <div class="type-segmented">
+                  <button type="button" class="type-btn active" data-type="lent" id="btnTypeLent">
+                    <span>↗</span> I Lent (Given)
+                  </button>
+                  <button type="button" class="type-btn" data-type="borrowed" id="btnTypeBorrowed">
+                    <span>↙</span> I Borrowed (Taken)
+                  </button>
+                </div>
+                <input type="hidden" id="uType" value="lent">
+              </div>
+
+              <div class="field">
+                <label for="uPerson">Person Name</label>
+                <input type="text" id="uPerson" placeholder="e.g. Rahul Sharma" list="personSuggestions">
+                <datalist id="personSuggestions"></datalist>
+              </div>
+
+              <div class="amount-row">
+                <div class="field rupee-wrap">
+                  <label for="uAmount">Amount</label>
+                  <span>₹</span>
+                  <input type="number" id="uAmount" min="1" step="1" placeholder="0">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="field">
+                  <label for="uDate">Date</label>
+                  <input type="date" id="uDate">
+                </div>
+                <div class="field">
+                  <label for="uDueDate">Due Date (Optional)</label>
+                  <input type="date" id="uDueDate">
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="uNotes">Notes / Purpose</label>
+                <input type="text" id="uNotes" placeholder="e.g. Dinner bill, Trip advance">
+              </div>
+
+              <div class="form-error" id="udhariFormError"></div>
+              <button type="button" class="submit-btn" id="addUdhariBtn" style="background:var(--navy);">Add record</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="ledger-header">
+            <h2 style="margin:0;">Udhari Khata</h2>
+            <div class="ledger-controls">
+              <div class="search-box">
+                <input type="text" id="udhariSearchInput" placeholder="Search person or notes…">
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-pills-row">
+            <button type="button" class="udhari-filter-pill active" data-filter="all">All (<span id="countAll">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="pending">Pending (<span id="countPending">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="lent">To Receive (<span id="countLent">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="borrowed">To Pay (<span id="countBorrowed">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="settled">Settled (<span id="countSettled">0</span>)</button>
+          </div>
+
+          <div id="udhariWrap">
+            <div class="loading-note">Loading your udhari ledger…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <footer class="foot">
       ExpenseTrackr &middot; All figures in Indian Rupees (INR).<br><br>
       <br><br>
-      © 2026 ExpenseTrackr. Designed &amp; Developed by
-      <a href="https://github.com/sahilprojects676" target="_blank">
-        sahilprojects676
-        <div class="social-links">
-          <a href="https://sahilprojects676.github.io/Portfolio/" target="_blank">🌐 Portfolio</a>
-          <a href="https://github.com/sahilprojects676" target="_blank">💻 GitHub</a>
-          <a href="https://www.linkedin.com/in/sahil-naphade-460758259/" target="_blank">💼 LinkedIn</a>
-        </div>
-      </a>
+      &copy; 2026 ExpenseTrackr. Designed &amp; Developed by
+      <a href="https://github.com/sahilprojects676" target="_blank" rel="noopener noreferrer">sahilprojects676</a>
+      <div class="social-links">
+        <a href="https://sahilprojects676.github.io/Portfolio/" target="_blank" rel="noopener noreferrer">🌐 Portfolio</a>
+        <a href="https://github.com/sahilprojects676" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
+        <a href="https://www.linkedin.com/in/sahil-naphade-460758259/" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
+      </div>
     </footer>
 
   </div>
@@ -1334,6 +1980,7 @@
       function switchTab(name) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === name));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+        if (name === 'udhari') renderUdhari(true);
       }
       document.getElementById('gotoExpenses').addEventListener('click', () => switchTab('tracker'));
 
@@ -1389,6 +2036,15 @@
             '<div class="trend-month">' + d.toLocaleDateString('en-IN', { month: 'short' }) + '</div>' +
             '</div>';
         }).join('');
+
+        trendBars.querySelectorAll('.trend-bar-col').forEach(col => {
+          col.addEventListener('click', (ev) => {
+            const wasActive = col.classList.contains('active');
+            trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
+            if (!wasActive) col.classList.add('active');
+            ev.stopPropagation();
+          });
+        });
       }
 
       async function saveExpenses() {
@@ -1560,12 +2216,12 @@
           if (editingId === e.id) {
             const options = Object.keys(CATEGORY_LABELS).map(c => '<option value="' + c + '" ' + (c === e.category ? 'selected' : '') + '>' + CATEGORY_LABELS[c] + '</option>').join('');
             return '<tr class="edit-row"><td colspan="4">' +
-              '<div style="display:grid; grid-template-columns:1fr 1.4fr 1fr 0.9fr auto; gap:8px; align-items:center;">' +
+              '<div class="edit-grid">' +
               '<input type="date" class="edit-date" value="' + e.date + '">' +
               '<input type="text" class="edit-desc" value="' + escapeHtml(e.description) + '">' +
               '<select class="edit-cat">' + options + '</select>' +
               '<input type="number" class="edit-amount-input" value="' + e.amount + '" min="1">' +
-              '<div style="display:flex; gap:4px;">' +
+              '<div class="edit-actions">' +
               '<button class="row-btn save-edit" data-id="' + e.id + '" aria-label="Save">&#10003;</button>' +
               '<button class="row-btn cancel-edit" aria-label="Cancel">&#10005;</button>' +
               '</div>' +
@@ -1713,7 +2369,367 @@
         });
       });
 
+      document.addEventListener('click', () => {
+        trendBars.querySelectorAll('.trend-bar-col').forEach(c => c.classList.remove('active'));
+      });
+
+      // ==========================================
+      // ---------- UDHARI (BORROWING) LOGIC ------
+      // ==========================================
+      let udhariRecords = [];
+      let udhariFilter = 'all';
+      let udhariSearch = '';
+      let udhariEditingId = null;
+
+      const statUdhariLent = document.getElementById('statUdhariLent');
+      const statUdhariBorrowed = document.getElementById('statUdhariBorrowed');
+      const statUdhariNet = document.getElementById('statUdhariNet');
+      const statUdhariNetSub = document.getElementById('statUdhariNetSub');
+      const udhariWrap = document.getElementById('udhariWrap');
+      const udhariSearchInput = document.getElementById('udhariSearchInput');
+      const udhariFormError = document.getElementById('udhariFormError');
+      const uType = document.getElementById('uType');
+      const btnTypeLent = document.getElementById('btnTypeLent');
+      const btnTypeBorrowed = document.getElementById('btnTypeBorrowed');
+      const uPerson = document.getElementById('uPerson');
+      const uAmount = document.getElementById('uAmount');
+      const uDate = document.getElementById('uDate');
+      const uDueDate = document.getElementById('uDueDate');
+      const uNotes = document.getElementById('uNotes');
+      const addUdhariBtn = document.getElementById('addUdhariBtn');
+      const personSuggestions = document.getElementById('personSuggestions');
+      const countAll = document.getElementById('countAll');
+      const countPending = document.getElementById('countPending');
+      const countLent = document.getElementById('countLent');
+      const countBorrowed = document.getElementById('countBorrowed');
+      const countSettled = document.getElementById('countSettled');
+
+      async function saveUdhari() {
+        const ok = await storageSet('udhari:records', JSON.stringify(udhariRecords));
+        if (!ok && hasRealStorage) showToast('Could not save udhari records.', true);
+        updatePersonSuggestions();
+      }
+
+      function updatePersonSuggestions() {
+        if (!personSuggestions) return;
+        const names = Array.from(new Set(udhariRecords.map(r => r.person).filter(Boolean)));
+        personSuggestions.innerHTML = names.map(n => '<option value="' + escapeHtml(n) + '">').join('');
+      }
+
+      async function loadUdhari() {
+        if (!udhariWrap) return;
+        const res = await storageGet('udhari:records');
+        udhariRecords = res ? (JSON.parse(res.value) || []) : [];
+        const today = new Date();
+        if (uDate && !uDate.value) uDate.value = localDateStr(today);
+        updatePersonSuggestions();
+        renderUdhari();
+      }
+
+      function renderUdhari(skipAnimate) {
+        if (!udhariWrap) return;
+
+        const pendingLent = udhariRecords
+          .filter(r => r.type === 'lent' && !r.settled)
+          .reduce((sum, r) => sum + r.amount, 0);
+
+        const pendingBorrowed = udhariRecords
+          .filter(r => r.type === 'borrowed' && !r.settled)
+          .reduce((sum, r) => sum + r.amount, 0);
+
+        const net = pendingLent - pendingBorrowed;
+
+        if (countAll) countAll.textContent = udhariRecords.length;
+        if (countPending) countPending.textContent = udhariRecords.filter(r => !r.settled).length;
+        if (countLent) countLent.textContent = udhariRecords.filter(r => r.type === 'lent' && !r.settled).length;
+        if (countBorrowed) countBorrowed.textContent = udhariRecords.filter(r => r.type === 'borrowed' && !r.settled).length;
+        if (countSettled) countSettled.textContent = udhariRecords.filter(r => r.settled).length;
+
+        if (statUdhariLent) statUdhariLent.textContent = fmtINR(pendingLent);
+        if (statUdhariBorrowed) statUdhariBorrowed.textContent = fmtINR(pendingBorrowed);
+        if (statUdhariNet) {
+          if (net > 0) {
+            statUdhariNet.textContent = '+' + fmtINR(net);
+            statUdhariNet.style.color = 'var(--green)';
+            if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net surplus (you are owed)';
+          } else if (net < 0) {
+            statUdhariNet.textContent = '-' + fmtINR(Math.abs(net));
+            statUdhariNet.style.color = 'var(--maroon)';
+            if (statUdhariNetSub) statUdhariNetSub.textContent = 'Net deficit (you owe)';
+          } else {
+            statUdhariNet.textContent = '₹0';
+            statUdhariNet.style.color = 'var(--navy-deep)';
+            if (statUdhariNetSub) statUdhariNetSub.textContent = 'All dues clear';
+          }
+        }
+
+        let filtered = udhariRecords.slice();
+        if (udhariFilter === 'pending') {
+          filtered = filtered.filter(r => !r.settled);
+        } else if (udhariFilter === 'lent') {
+          filtered = filtered.filter(r => r.type === 'lent' && !r.settled);
+        } else if (udhariFilter === 'borrowed') {
+          filtered = filtered.filter(r => r.type === 'borrowed' && !r.settled);
+        } else if (udhariFilter === 'settled') {
+          filtered = filtered.filter(r => r.settled);
+        }
+
+        if (udhariSearch) {
+          const s = udhariSearch.toLowerCase();
+          filtered = filtered.filter(r =>
+            (r.person && r.person.toLowerCase().includes(s)) ||
+            (r.notes && r.notes.toLowerCase().includes(s))
+          );
+        }
+
+        filtered.sort((a, b) => {
+          if (a.settled !== b.settled) return a.settled ? 1 : -1;
+          return b.date.localeCompare(a.date);
+        });
+
+        if (udhariRecords.length === 0) {
+          udhariWrap.innerHTML = '<div class="ledger-empty">No borrowing or lending records yet. Add your first entry from the left panel.</div>';
+          return;
+        }
+
+        if (filtered.length === 0) {
+          udhariWrap.innerHTML = '<div class="ledger-empty">No records match your selected filter or search.</div>';
+          return;
+        }
+
+        const todayStr = localDateStr(new Date());
+
+        const rows = filtered.map(r => {
+          if (udhariEditingId === r.id) {
+            return '<tr class="edit-row"><td colspan="4">' +
+              '<div class="udhari-edit-grid">' +
+              '<input type="text" class="edit-person" value="' + escapeHtml(r.person) + '" placeholder="Person name">' +
+              '<select class="edit-type">' +
+                '<option value="lent" ' + (r.type === 'lent' ? 'selected' : '') + '>Lent (Given)</option>' +
+                '<option value="borrowed" ' + (r.type === 'borrowed' ? 'selected' : '') + '>Borrowed (Taken)</option>' +
+              '</select>' +
+              '<input type="number" class="edit-amount" value="' + r.amount + '" min="1" placeholder="Amount">' +
+              '<input type="date" class="edit-date" value="' + r.date + '">' +
+              '<input type="date" class="edit-duedate" value="' + (r.dueDate || '') + '" title="Due date">' +
+              '<input type="text" class="edit-notes" value="' + escapeHtml(r.notes || '') + '" placeholder="Notes">' +
+              '<div class="edit-actions">' +
+                '<button class="row-btn save-u-edit" data-id="' + r.id + '" aria-label="Save">&#10003;</button>' +
+                '<button class="row-btn cancel-u-edit" aria-label="Cancel">&#10005;</button>' +
+              '</div>' +
+              '</div>' +
+              '</td></tr>';
+          }
+
+          const d = new Date(r.date + 'T00:00:00');
+          const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+          const isLent = r.type === 'lent';
+          const typeLabel = isLent ? '↗ Lent' : '↙ Borrowed';
+          const typeClass = isLent ? 'lent' : 'borrowed';
+
+          let dueHtml = '';
+          if (r.dueDate) {
+            const dueD = new Date(r.dueDate + 'T00:00:00');
+            const dueLabel = dueD.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            const isOverdue = !r.settled && r.dueDate < todayStr;
+            dueHtml = '<span class="badge-due ' + (isOverdue ? 'overdue' : '') + '">' +
+              (isOverdue ? '⚠️ Overdue (' + dueLabel + ')' : 'Due: ' + dueLabel) +
+              '</span>';
+          }
+
+          const statusBadge = r.settled
+            ? '<span class="badge-status settled">Settled</span>'
+            : '<span class="badge-status pending">Pending</span>';
+
+          const settleBtnTitle = r.settled ? 'Mark as pending' : 'Mark as settled';
+          const settleIcon = r.settled ? '↺' : '✓';
+          const settleBtnClass = r.settled ? 'unsettle-btn' : 'settle-btn';
+
+          return '<tr class="' + (r.settled ? 'settled-row' : '') + '">' +
+            '<td class="date">' + dLabel + '</td>' +
+            '<td class="desc">' +
+              '<div>' +
+                '<span class="person-name">' + escapeHtml(r.person) + '</span> ' +
+                '<span class="badge-type ' + typeClass + '">' + typeLabel + '</span> ' +
+                statusBadge +
+              '</div>' +
+              (r.notes ? '<div class="person-notes">' + escapeHtml(r.notes) + '</div>' : '') +
+              dueHtml +
+            '</td>' +
+            '<td class="num" style="color:' + (isLent ? 'var(--green)' : 'var(--maroon)') + ';">' +
+              (isLent ? '+' : '-') + fmtINR(r.amount) +
+            '</td>' +
+            '<td class="actions">' +
+              '<button class="row-btn ' + settleBtnClass + '" data-id="' + r.id + '" title="' + settleBtnTitle + '" aria-label="' + settleBtnTitle + '">' + settleIcon + '</button>' +
+              '<button class="row-btn edit-u-btn" data-id="' + r.id + '" title="Edit record" aria-label="Edit record">&#9998;</button>' +
+              '<button class="row-btn del-u-btn del-btn" data-id="' + r.id + '" title="Delete record" aria-label="Delete record">&#10005;</button>' +
+            '</td>' +
+            '</tr>';
+        }).join('');
+
+        udhariWrap.innerHTML =
+          '<table class="ledger">' +
+          '<thead><tr>' +
+          '<th>Date</th>' +
+          '<th>Person & Details</th>' +
+          '<th class="num">Amount</th>' +
+          '<th></th>' +
+          '</tr></thead>' +
+          '<tbody>' + rows + '</tbody>' +
+          '</table>';
+
+        udhariWrap.querySelectorAll('.settle-btn, .unsettle-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            const item = udhariRecords.find(r => r.id === id);
+            if (item) {
+              item.settled = !item.settled;
+              item.settledDate = item.settled ? localDateStr(new Date()) : null;
+              await saveUdhari();
+              renderUdhari();
+              showToast(item.settled ? 'Marked as settled' : 'Marked as pending');
+            }
+          });
+        });
+
+        udhariWrap.querySelectorAll('.del-u-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            udhariRecords = udhariRecords.filter(r => r.id !== id);
+            await saveUdhari();
+            renderUdhari();
+            showToast('Record deleted');
+          });
+        });
+
+        udhariWrap.querySelectorAll('.edit-u-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            udhariEditingId = btn.getAttribute('data-id');
+            renderUdhari(true);
+          });
+        });
+
+        const cancelUBtn = udhariWrap.querySelector('.cancel-u-edit');
+        if (cancelUBtn) {
+          cancelUBtn.addEventListener('click', () => {
+            udhariEditingId = null;
+            renderUdhari(true);
+          });
+        }
+
+        const saveUBtn = udhariWrap.querySelector('.save-u-edit');
+        if (saveUBtn) {
+          saveUBtn.addEventListener('click', async () => {
+            const id = saveUBtn.getAttribute('data-id');
+            const row = saveUBtn.closest('tr');
+            const person = row.querySelector('.edit-person').value.trim();
+            const type = row.querySelector('.edit-type').value;
+            const amount = parseFloat(row.querySelector('.edit-amount').value);
+            const date = row.querySelector('.edit-date').value;
+            const dueDate = row.querySelector('.edit-duedate').value;
+            const notes = row.querySelector('.edit-notes').value.trim();
+
+            if (!person || !date || isNaN(amount) || amount <= 0) {
+              showToast('Please provide person name, date, and a valid amount.', true);
+              return;
+            }
+
+            const idx = udhariRecords.findIndex(r => r.id === id);
+            if (idx > -1) {
+              udhariRecords[idx] = Object.assign({}, udhariRecords[idx], {
+                person: person,
+                type: type,
+                amount: amount,
+                date: date,
+                dueDate: dueDate,
+                notes: notes
+              });
+              await saveUdhari();
+            }
+            udhariEditingId = null;
+            renderUdhari();
+            showToast('Record updated');
+          });
+        }
+      }
+
+      async function addUdhariRecord() {
+        udhariFormError.textContent = '';
+        const person = uPerson.value.trim();
+        const type = uType.value;
+        const amount = parseFloat(uAmount.value);
+        const date = uDate.value;
+        const dueDate = uDueDate.value;
+        const notes = uNotes.value.trim();
+
+        if (!person || !date || isNaN(amount) || amount <= 0) {
+          udhariFormError.textContent = 'Please fill person name, amount, and date.';
+          return;
+        }
+
+        udhariRecords.push({
+          id: 'u_' + Date.now() + Math.random().toString(16).slice(2),
+          type: type,
+          person: person,
+          amount: amount,
+          date: date,
+          dueDate: dueDate || '',
+          notes: notes,
+          settled: false,
+          createdAt: new Date().toISOString()
+        });
+
+        await saveUdhari();
+        uPerson.value = '';
+        uAmount.value = '';
+        uNotes.value = '';
+        if (uDueDate) uDueDate.value = '';
+        renderUdhari();
+        showToast('Record added to Khata');
+      }
+
+      if (btnTypeLent && btnTypeBorrowed) {
+        btnTypeLent.addEventListener('click', () => {
+          btnTypeLent.classList.add('active');
+          btnTypeBorrowed.classList.remove('active');
+          uType.value = 'lent';
+        });
+        btnTypeBorrowed.addEventListener('click', () => {
+          btnTypeBorrowed.classList.add('active');
+          btnTypeLent.classList.remove('active');
+          uType.value = 'borrowed';
+        });
+      }
+
+      document.querySelectorAll('.udhari-filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.udhari-filter-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          udhariFilter = pill.getAttribute('data-filter');
+          renderUdhari(true);
+        });
+      });
+
+      if (udhariSearchInput) {
+        udhariSearchInput.addEventListener('input', (e) => {
+          udhariSearch = e.target.value;
+          renderUdhari(true);
+        });
+      }
+
+      if (addUdhariBtn) {
+        addUdhariBtn.addEventListener('click', addUdhariRecord);
+      }
+      ['uPerson', 'uAmount', 'uNotes'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); addUdhariRecord(); }
+          });
+        }
+      });
+
       loadMonth();
+      loadUdhari();
     })();
   </script>
 

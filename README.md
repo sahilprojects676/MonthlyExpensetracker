@@ -23,7 +23,8 @@ The project focuses on providing a clean user interface, responsive design, and 
 * 🏷️ Expense categorization
 * 📅 Monthly expense tracking
 * 📈 Spending analytics
-* 📱 Fully responsive design
+* 🤝 Borrowing (Udhari) Khata to track lent & borrowed dues with settlement
+* 📱 Fully mobile-responsive design
 * 💾 Local data storage
 * ⚡ Fast and lightweight interface
 
