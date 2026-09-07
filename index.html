@@ -2288,13 +2288,40 @@
         if (pill) pill.title = `Your Account ID: ${uid} (Click to copy or switch account)`;
       }
 
-      // Universal API caller that automatically passes current User ID
-      function userFetch(url, options = {}) {
+      // Dynamic API base detection (supports http://localhost:3000, file:/// protocol, and Live Server)
+      let determinedApiBase = null;
+
+      function getApiBaseCandidates() {
+        const loc = window.location;
+        const candidates = [];
+        // If served from backend port 3000 or production host
+        if (loc && loc.protocol.startsWith('http') && (loc.port === '3000' || !loc.port)) {
+          candidates.push('');
+        }
+        // Always include localhost:3000 and 127.0.0.1:3000 for file:/// and external dev ports (like 5500)
+        candidates.push('http://localhost:3000');
+        candidates.push('http://127.0.0.1:3000');
+        return [...new Set(candidates)];
+      }
+
+      function resolveApiUrl(path) {
+        if (!path || path.startsWith('http://') || path.startsWith('https://')) return path;
+        const base = determinedApiBase !== null ? determinedApiBase : (
+          (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000'))
+            ? 'http://localhost:3000'
+            : ''
+        );
+        return base + path;
+      }
+
+      // Universal API caller that automatically passes current User ID & handles file:/// and cross-origin dev ports
+      async function userFetch(url, options = {}) {
         const uid = getOrInitUserId();
         const headers = Object.assign({}, options.headers || {}, {
           'X-User-Id': uid
         });
-        return fetch(url, Object.assign({}, options, { headers }));
+        const targetUrl = resolveApiUrl(url);
+        return fetch(targetUrl, Object.assign({}, options, { headers }));
       }
 
       // Initialize User ID immediately
@@ -2321,36 +2348,60 @@
             storageNote.innerHTML = `🟢 <strong>Connected to MongoDB</strong> (<code>mongodb://localhost:27017/expensetracker</code>) — All records are automatically saved under your unique Account ID (<code>${currentUserId}</code>).`;
           } else {
             storageNote.style.display = 'block';
-            storageNote.innerHTML = hasLocalStorage
-              ? `🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage under Account ID <code>${currentUserId}</code>.`
-              : 'Storage isn\u2019t available in this browser (private mode) — entries will only last for this session.';
+            const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
+            storageNote.innerHTML = isFileOrLiveServer
+              ? `🟠 <strong>Local / Offline Mode</strong> (Server unreachable at <code>http://localhost:3000</code>). Run <code>npm start</code> in your terminal and open <a href="http://localhost:3000" style="color:inherit;font-weight:700;text-decoration:underline;">http://localhost:3000</a> to connect to MongoDB.`
+              : (hasLocalStorage
+                ? `🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage under Account ID <code>${currentUserId}</code>.`
+                : 'Storage isn\u2019t available in this browser (private mode) — entries will only last for this session.');
           }
         }
       }
 
       // Check MongoDB status & perform automatic migration of existing localStorage data
       async function checkAndSyncData(showUserFeedback) {
-        try {
-          const res = await userFetch('/api/status', { cache: 'no-store' });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.connected) {
-              isMongoConnected = true;
-              updateDbStatus(true, 'MongoDB Connected', `Database: ${data.database || 'expensetracker'} · Account: ${data.userId || currentUserId}`);
-              updateUserIdUI();
+        const candidates = getApiBaseCandidates();
+        let connectedData = null;
+        let successfulBase = null;
 
-              // Check if we have local data to sync to MongoDB
-              await syncLocalDataToMongo();
-              if (showUserFeedback) showToast('MongoDB connection verified & synced');
-              return true;
+        for (const base of candidates) {
+          try {
+            const uid = getOrInitUserId();
+            const res = await fetch(base + '/api/status', {
+              cache: 'no-store',
+              headers: { 'X-User-Id': uid }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.connected) {
+                connectedData = data;
+                successfulBase = base;
+                break;
+              }
             }
+          } catch (e) {
+            // Try next candidate port / host
           }
-        } catch (e) {
-          // Backend or network not responding
+        }
+
+        if (connectedData) {
+          determinedApiBase = successfulBase;
+          isMongoConnected = true;
+          updateDbStatus(true, 'MongoDB Connected', `Database: ${connectedData.database || 'expensetracker'} · Account: ${connectedData.userId || currentUserId}`);
+          updateUserIdUI();
+
+          // Check if we have local data to sync to MongoDB
+          await syncLocalDataToMongo();
+          if (showUserFeedback) showToast('MongoDB connection verified & synced');
+          return true;
         }
 
         isMongoConnected = false;
-        updateDbStatus(false, 'Local / Offline', 'MongoDB unreachable · Saving to local browser storage');
+        const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
+        const hint = isFileOrLiveServer 
+          ? 'Server offline or unreachable at http://localhost:3000. Run "npm start" and open http://localhost:3000'
+          : 'MongoDB unreachable · Saving to local browser storage';
+        updateDbStatus(false, 'Local / Offline', hint);
         if (showUserFeedback) showToast('Working in offline local storage mode', true);
         return false;
       }
