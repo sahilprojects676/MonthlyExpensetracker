@@ -924,6 +924,52 @@
       font-size: 13.5px;
     }
 
+    /* ---------- Database Status Pill ---------- */
+    .db-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      background: #EEF1F5;
+      color: var(--ink-soft);
+      border: 1px solid var(--line);
+      cursor: default;
+      user-select: none;
+      transition: all .2s ease;
+    }
+
+    .db-status-pill.connected {
+      background: #EBF7EE;
+      color: #1F7343;
+      border-color: #BDE4C9;
+    }
+
+    .db-status-pill.offline {
+      background: #FFF5E5;
+      color: #A06400;
+      border-color: #F8E2BC;
+    }
+
+    .db-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8A8F98;
+      display: inline-block;
+    }
+
+    .db-status-pill.connected .db-dot {
+      background: #2E9B5C;
+      box-shadow: 0 0 0 2px rgba(46, 155, 92, 0.25);
+    }
+
+    .db-status-pill.offline .db-dot {
+      background: #B8862E;
+    }
+
     /* ---------- Borrowing (Udhari) Section ---------- */
     .type-segmented {
       display: flex;
@@ -1560,6 +1606,177 @@
         font-size: 10.5px;
       }
     }
+
+    /* MongoDB Connection Status Pill */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .db-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      background: rgba(46, 155, 92, 0.09);
+      color: #1a6f3e;
+      border: 1px solid rgba(46, 155, 92, 0.28);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
+    }
+
+    .db-status-pill:hover {
+      background: rgba(46, 155, 92, 0.16);
+      box-shadow: 0 2px 8px rgba(46, 155, 92, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .db-status-pill.offline {
+      background: rgba(201, 98, 45, 0.08);
+      color: #ad4b18;
+      border-color: rgba(201, 98, 45, 0.3);
+    }
+
+    .db-status-pill.offline:hover {
+      background: rgba(201, 98, 45, 0.14);
+      box-shadow: 0 2px 8px rgba(201, 98, 45, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .db-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2E9B5C;
+      box-shadow: 0 0 0 2px rgba(46, 155, 92, 0.25);
+      display: inline-block;
+      animation: dbPulse 2.2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    .db-status-pill.offline .db-dot {
+      background: #C9622D;
+      box-shadow: 0 0 0 2px rgba(201, 98, 45, 0.25);
+      animation: none;
+    }
+
+    @keyframes dbPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.22);
+        opacity: 0.7;
+      }
+    }
+
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .export-btn:hover {
+      background: var(--paper);
+      border-color: var(--navy);
+      color: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.12);
+    }
+
+    .export-btn:active {
+      transform: translateY(0);
+    }
+
+    .export-btn svg {
+      flex-shrink: 0;
+    }
+
+    .export-btn.primary {
+      background: var(--navy);
+      color: #ffffff;
+      border-color: var(--navy);
+    }
+
+    .export-btn.primary:hover {
+      background: #1e3859;
+      color: #ffffff;
+    }
+
+    .backup-bar {
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    @media (max-width: 680px) {
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .db-status-pill {
+        font-size: 11px;
+        padding: 5px 9px;
+        gap: 5px;
+      }
+
+      .export-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+        gap: 5px;
+      }
+
+      .backup-bar {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 14px;
+      }
+
+      .backup-bar .backup-actions {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
+
+      .backup-bar .backup-actions .export-btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 
@@ -1600,10 +1817,20 @@
           <div class="sub">Monthly Expense Tracker</div>
         </div>
       </div>
-      <div class="month-nav">
-        <button id="prevMonth" aria-label="Previous month">&#8249;</button>
-        <div class="month-label" id="monthLabel">—</div>
-        <button id="nextMonth" aria-label="Next month">&#8250;</button>
+      <div class="header-actions">
+        <div class="db-status-pill" id="dbStatusPill" title="Click to re-check MongoDB connection">
+          <span class="db-dot" id="dbDot"></span>
+          <span id="dbStatusText">Checking DB…</span>
+        </div>
+        <button type="button" class="export-btn" id="headerExportBtn" title="Export phone's localStorage to JSON file">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export JSON</span>
+        </button>
+        <div class="month-nav">
+          <button id="prevMonth" aria-label="Previous month">&#8249;</button>
+          <div class="month-label" id="monthLabel">—</div>
+          <button id="nextMonth" aria-label="Next month">&#8250;</button>
+        </div>
       </div>
     </header>
 
@@ -1613,7 +1840,7 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="tracker">Expense Tracker</button>
-      <button class="tab-btn" data-tab="udhari">Borrowing (Udhari)</button>
+      <button class="tab-btn" data-tab="udhari">Borrowing </button>
     </nav>
 
     <!-- ============ DASHBOARD TAB ============ -->
@@ -1741,7 +1968,8 @@
         <div class="stat">
           <div class="label">Net balance</div>
           <div class="value" id="statUdhariNet">₹0</div>
-          <div id="statUdhariNetSub" style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">All dues clear</div>
+          <div id="statUdhariNetSub" style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">All dues clear
+          </div>
         </div>
       </section>
 
@@ -1794,7 +2022,8 @@
               </div>
 
               <div class="form-error" id="udhariFormError"></div>
-              <button type="button" class="submit-btn" id="addUdhariBtn" style="background:var(--navy);">Add record</button>
+              <button type="button" class="submit-btn" id="addUdhariBtn" style="background:var(--navy);">Add
+                record</button>
             </div>
           </div>
         </div>
@@ -1810,11 +2039,16 @@
           </div>
 
           <div class="filter-pills-row">
-            <button type="button" class="udhari-filter-pill active" data-filter="all">All (<span id="countAll">0</span>)</button>
-            <button type="button" class="udhari-filter-pill" data-filter="pending">Pending (<span id="countPending">0</span>)</button>
-            <button type="button" class="udhari-filter-pill" data-filter="lent">To Receive (<span id="countLent">0</span>)</button>
-            <button type="button" class="udhari-filter-pill" data-filter="borrowed">To Pay (<span id="countBorrowed">0</span>)</button>
-            <button type="button" class="udhari-filter-pill" data-filter="settled">Settled (<span id="countSettled">0</span>)</button>
+            <button type="button" class="udhari-filter-pill active" data-filter="all">All (<span
+                id="countAll">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="pending">Pending (<span
+                id="countPending">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="lent">To Receive (<span
+                id="countLent">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="borrowed">To Pay (<span
+                id="countBorrowed">0</span>)</button>
+            <button type="button" class="udhari-filter-pill" data-filter="settled">Settled (<span
+                id="countSettled">0</span>)</button>
           </div>
 
           <div id="udhariWrap">
@@ -1825,15 +2059,39 @@
     </div>
 
 
+    <!-- ============ DEVICE / PHONE BACKUP & EXPORT ============ -->
+    <div class="backup-bar">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 24px; line-height: 1;">📱</span>
+        <div>
+          <strong style="font-size: 13.5px; color: var(--navy); display: block;">Device Storage & Backup (JSON)</strong>
+          <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">Export this phone's localStorage (all expenses, budgets & udhari records) to a portable JSON file.</div>
+        </div>
+      </div>
+      <div class="backup-actions" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <button type="button" class="export-btn primary" id="footerExportBtn" title="Download JSON backup">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export LocalStorage (JSON)</span>
+        </button>
+        <label class="export-btn" style="cursor: pointer;" title="Import and restore a JSON backup file">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Import JSON</span>
+          <input type="file" id="importJsonInput" accept=".json,application/json" style="display: none;">
+        </label>
+      </div>
+    </div>
+
     <footer class="foot">
       ExpenseTrackr &middot; All figures in Indian Rupees (INR).<br><br>
       <br><br>
       &copy; 2026 ExpenseTrackr. Designed &amp; Developed by
       <a href="https://github.com/sahilprojects676" target="_blank" rel="noopener noreferrer">sahilprojects676</a>
       <div class="social-links">
-        <a href="https://sahilprojects676.github.io/Portfolio/" target="_blank" rel="noopener noreferrer">🌐 Portfolio</a>
+        <a href="https://sahilprojects676.github.io/Portfolio/" target="_blank" rel="noopener noreferrer">🌐
+          Portfolio</a>
         <a href="https://github.com/sahilprojects676" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
-        <a href="https://www.linkedin.com/in/sahil-naphade-460758259/" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
+        <a href="https://www.linkedin.com/in/sahil-naphade-460758259/" target="_blank" rel="noopener noreferrer">💼
+          LinkedIn</a>
       </div>
     </footer>
 
@@ -1857,12 +2115,7 @@
         "Entertainment": "#B0455C", "Shopping": "#6B5B95", "Mobile & Internet": "#4E6E8E", "Other": "#8A8F98"
       };
 
-      // ---- Storage wrapper: uses window.storage when running inside the
-      // Claude artifact viewer (syncs to your Claude account). When that API
-      // isn't present -- e.g. this file hosted standalone on GitHub Pages or
-      // opened directly in a browser -- it falls back to the browser's own
-      // localStorage, which persists indefinitely on that device/browser
-      // (survives reloads and restarts, but does not sync across devices). ----
+      // ---- Storage Architecture: MongoDB Backend with LocalStorage Offline Fallback & Zero Data Loss ----
       const LS_PREFIX = 'expense-tracker:';
       const hasRealStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
       let hasLocalStorage = false;
@@ -1874,34 +2127,402 @@
       } catch (e) {
         hasLocalStorage = false;
       }
-      if (!hasRealStorage) {
-        const note = document.getElementById('storageNote');
-        if (note) {
-          note.style.display = 'block';
-          note.textContent = hasLocalStorage
-            ? 'Saving to this browser\u2019s local storage \u2014 your data stays on this device and browser, but won\u2019t follow you to another device.'
-            : 'Storage isn\u2019t available in this browser (private/incognito mode can block it) \u2014 entries will only last for this session.';
+
+      const memoryStore = {};
+      let isMongoConnected = false;
+
+      const dbStatusPill = document.getElementById('dbStatusPill');
+      const dbStatusText = document.getElementById('dbStatusText');
+      const storageNote = document.getElementById('storageNote');
+
+      function updateDbStatus(connected, text, title) {
+        if (dbStatusPill) {
+          dbStatusPill.classList.toggle('offline', !connected);
+          if (title) dbStatusPill.title = title;
+        }
+        if (dbStatusText) {
+          dbStatusText.textContent = text;
+        }
+        if (storageNote) {
+          if (connected) {
+            storageNote.style.display = 'block';
+            storageNote.innerHTML = '🟢 <strong>Connected to MongoDB</strong> (<code>mongodb://localhost:27017/expensetracker</code>) — All expenses, budgets, and udhari records are automatically synced and persisted.';
+          } else {
+            storageNote.style.display = 'block';
+            storageNote.innerHTML = hasLocalStorage
+              ? '🟠 <strong>Local Browser Storage Mode</strong> (MongoDB unreachable) — Your data is safely saved in local storage and will automatically sync once MongoDB is connected.'
+              : 'Storage isn\u2019t available in this browser (private mode) — entries will only last for this session.';
+          }
         }
       }
-      const memoryStore = {};
+
+      // Check MongoDB status & perform automatic migration of existing localStorage data
+      async function checkAndSyncData(showUserFeedback) {
+        try {
+          const res = await fetch('/api/status', { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.connected) {
+              isMongoConnected = true;
+              updateDbStatus(true, 'MongoDB Connected', `Database: ${data.database || 'expensetracker'} · Synced & Persistent`);
+
+              // Check if we have local data to sync to MongoDB
+              await syncLocalDataToMongo();
+              if (showUserFeedback) showToast('MongoDB connection verified & synced');
+              return true;
+            }
+          }
+        } catch (e) {
+          // Backend or network not responding
+        }
+
+        isMongoConnected = false;
+        updateDbStatus(false, 'Local / Offline', 'MongoDB unreachable · Saving to local browser storage');
+        if (showUserFeedback) showToast('Working in offline local storage mode', true);
+        return false;
+      }
+
+      async function syncLocalDataToMongo() {
+        if (!hasLocalStorage || !isMongoConnected) return;
+
+        // Collect all localStorage keys that belong to this app
+        const monthlyExpenses = {};
+        const monthlyBudgets = {};
+        let udhariRecordsToSync = [];
+        let totalItemsFound = 0;
+
+        for (let i = 0; i < window.localStorage.length; i++) {
+          const k = window.localStorage.key(i);
+          if (k && k.startsWith(LS_PREFIX)) {
+            const subKey = k.slice(LS_PREFIX.length);
+            const rawVal = window.localStorage.getItem(k);
+            if (!rawVal) continue;
+            try {
+              if (subKey.startsWith('expenses:')) {
+                const m = subKey.replace('expenses:', '');
+                const list = JSON.parse(rawVal);
+                if (Array.isArray(list) && list.length > 0) {
+                  monthlyExpenses[m] = list;
+                  totalItemsFound += list.length;
+                }
+              } else if (subKey.startsWith('budget:')) {
+                const m = subKey.replace('budget:', '');
+                const num = JSON.parse(rawVal);
+                if (num > 0) {
+                  monthlyBudgets[m] = num;
+                  totalItemsFound++;
+                }
+              } else if (subKey === 'udhari:records') {
+                const list = JSON.parse(rawVal);
+                if (Array.isArray(list) && list.length > 0) {
+                  udhariRecordsToSync = list;
+                  totalItemsFound += list.length;
+                }
+              }
+            } catch (err) {
+              console.warn('Failed parsing local item:', k, err);
+            }
+          }
+        }
+
+        const syncMarker = 'et_synced_to_mongodb_v2';
+        const alreadySynced = window.localStorage.getItem(syncMarker);
+
+        if (totalItemsFound > 0 && !alreadySynced) {
+          try {
+            const resp = await fetch('/api/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                monthlyExpenses,
+                monthlyBudgets,
+                udhariRecords: udhariRecordsToSync
+              })
+            });
+            if (resp.ok) {
+              const resJson = await resp.json();
+              window.localStorage.setItem(syncMarker, 'true');
+              showToast(`✨ Synced ${resJson.counts.expenses + resJson.counts.udhari} existing local records to MongoDB!`);
+            }
+          } catch (syncErr) {
+            console.warn('Sync request failed:', syncErr);
+          }
+        }
+      }
+
+      if (dbStatusPill) {
+        dbStatusPill.addEventListener('click', async () => {
+          updateDbStatus(isMongoConnected, 'Checking…', 'Re-verifying MongoDB connection');
+          await checkAndSyncData(true);
+          await loadMonth();
+          await loadUdhari();
+        });
+      }
+
+      // ==========================================
+      // ---------- PHONE & LOCALSTORAGE BACKUP ---
+      // ==========================================
+      function exportLocalStorageToJson() {
+        try {
+          const exportData = {
+            app: 'ExpenseTrackr',
+            version: '2.0',
+            exportedAt: new Date().toISOString(),
+            deviceInfo: {
+              userAgent: navigator.userAgent || 'unknown',
+              platform: navigator.platform || 'unknown',
+              screen: `${window.screen.width}x${window.screen.height}`
+            },
+            summary: {
+              totalKeys: 0,
+              totalExpenses: 0,
+              totalBudgets: 0,
+              totalUdhariRecords: 0
+            },
+            // Complete raw key-value store for 100% loss-free recovery
+            rawLocalStorage: {},
+            // Formatted JSON structure for easy human reading / data analysis
+            parsedData: {
+              expensesByMonth: {},
+              budgetsByMonth: {},
+              udhariRecords: []
+            }
+          };
+
+          if (hasLocalStorage) {
+            for (let i = 0; i < window.localStorage.length; i++) {
+              const k = window.localStorage.key(i);
+              if (!k) continue;
+              const raw = window.localStorage.getItem(k);
+              exportData.rawLocalStorage[k] = raw;
+              exportData.summary.totalKeys++;
+
+              if (k.startsWith(LS_PREFIX)) {
+                const subKey = k.slice(LS_PREFIX.length);
+                try {
+                  const val = JSON.parse(raw);
+                  if (subKey.startsWith('expenses:')) {
+                    const m = subKey.replace('expenses:', '');
+                    exportData.parsedData.expensesByMonth[m] = val;
+                    if (Array.isArray(val)) exportData.summary.totalExpenses += val.length;
+                  } else if (subKey.startsWith('budget:')) {
+                    const m = subKey.replace('budget:', '');
+                    exportData.parsedData.budgetsByMonth[m] = val;
+                    exportData.summary.totalBudgets++;
+                  } else if (subKey === 'udhari:records') {
+                    exportData.parsedData.udhariRecords = val;
+                    if (Array.isArray(val)) exportData.summary.totalUdhariRecords += val.length;
+                  }
+                } catch (pe) {}
+              }
+            }
+          }
+
+          // If phone localStorage is empty but we have in-memory/loaded records, include them
+          if (exportData.summary.totalExpenses === 0 && expenses.length > 0) {
+            exportData.parsedData.expensesByMonth[monthKey(current)] = expenses;
+            exportData.summary.totalExpenses += expenses.length;
+          }
+          if (exportData.summary.totalUdhariRecords === 0 && udhariRecords.length > 0) {
+            exportData.parsedData.udhariRecords = udhariRecords;
+            exportData.summary.totalUdhariRecords += udhariRecords.length;
+          }
+
+          const now = new Date();
+          const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+          const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+          const fileName = `ExpenseTrackr-phone-backup-${dateStr}-${timeStr}.json`;
+
+          const jsonContent = JSON.stringify(exportData, null, 2);
+          const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+          const blobUrl = URL.createObjectURL(blob);
+
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+          }, 600);
+
+          showToast(`📱 Exported ${exportData.summary.totalExpenses} expenses & ${exportData.summary.totalUdhariRecords} udhari items to ${fileName}!`);
+        } catch (err) {
+          console.error('Export error:', err);
+          showToast('Failed to export JSON: ' + err.message, true);
+        }
+      }
+
+      function importLocalStorageFromJson(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (!data || (!data.rawLocalStorage && !data.parsedData)) {
+              showToast('Invalid backup file. Missing localStorage data.', true);
+              return;
+            }
+
+            let restoredCount = 0;
+            // 1. Restore raw localStorage keys
+            if (data.rawLocalStorage && typeof data.rawLocalStorage === 'object') {
+              for (const [k, v] of Object.entries(data.rawLocalStorage)) {
+                if (typeof v === 'string') {
+                  window.localStorage.setItem(k, v);
+                  restoredCount++;
+                }
+              }
+            }
+
+            // 2. Also restore from parsedData if present
+            if (data.parsedData) {
+              if (data.parsedData.expensesByMonth) {
+                for (const [m, list] of Object.entries(data.parsedData.expensesByMonth)) {
+                  window.localStorage.setItem(LS_PREFIX + 'expenses:' + m, JSON.stringify(list));
+                }
+              }
+              if (data.parsedData.budgetsByMonth) {
+                for (const [m, b] of Object.entries(data.parsedData.budgetsByMonth)) {
+                  window.localStorage.setItem(LS_PREFIX + 'budget:' + m, JSON.stringify(b));
+                }
+              }
+              if (data.parsedData.udhariRecords) {
+                window.localStorage.setItem(LS_PREFIX + 'udhari:records', JSON.stringify(data.parsedData.udhariRecords));
+              }
+            }
+
+            // Force resync to MongoDB if connected
+            window.localStorage.removeItem('et_synced_to_mongodb_v2');
+            await checkAndSyncData(false);
+            await loadMonth();
+            await loadUdhari();
+
+            showToast('🎉 Successfully imported backup into phone storage!');
+          } catch (err) {
+            console.error('Import parse error:', err);
+            showToast('Error reading backup file: ' + err.message, true);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      const headerExportBtn = document.getElementById('headerExportBtn');
+      if (headerExportBtn) headerExportBtn.addEventListener('click', exportLocalStorageToJson);
+
+      const footerExportBtn = document.getElementById('footerExportBtn');
+      if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
+
+      const importJsonInput = document.getElementById('importJsonInput');
+      if (importJsonInput) {
+        importJsonInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files[0]) {
+            importLocalStorageFromJson(e.target.files[0]);
+            e.target.value = '';
+          }
+        });
+      }
+
       async function storageGet(key) {
+        // 1. Try MongoDB API if connected
+        if (isMongoConnected) {
+          try {
+            if (key.startsWith('expenses:')) {
+              const m = key.replace('expenses:', '');
+              const res = await fetch('/api/expenses/' + encodeURIComponent(m));
+              if (res.ok) {
+                const data = await res.json();
+                const str = JSON.stringify(data.expenses || []);
+                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                return { value: str };
+              }
+            } else if (key.startsWith('budget:')) {
+              const m = key.replace('budget:', '');
+              const res = await fetch('/api/budget/' + encodeURIComponent(m));
+              if (res.ok) {
+                const data = await res.json();
+                const str = JSON.stringify(data.budget || 0);
+                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                return { value: str };
+              }
+            } else if (key === 'udhari:records') {
+              const res = await fetch('/api/udhari');
+              if (res.ok) {
+                const data = await res.json();
+                const str = JSON.stringify(data.records || []);
+                if (hasLocalStorage) window.localStorage.setItem(LS_PREFIX + key, str);
+                return { value: str };
+              }
+            }
+          } catch (e) {
+            console.warn('API get error, falling back to local cache', e);
+          }
+        }
+
+        // 2. Fallback to Claude window.storage if present
         if (hasRealStorage) {
           try { return await window.storage.get(key); } catch (e) { return null; }
         }
+
+        // 3. Fallback to localStorage
         if (hasLocalStorage) {
           const raw = window.localStorage.getItem(LS_PREFIX + key);
           return raw !== null ? { value: raw } : null;
         }
+
         return Object.prototype.hasOwnProperty.call(memoryStore, key) ? { value: memoryStore[key] } : null;
       }
+
       async function storageSet(key, value) {
-        if (hasRealStorage) {
-          try { await window.storage.set(key, value); return true; } catch (e) { return false; }
-        }
+        // 1. Keep local storage up to date for instant offline fallback
         if (hasLocalStorage) {
-          try { window.localStorage.setItem(LS_PREFIX + key, value); return true; } catch (e) { return false; }
+          try { window.localStorage.setItem(LS_PREFIX + key, value); } catch (e) { }
         }
         memoryStore[key] = value;
+
+        if (hasRealStorage) {
+          try { await window.storage.set(key, value); } catch (e) { }
+        }
+
+        // 2. Persist to MongoDB API if connected
+        if (isMongoConnected) {
+          try {
+            if (key.startsWith('expenses:')) {
+              const m = key.replace('expenses:', '');
+              const parsed = JSON.parse(value);
+              const res = await fetch('/api/expenses/' + encodeURIComponent(m), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ expenses: parsed })
+              });
+              return res.ok;
+            } else if (key.startsWith('budget:')) {
+              const m = key.replace('budget:', '');
+              const parsed = JSON.parse(value);
+              const res = await fetch('/api/budget/' + encodeURIComponent(m), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: parsed })
+              });
+              return res.ok;
+            } else if (key === 'udhari:records') {
+              const parsed = JSON.parse(value);
+              const res = await fetch('/api/udhari', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ records: parsed })
+              });
+              return res.ok;
+            }
+          } catch (e) {
+            console.warn('API set error, saved to local cache', e);
+            return true;
+          }
+        }
+
         return true;
       }
 
@@ -2505,16 +3126,16 @@
               '<div class="udhari-edit-grid">' +
               '<input type="text" class="edit-person" value="' + escapeHtml(r.person) + '" placeholder="Person name">' +
               '<select class="edit-type">' +
-                '<option value="lent" ' + (r.type === 'lent' ? 'selected' : '') + '>Lent (Given)</option>' +
-                '<option value="borrowed" ' + (r.type === 'borrowed' ? 'selected' : '') + '>Borrowed (Taken)</option>' +
+              '<option value="lent" ' + (r.type === 'lent' ? 'selected' : '') + '>Lent (Given)</option>' +
+              '<option value="borrowed" ' + (r.type === 'borrowed' ? 'selected' : '') + '>Borrowed (Taken)</option>' +
               '</select>' +
               '<input type="number" class="edit-amount" value="' + r.amount + '" min="1" placeholder="Amount">' +
               '<input type="date" class="edit-date" value="' + r.date + '">' +
               '<input type="date" class="edit-duedate" value="' + (r.dueDate || '') + '" title="Due date">' +
               '<input type="text" class="edit-notes" value="' + escapeHtml(r.notes || '') + '" placeholder="Notes">' +
               '<div class="edit-actions">' +
-                '<button class="row-btn save-u-edit" data-id="' + r.id + '" aria-label="Save">&#10003;</button>' +
-                '<button class="row-btn cancel-u-edit" aria-label="Cancel">&#10005;</button>' +
+              '<button class="row-btn save-u-edit" data-id="' + r.id + '" aria-label="Save">&#10003;</button>' +
+              '<button class="row-btn cancel-u-edit" aria-label="Cancel">&#10005;</button>' +
               '</div>' +
               '</div>' +
               '</td></tr>';
@@ -2547,21 +3168,21 @@
           return '<tr class="' + (r.settled ? 'settled-row' : '') + '">' +
             '<td class="date">' + dLabel + '</td>' +
             '<td class="desc">' +
-              '<div>' +
-                '<span class="person-name">' + escapeHtml(r.person) + '</span> ' +
-                '<span class="badge-type ' + typeClass + '">' + typeLabel + '</span> ' +
-                statusBadge +
-              '</div>' +
-              (r.notes ? '<div class="person-notes">' + escapeHtml(r.notes) + '</div>' : '') +
-              dueHtml +
+            '<div>' +
+            '<span class="person-name">' + escapeHtml(r.person) + '</span> ' +
+            '<span class="badge-type ' + typeClass + '">' + typeLabel + '</span> ' +
+            statusBadge +
+            '</div>' +
+            (r.notes ? '<div class="person-notes">' + escapeHtml(r.notes) + '</div>' : '') +
+            dueHtml +
             '</td>' +
             '<td class="num" style="color:' + (isLent ? 'var(--green)' : 'var(--maroon)') + ';">' +
-              (isLent ? '+' : '-') + fmtINR(r.amount) +
+            (isLent ? '+' : '-') + fmtINR(r.amount) +
             '</td>' +
             '<td class="actions">' +
-              '<button class="row-btn ' + settleBtnClass + '" data-id="' + r.id + '" title="' + settleBtnTitle + '" aria-label="' + settleBtnTitle + '">' + settleIcon + '</button>' +
-              '<button class="row-btn edit-u-btn" data-id="' + r.id + '" title="Edit record" aria-label="Edit record">&#9998;</button>' +
-              '<button class="row-btn del-u-btn del-btn" data-id="' + r.id + '" title="Delete record" aria-label="Delete record">&#10005;</button>' +
+            '<button class="row-btn ' + settleBtnClass + '" data-id="' + r.id + '" title="' + settleBtnTitle + '" aria-label="' + settleBtnTitle + '">' + settleIcon + '</button>' +
+            '<button class="row-btn edit-u-btn" data-id="' + r.id + '" title="Edit record" aria-label="Edit record">&#9998;</button>' +
+            '<button class="row-btn del-u-btn del-btn" data-id="' + r.id + '" title="Delete record" aria-label="Delete record">&#10005;</button>' +
             '</td>' +
             '</tr>';
         }).join('');
@@ -2728,8 +3349,12 @@
         }
       });
 
-      loadMonth();
-      loadUdhari();
+      // Startup: check MongoDB connection, auto-sync localStorage data, then load views
+      (async function init() {
+        await checkAndSyncData();
+        await loadMonth();
+        await loadUdhari();
+      })();
     })();
   </script>
 
