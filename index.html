@@ -1778,6 +1778,16 @@
       }
     }
   </style>
+
+  <!-- jsPDF & AutoTable for High-Quality PDF Statement Generation (Local with CDN fallback) -->
+  <script src="libs/jspdf.umd.min.js"></script>
+  <script src="libs/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    if (typeof window.jspdf === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"><\/script>');
+    }
+  </script>
 </head>
 
 <body>
@@ -1822,9 +1832,9 @@
           <span class="db-dot" id="dbDot"></span>
           <span id="dbStatusText">Checking DB…</span>
         </div>
-        <button type="button" class="export-btn" id="headerExportBtn" title="Export phone's localStorage to JSON file">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Export JSON</span>
+        <button type="button" class="export-btn primary" id="headerDownloadPdfBtn" title="Download well-formatted PDF statement for this month">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>Download PDF</span>
         </button>
         <div class="month-nav">
           <button id="prevMonth" aria-label="Previous month">&#8249;</button>
@@ -2059,19 +2069,23 @@
     </div>
 
 
-    <!-- ============ DEVICE / PHONE BACKUP & EXPORT ============ -->
+    <!-- ============ REPORTS & DEVICE BACKUP ============ -->
     <div class="backup-bar">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 24px; line-height: 1;">📱</span>
+        <span style="font-size: 24px; line-height: 1;">📄</span>
         <div>
-          <strong style="font-size: 13.5px; color: var(--navy); display: block;">Device Storage & Backup (JSON)</strong>
-          <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">Export this phone's localStorage (all expenses, budgets & udhari records) to a portable JSON file.</div>
+          <strong style="font-size: 13.5px; color: var(--navy); display: block;">Reports & Device Backup</strong>
+          <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">Download well-formatted PDF statement for this month or manage raw JSON backups.</div>
         </div>
       </div>
       <div class="backup-actions" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <button type="button" class="export-btn primary" id="footerExportBtn" title="Download JSON backup">
+        <button type="button" class="export-btn primary" id="footerDownloadPdfBtn" title="Download well-formatted PDF statement for this month">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>Download PDF Statement</span>
+        </button>
+        <button type="button" class="export-btn" id="footerExportBtn" title="Export raw phone localStorage to JSON file">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Export LocalStorage (JSON)</span>
+          <span>Export JSON</span>
         </button>
         <label class="export-btn" style="cursor: pointer;" title="Import and restore a JSON backup file">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -2410,8 +2424,449 @@
         reader.readAsText(file);
       }
 
-      const headerExportBtn = document.getElementById('headerExportBtn');
-      if (headerExportBtn) headerExportBtn.addEventListener('click', exportLocalStorageToJson);
+      // ==========================================
+      // ---------- WELL-FORMATTED PDF STATEMENT --
+      // ==========================================
+      function renderPdfTable(doc, options) {
+        if (typeof doc.autoTable === 'function') {
+          doc.autoTable(options);
+        } else if (window.jspdf && typeof window.jspdf.autoTable === 'function') {
+          window.jspdf.autoTable(doc, options);
+        } else if (typeof window.autoTable === 'function') {
+          window.autoTable(doc, options);
+        }
+      }
+
+      async function ensureJsPdfLoaded() {
+        let jspdfModule = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+        if (jspdfModule) return jspdfModule;
+
+        showToast('Loading PDF generator…');
+        await new Promise((resolve) => {
+          const s1 = document.createElement('script');
+          s1.src = 'libs/jspdf.umd.min.js';
+          s1.onload = () => {
+            const s2 = document.createElement('script');
+            s2.src = 'libs/jspdf.plugin.autotable.min.js';
+            s2.onload = () => resolve();
+            s2.onerror = () => resolve();
+            document.head.appendChild(s2);
+          };
+          s1.onerror = () => {
+            const c1 = document.createElement('script');
+            c1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            c1.onload = () => {
+              const c2 = document.createElement('script');
+              c2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+              c2.onload = () => resolve();
+              c2.onerror = () => resolve();
+              document.head.appendChild(c2);
+            };
+            c1.onerror = () => resolve();
+            document.head.appendChild(c1);
+          };
+          document.head.appendChild(s1);
+        });
+
+        return window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+      }
+
+      async function downloadMonthlyPdfStatement(e) {
+        const triggerBtn = e && e.currentTarget ? e.currentTarget : null;
+        let originalHtml = '';
+        if (triggerBtn) {
+          originalHtml = triggerBtn.innerHTML;
+          triggerBtn.disabled = true;
+          triggerBtn.style.opacity = '0.75';
+          triggerBtn.innerHTML = '<span>⏳ Downloading…</span>';
+        }
+
+        try {
+          const jspdfModule = await ensureJsPdfLoaded();
+          if (!jspdfModule) {
+            showToast('Unable to load PDF generator library. Please check your connection.', true);
+            if (triggerBtn) {
+              triggerBtn.innerHTML = originalHtml;
+              triggerBtn.disabled = false;
+              triggerBtn.style.opacity = '';
+            }
+            return;
+          }
+
+          showToast('Generating and downloading statement PDF…');
+          const doc = new jspdfModule({
+            orientation: 'portrait',
+            unit: 'pt',
+            format: 'a4'
+          });
+
+          const pageWidth = doc.internal.pageSize.getWidth(); // 595.28 pt
+          const pageHeight = doc.internal.pageSize.getHeight(); // 841.89 pt
+          const margin = 36;
+          const contentWidth = pageWidth - margin * 2;
+
+          const monthLabelStr = fmtMonthLabel(current);
+          const monthKeyStr = monthKey(current);
+
+          // --- 1. TOP HEADER BANNER ---
+          doc.setFillColor(21, 40, 64); // Navy deep #152840
+          doc.rect(0, 0, pageWidth, 74, 'F');
+
+          // Accent Green Line
+          doc.setFillColor(46, 155, 92); // Emerald #2E9B5C
+          doc.rect(0, 74, pageWidth, 4, 'F');
+
+          // Brand Name & Title
+          doc.setTextColor(255, 255, 255);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(20);
+          doc.text('ExpenseTrackr', margin, 38);
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(190, 205, 225);
+          doc.text('MONTHLY EXPENSE STATEMENT & FINANCIAL REPORT', margin, 54);
+
+          // Right Header: Month & Generated Date
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(14);
+          doc.setTextColor(255, 255, 255);
+          doc.text(monthLabelStr.toUpperCase(), pageWidth - margin, 38, { align: 'right' });
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8.5);
+          doc.setTextColor(190, 205, 225);
+          const genDate = new Date().toLocaleDateString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+          doc.text(`Generated: ${genDate}`, pageWidth - margin, 54, { align: 'right' });
+
+          let currentY = 98;
+
+          // --- 2. EXECUTIVE SUMMARY METRIC CARDS ---
+          const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+          const remaining = budget > 0 ? (budget - totalSpent) : 0;
+          const isOver = budget > 0 && totalSpent > budget;
+
+          const cardWidth = (contentWidth - 16) / 3;
+          const cardHeight = 52;
+
+          // Card 1: Monthly Budget
+          doc.setFillColor(245, 247, 250);
+          doc.setDrawColor(218, 224, 233);
+          doc.roundedRect(margin, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(7.5);
+          doc.setTextColor(91, 100, 114);
+          doc.text('MONTHLY BUDGET', margin + 12, currentY + 18);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(13.5);
+          doc.setTextColor(31, 58, 95);
+          doc.text(budget > 0 ? `Rs. ${budget.toLocaleString('en-IN')}` : 'Not Set', margin + 12, currentY + 38);
+
+          // Card 2: Total Spent
+          const c2X = margin + cardWidth + 8;
+          doc.setFillColor(245, 247, 250);
+          doc.setDrawColor(218, 224, 233);
+          doc.roundedRect(c2X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(7.5);
+          doc.setTextColor(91, 100, 114);
+          doc.text('TOTAL SPENT (' + expenses.length + ' TXNS)', c2X + 12, currentY + 18);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(13.5);
+          doc.setTextColor(isOver ? 160 : 31, isOver ? 30 : 58, isOver ? 30 : 95);
+          doc.text(`Rs. ${totalSpent.toLocaleString('en-IN')}`, c2X + 12, currentY + 38);
+
+          // Card 3: Remaining Balance / Savings
+          const c3X = margin + (cardWidth + 8) * 2;
+          doc.setFillColor(isOver ? 254 : (budget > 0 ? 242 : 245), isOver ? 242 : (budget > 0 ? 249 : 247), isOver ? 242 : (budget > 0 ? 244 : 250));
+          doc.setDrawColor(isOver ? 230 : (budget > 0 ? 180 : 218), isOver ? 160 : (budget > 0 ? 220 : 224), isOver ? 160 : (budget > 0 ? 195 : 233));
+          doc.roundedRect(c3X, currentY, cardWidth, cardHeight, 4, 4, 'FD');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(7.5);
+          doc.setTextColor(isOver ? 160 : (budget > 0 ? 30 : 91), isOver ? 30 : (budget > 0 ? 120 : 100), isOver ? 30 : (budget > 0 ? 60 : 114));
+          doc.text(budget > 0 ? (isOver ? 'OVER BUDGET BY' : 'REMAINING SAVINGS') : 'REMAINING STATUS', c3X + 12, currentY + 18);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(13.5);
+          doc.setTextColor(isOver ? 160 : (budget > 0 ? 46 : 91), isOver ? 30 : (budget > 0 ? 130 : 100), isOver ? 30 : (budget > 0 ? 70 : 114));
+          const remText = budget > 0 ? `Rs. ${Math.abs(remaining).toLocaleString('en-IN')}` : 'No Budget Set';
+          doc.text(remText, c3X + 12, currentY + 38);
+
+          currentY += cardHeight + 18;
+
+          // --- 3. CATEGORY SPENDING BREAKDOWN TABLE ---
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10.5);
+          doc.setTextColor(21, 40, 64);
+          doc.text('Spending by Category', margin, currentY);
+          currentY += 6;
+
+          const catTotals = {};
+          expenses.forEach(e => {
+            catTotals[e.category] = (catTotals[e.category] || 0) + Number(e.amount);
+          });
+          const catSorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+
+          const catTableBody = catSorted.length > 0 ? catSorted.map(([cat, amt]) => {
+            const pct = totalSpent > 0 ? ((amt / totalSpent) * 100).toFixed(1) + '%' : '0%';
+            return [cat, `Rs. ${amt.toLocaleString('en-IN')}`, pct];
+          }) : [['No expenses recorded for this month', 'Rs. 0', '0%']];
+
+          renderPdfTable(doc, {
+            startY: currentY,
+            head: [['Category', 'Amount (INR)', '% of Total']],
+            body: catTableBody,
+            theme: 'grid',
+            headStyles: {
+              fillColor: [31, 58, 95],
+              textColor: [255, 255, 255],
+              fontStyle: 'bold',
+              fontSize: 8
+            },
+            styles: {
+              fontSize: 7.5,
+              cellPadding: 4,
+              textColor: [30, 40, 55],
+              lineColor: [225, 230, 238]
+            },
+            columnStyles: {
+              0: { cellWidth: 240 },
+              1: { halign: 'right', fontStyle: 'bold', cellWidth: 140 },
+              2: { halign: 'right', cellWidth: 143.28 }
+            },
+            margin: { left: margin, right: margin }
+          });
+
+          currentY = doc.lastAutoTable.finalY + 20;
+
+          // --- 4. DETAILED TRANSACTION LEDGER ---
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10.5);
+          doc.setTextColor(21, 40, 64);
+          doc.text(`Transaction Ledger (${expenses.length} items)`, margin, currentY);
+          currentY += 6;
+
+          const sortedExpenses = expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
+          const ledgerRows = sortedExpenses.length > 0 ? sortedExpenses.map((e, idx) => {
+            const d = new Date(e.date + 'T00:00:00');
+            const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : e.date;
+            return [
+              idx + 1,
+              dStr,
+              CATEGORY_LABELS[e.category] || e.category || 'Other',
+              e.description || '',
+              `Rs. ${Number(e.amount).toLocaleString('en-IN')}`
+            ];
+          }) : [['-', '-', 'No transactions', 'No entries logged this month', 'Rs. 0']];
+
+          renderPdfTable(doc, {
+            startY: currentY,
+            head: [['#', 'Date', 'Category', 'Description', 'Amount (INR)']],
+            body: ledgerRows,
+            foot: [['', '', '', 'Total Expenditure', `Rs. ${totalSpent.toLocaleString('en-IN')}`]],
+            theme: 'striped',
+            headStyles: {
+              fillColor: [21, 40, 64],
+              textColor: [255, 255, 255],
+              fontStyle: 'bold',
+              fontSize: 8
+            },
+            footStyles: {
+              fillColor: [240, 243, 248],
+              textColor: [21, 40, 64],
+              fontStyle: 'bold',
+              fontSize: 8.5,
+              halign: 'right'
+            },
+            styles: {
+              fontSize: 7.5,
+              cellPadding: 4.5,
+              textColor: [30, 40, 55],
+              lineColor: [230, 234, 240]
+            },
+            alternateRowStyles: {
+              fillColor: [250, 251, 253]
+            },
+            columnStyles: {
+              0: { halign: 'center', cellWidth: 26 },
+              1: { cellWidth: 74 },
+              2: { cellWidth: 95 },
+              3: { cellWidth: 228.28 },
+              4: { halign: 'right', fontStyle: 'bold', cellWidth: 100 }
+            },
+            margin: { left: margin, right: margin }
+          });
+
+          currentY = doc.lastAutoTable.finalY + 20;
+
+          // --- 5. BORROWING & LENDING (UDHARI) SECTION ---
+          if (udhariRecords && udhariRecords.length > 0) {
+            if (currentY > pageHeight - 140) {
+              doc.addPage();
+              currentY = 40;
+            }
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10.5);
+            doc.setTextColor(21, 40, 64);
+            doc.text(`Borrowing & Lending Khata (Udhari - ${udhariRecords.length} records)`, margin, currentY);
+            currentY += 6;
+
+            let totalLent = 0;
+            let totalBorrowed = 0;
+            const udhariRows = udhariRecords.map((u, idx) => {
+              const amt = Number(u.amount);
+              if (u.type === 'lent') totalLent += amt;
+              else totalBorrowed += amt;
+              const typeLabel = u.type === 'lent' ? 'Lent (To Receive)' : 'Borrowed (To Pay)';
+              const statusLabel = u.settled ? 'Settled' : 'Pending';
+              const d = new Date(u.date + 'T00:00:00');
+              const dStr = !isNaN(d) ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : u.date;
+              return [
+                idx + 1,
+                dStr,
+                u.person,
+                typeLabel,
+                u.notes || '-',
+                statusLabel,
+                (u.type === 'lent' ? '+Rs. ' : '-Rs. ') + amt.toLocaleString('en-IN')
+              ];
+            });
+
+            const netUdhari = totalLent - totalBorrowed;
+
+            renderPdfTable(doc, {
+              startY: currentY,
+              head: [['#', 'Date', 'Person', 'Type', 'Notes', 'Status', 'Amount (INR)']],
+              body: udhariRows,
+              foot: [
+                ['', '', '', '', 'Total Lent: Rs. ' + totalLent.toLocaleString('en-IN') + '  |  Borrowed: Rs. ' + totalBorrowed.toLocaleString('en-IN'), 'Net Balance:', (netUdhari >= 0 ? '+Rs. ' : '-Rs. ') + Math.abs(netUdhari).toLocaleString('en-IN')]
+              ],
+              theme: 'grid',
+              headStyles: {
+                fillColor: [47, 111, 94],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 8
+              },
+              footStyles: {
+                fillColor: [240, 245, 242],
+                textColor: [21, 40, 64],
+                fontStyle: 'bold',
+                fontSize: 8
+              },
+              styles: {
+                fontSize: 7.5,
+                cellPadding: 4,
+                textColor: [30, 40, 55],
+                lineColor: [225, 230, 235]
+              },
+              columnStyles: {
+                0: { halign: 'center', cellWidth: 24 },
+                1: { cellWidth: 64 },
+                2: { cellWidth: 80, fontStyle: 'bold' },
+                3: { cellWidth: 90 },
+                4: { cellWidth: 135.28 },
+                5: { cellWidth: 50, halign: 'center' },
+                6: { halign: 'right', fontStyle: 'bold', cellWidth: 80 }
+              },
+              margin: { left: margin, right: margin }
+            });
+          }
+
+          // --- RUNNING FOOTER ON ALL PAGES ---
+          const totalPages = doc.internal.getNumberOfPages();
+          for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(140, 150, 165);
+            doc.text(
+              `ExpenseTrackr Statement · All figures in Indian Rupees (INR) · Confidential`,
+              margin,
+              pageHeight - 16
+            );
+            doc.text(
+              `Page ${i} of ${totalPages}`,
+              pageWidth - margin,
+              pageHeight - 16,
+              { align: 'right' }
+            );
+            doc.setDrawColor(226, 229, 234);
+            doc.line(margin, pageHeight - 24, pageWidth - margin, pageHeight - 24);
+          }
+
+          const fileName = `ExpenseTrackr-Statement-${monthKeyStr}.pdf`;
+
+          // Automatic download:
+          // 1. Generate Blob from jsPDF output
+          let pdfBlob;
+          try {
+            pdfBlob = doc.output('blob');
+          } catch (blobErr) {
+            const arrBuffer = doc.output('arraybuffer');
+            pdfBlob = new Blob([arrBuffer], { type: 'application/pdf' });
+          }
+
+          // 2. Trigger instant direct browser download via synthetic anchor click
+          let autoDownloaded = false;
+          if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+            try {
+              const blobUrl = URL.createObjectURL(pdfBlob);
+              const downloadLink = document.createElement('a');
+              downloadLink.href = blobUrl;
+              downloadLink.download = fileName;
+              downloadLink.setAttribute('download', fileName);
+              downloadLink.style.display = 'none';
+              document.body.appendChild(downloadLink);
+
+              // Immediate synthetic click to trigger automatic download
+              downloadLink.click();
+              autoDownloaded = true;
+
+              setTimeout(() => {
+                if (downloadLink.parentNode) {
+                  downloadLink.parentNode.removeChild(downloadLink);
+                }
+                URL.revokeObjectURL(blobUrl);
+              }, 2500);
+            } catch (anchorErr) {
+              console.warn('Anchor auto-download failed, fallback to doc.save:', anchorErr);
+            }
+          }
+
+          // 3. Fallback to doc.save if anchor creation was blocked
+          if (!autoDownloaded) {
+            doc.save(fileName);
+          }
+
+          if (triggerBtn) {
+            triggerBtn.innerHTML = '<span>✓ Downloaded!</span>';
+            setTimeout(() => {
+              triggerBtn.innerHTML = originalHtml;
+              triggerBtn.disabled = false;
+              triggerBtn.style.opacity = '';
+            }, 2000);
+          }
+
+          showToast(`📄 Automatically downloaded ${fileName}!`);
+        } catch (err) {
+          console.error('PDF Generation Error:', err);
+          showToast('Failed to generate PDF: ' + err.message, true);
+          if (triggerBtn) {
+            triggerBtn.innerHTML = originalHtml;
+            triggerBtn.disabled = false;
+            triggerBtn.style.opacity = '';
+          }
+        }
+      }
+
+      const headerDownloadPdfBtn = document.getElementById('headerDownloadPdfBtn');
+      if (headerDownloadPdfBtn) headerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
+
+      const footerDownloadPdfBtn = document.getElementById('footerDownloadPdfBtn');
+      if (footerDownloadPdfBtn) footerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
 
       const footerExportBtn = document.getElementById('footerExportBtn');
       if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
