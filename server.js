@@ -4,12 +4,29 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+const os = require('os');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/expensetracker';
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// ---------- Helper: Get Local Network IPv4 Address for Multi-Device Access ----------
+function getLocalIp() {
+  try {
+    const ifaces = os.networkInterfaces();
+    for (const name of Object.keys(ifaces)) {
+      for (const net of ifaces[name]) {
+        if (net.family === 'IPv4' && !net.internal && !net.address.startsWith('192.168.56.') && !net.address.startsWith('169.254.')) {
+          return net.address;
+        }
+      }
+    }
+  } catch (e) { }
+  return '127.0.0.1';
+}
 
 // ---------- Mongoose Schemas & Models with User ID ----------
 const expenseSchema = new mongoose.Schema({
@@ -52,37 +69,49 @@ const Expense = mongoose.model('Expense', expenseSchema);
 const Budget = mongoose.model('Budget', budgetSchema);
 const Udhari = mongoose.model('Udhari', udhariSchema);
 
+// ---------- Helper: Clean & Normalize Username / User ID ----------
+function normalizeUsername(raw) {
+  if (!raw) return 'default';
+  let str = String(raw).trim().toLowerCase();
+  // Strip special characters except alphanumeric, hyphen, underscore
+  str = str.replace(/[^a-z0-9_-]/g, '');
+  if (!str) return 'default';
+  // Map legacy usr_sahil_primary to sahil so cross-device sync works seamlessly
+  if (str === 'usr_sahil_primary') return 'sahil';
+  return str;
+}
+
 // ---------- Helper: Extract User ID from Request ----------
 function getUserId(req) {
-  const headerId = req.headers['x-user-id'];
-  const queryId = req.query ? req.query.userId : null;
-  const bodyId = req.body && typeof req.body === 'object' ? req.body.userId : null;
-  const raw = headerId || queryId || bodyId || 'usr_default';
-  return String(raw).trim();
+  const headerId = req.headers['x-user-id'] || req.headers['x-username'];
+  const queryId = req.query ? (req.query.userId || req.query.username) : null;
+  const bodyId = req.body && typeof req.body === 'object' ? (req.body.userId || req.body.username) : null;
+  const raw = headerId || queryId || bodyId || 'default';
+  return normalizeUsername(raw);
 }
 
 // ---------- Zero Data Loss: Claim Legacy Unassigned Records ----------
 async function claimLegacyDataIfNeeded(userId) {
-  if (!userId || userId === 'usr_default') return;
+  if (!userId || userId === 'default' || userId === 'usr_default') return;
   try {
     const unassignedExpenses = await Expense.countDocuments({
-      $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }]
+      $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }]
     });
 
     if (unassignedExpenses > 0) {
       const userExpenses = await Expense.countDocuments({ userId });
       if (userExpenses === 0) {
-        console.log(`[Migration] Attributing ${unassignedExpenses} legacy expenses to primary user: ${userId}`);
+        console.log(`[Migration] Attributing ${unassignedExpenses} legacy expenses to user: ${userId}`);
         await Expense.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }] },
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
           { $set: { userId } }
         );
         await Budget.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }] },
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
           { $set: { userId } }
         );
         await Udhari.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }] },
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
           { $set: { userId } }
         );
         console.log(`[Migration] Completed successfully for user: ${userId}`);
@@ -97,6 +126,21 @@ async function claimLegacyDataIfNeeded(userId) {
 mongoose.connect(MONGODB_URI)
   .then(async () => {
     console.log(`Connected to MongoDB successfully: ${MONGODB_URI}`);
+
+    // Automatically migrate legacy usr_sahil_primary records to sahil
+    try {
+      const legacySahil = await Expense.countDocuments({ userId: 'usr_sahil_primary' });
+      if (legacySahil > 0) {
+        console.log(`[Migration] Normalizing ${legacySahil} legacy records from 'usr_sahil_primary' to 'sahil'...`);
+        await Expense.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
+        await Budget.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
+        await Udhari.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
+        console.log(`[Migration] Legacy migration complete. All records attributed to 'sahil'.`);
+      }
+    } catch (e) {
+      console.warn('[Migration Notice]:', e.message);
+    }
+
     try {
       // Drop legacy single unique index month_1 on budgets if it exists
       await mongoose.connection.collection('budgets').dropIndex('month_1');
@@ -125,20 +169,89 @@ mongoose.connect(MONGODB_URI)
 
 // ---------- API Routes ----------
 
-// 1. Health, Connection & User Status
+// 1. Health, Connection & User Status with Multi-Device Network URL
 app.get('/api/status', async (req, res) => {
   const isConnected = mongoose.connection.readyState === 1;
   const userId = getUserId(req);
   if (isConnected) {
     await claimLegacyDataIfNeeded(userId);
   }
+  const localIp = getLocalIp();
   res.json({
     status: 'ok',
     connected: isConnected,
     userId: userId,
     database: isConnected ? mongoose.connection.name : null,
+    networkIp: localIp,
+    networkPort: PORT,
+    networkUrl: `http://${localIp}:${PORT}`,
     uri: MONGODB_URI.replace(/\/\/.*@/, '//***@')
   });
+});
+
+// 1b. User Summary & Month Discovery (Finds all active months for this username across devices)
+app.get('/api/user/summary', async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    await claimLegacyDataIfNeeded(userId);
+
+    const expCount = await Expense.countDocuments({ userId });
+    const budCount = await Budget.countDocuments({ userId });
+    const udhariCount = await Udhari.countDocuments({ userId });
+
+    const distinctMonths = await Expense.distinct('month', { userId });
+    distinctMonths.sort().reverse();
+
+    res.json({
+      success: true,
+      userId,
+      totalExpenses: expCount,
+      totalBudgets: budCount,
+      totalUdharis: udhariCount,
+      monthsWithData: distinctMonths,
+      latestMonth: distinctMonths[0] || null
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 1c. Get All Data for User (Instant full restore when switching device / username)
+app.get('/api/user/all-data', async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    await claimLegacyDataIfNeeded(userId);
+
+    const expenses = await Expense.find({ userId }).sort({ date: -1, createdAt: -1 });
+    const budgets = await Budget.find({ userId });
+    const udharis = await Udhari.find({ userId }).sort({ date: -1, createdAt: -1 });
+
+    const monthlyExpenses = {};
+    for (const e of expenses) {
+      if (!monthlyExpenses[e.month]) monthlyExpenses[e.month] = [];
+      monthlyExpenses[e.month].push(e);
+    }
+
+    const monthlyBudgets = {};
+    for (const b of budgets) {
+      monthlyBudgets[b.month] = b.amount;
+    }
+
+    res.json({
+      success: true,
+      userId,
+      counts: {
+        expenses: expenses.length,
+        budgets: budgets.length,
+        udhari: udharis.length
+      },
+      monthlyExpenses,
+      monthlyBudgets,
+      udhariRecords: udharis
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // 2. Expenses by Month & User
@@ -395,7 +508,10 @@ app.get('*', (req, res) => {
 });
 
 // ---------- Start Server ----------
-app.listen(PORT, () => {
-  console.log(`ExpenseTrackr server running on http://localhost:${PORT}`);
+const localIp = getLocalIp();
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`ExpenseTrackr server running:`);
+  console.log(`  - Local:   http://localhost:${PORT}`);
+  console.log(`  - Network: http://${localIp}:${PORT} (Open this on your phone/tablet/other laptop)`);
   console.log(`Connected database: ${MONGODB_URI}`);
 });
