@@ -2877,9 +2877,9 @@
             <div class="step-item">
               <span class="step-num">A</span>
               <div class="step-text">
-                <span>Open this address in your browser on your phone/laptop:</span>
+                <span>Connect your phone/laptop to the <strong>same Wi-Fi network</strong>, then open this exact address:</span>
                 <div class="network-url-container">
-                  <code id="modalNetworkUrl">http://localhost:3000</code>
+                  <code id="modalNetworkUrl">http://192.168.0.107:3000</code>
                   <button type="button" class="btn-copy-chip" id="modalCopyUrlBtn">Copy Link</button>
                 </div>
               </div>
@@ -2887,7 +2887,7 @@
             <div class="step-item">
               <span class="step-num">B</span>
               <div class="step-text">
-                <span>Use the exact same username:</span>
+                <span>Log in with the exact same username:</span>
                 <div class="username-pill-row">
                   <span class="username-code-pill" id="modalCodeUsername">sahil</span>
                   <span class="pill-note">&mdash; all expenses, budgets &amp; udhari load automatically!</span>
@@ -2915,6 +2915,24 @@
           </form>
           <div class="modal-switch-feedback" id="modalSwitchFeedback"></div>
         </div>
+
+        <!-- Backend Server Connection Details (for custom networks / IP) -->
+        <details class="server-config-details" id="serverConfigDetails" style="margin-top: 14px; font-size: 12px; background: #FAFBFC; border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;">
+          <summary style="cursor: pointer; font-weight: 600; color: var(--navy); display: flex; align-items: center; justify-content: space-between; user-select: none;">
+            <span>⚙️ Server Connection Settings</span>
+            <span id="serverStatusBadge" style="font-size: 11px; padding: 2px 8px; border-radius: 99px; background: #DEF7EC; color: #03543F; font-weight: 700;">🟢 Online</span>
+          </summary>
+          <div style="margin-top: 10px;">
+            <p style="margin: 0 0 8px; color: var(--ink-soft); line-height: 1.45; font-size: 11.5px;">
+              If another device cannot connect automatically or is opening via a different URL, specify this computer's backend API URL:
+            </p>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="customServerInput" placeholder="http://192.168.0.107:3000" style="flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 12px; font-family: monospace; outline: none;">
+              <button type="button" id="saveServerBtn" class="btn-switch-submit" style="padding: 8px 14px; font-size: 11.5px;">Test &amp; Connect</button>
+            </div>
+            <div id="customServerFeedback" style="margin-top: 6px; font-size: 11.5px;"></div>
+          </div>
+        </details>
       </div>
     </div>
   </div>
@@ -2957,8 +2975,9 @@
       // ---- Multi-Device User Account Architecture & Normalization ----
       const USER_NAME_STORAGE_KEY = 'expensetrackr_username';
       const USER_ID_STORAGE_KEY = 'expensetrackr_user_id';
+      const API_SERVER_STORAGE_KEY = 'expensetrackr_api_server';
       let currentUserId = '';
-      let detectedNetworkUrl = window.location.origin;
+      let detectedNetworkUrl = 'http://192.168.0.107:3000';
 
       function normalizeUsername(raw) {
         if (!raw) return '';
@@ -3031,16 +3050,34 @@
       function getApiBaseCandidates() {
         const loc = window.location;
         const candidates = [];
-        // If served from backend port 3000 or production host
+
+        // 1. Check user-configured custom server URL if previously set in modal
+        try {
+          if (hasLocalStorage) {
+            const customServer = window.localStorage.getItem(API_SERVER_STORAGE_KEY);
+            if (customServer && customServer.trim()) {
+              candidates.push(customServer.trim().replace(/\/+$/, ''));
+            }
+          }
+        } catch (e) { }
+
+        // 2. If served from backend port 3000 or production host
         if (loc && loc.protocol.startsWith('http') && (loc.port === '3000' || !loc.port)) {
           candidates.push('');
         }
-        // Always include localhost:3000 and 127.0.0.1:3000 for file:/// and external dev ports (like 5500)
+
+        // 3. Always include localhost:3000 and 127.0.0.1:3000
         candidates.push('http://localhost:3000');
         candidates.push('http://127.0.0.1:3000');
+
+        // 4. If opened on LAN or custom hostname
         if (loc && loc.hostname && loc.hostname !== 'localhost' && loc.hostname !== '127.0.0.1') {
           candidates.push(`http://${loc.hostname}:3000`);
         }
+
+        // 5. Always include host machine Wi-Fi network IP for multi-device access
+        candidates.push('http://192.168.0.107:3000');
+
         return [...new Set(candidates)];
       }
 
@@ -3048,7 +3085,7 @@
         if (!path || path.startsWith('http://') || path.startsWith('https://')) return path;
         const base = determinedApiBase !== null ? determinedApiBase : (
           (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000'))
-            ? 'http://localhost:3000'
+            ? 'http://192.168.0.107:3000'
             : ''
         );
         return base + path;
@@ -3110,9 +3147,24 @@
           }
         }
 
+        const serverBadge = document.getElementById('serverStatusBadge');
+
         if (connectedData) {
           determinedApiBase = successfulBase;
           isMongoConnected = true;
+
+          if (connectedData.networkUrl) {
+            detectedNetworkUrl = connectedData.networkUrl;
+            const urlEl = document.getElementById('modalNetworkUrl');
+            if (urlEl) urlEl.textContent = connectedData.networkUrl;
+          }
+
+          if (serverBadge) {
+            serverBadge.textContent = '🟢 Online';
+            serverBadge.style.background = '#DEF7EC';
+            serverBadge.style.color = '#03543F';
+          }
+
           updateDbStatus(true, 'MongoDB Connected', `Database: ${connectedData.database || 'expensetracker'} · Account: ${connectedData.userId || currentUserId}`);
           updateUserIdUI();
 
@@ -3123,9 +3175,15 @@
         }
 
         isMongoConnected = false;
+        if (serverBadge) {
+          serverBadge.textContent = '🔴 Offline';
+          serverBadge.style.background = '#FDE8E8';
+          serverBadge.style.color = '#9B1C1C';
+        }
+
         const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
         const hint = isFileOrLiveServer
-          ? 'Server offline or unreachable at http://localhost:3000. Run "npm start" and open http://localhost:3000'
+          ? 'Server offline or unreachable. Ensure "node server.js" is running and open http://192.168.0.107:3000'
           : 'MongoDB unreachable · Saving to local browser storage';
         updateDbStatus(false, 'Local / Offline', hint);
         if (showUserFeedback) showToast('Working in offline local storage mode', true);
@@ -3834,8 +3892,19 @@
           input.value = currentUserId || 'sahil';
           setTimeout(() => input.select(), 100);
         }
+
+        const serverInput = document.getElementById('customServerInput');
+        if (serverInput) {
+          try {
+            const savedServer = hasLocalStorage ? window.localStorage.getItem(API_SERVER_STORAGE_KEY) : '';
+            serverInput.value = savedServer || detectedNetworkUrl || 'http://192.168.0.107:3000';
+          } catch (e) { }
+        }
+
         const feedback = document.getElementById('modalSwitchFeedback');
         if (feedback) feedback.textContent = '';
+        const serverFeedback = document.getElementById('customServerFeedback');
+        if (serverFeedback) serverFeedback.textContent = '';
       }
 
       function closeUserModal() {
@@ -3848,7 +3917,7 @@
       async function updateModalSummaryStats() {
         const metaEl = document.getElementById('modalUserMeta');
         const urlEl = document.getElementById('modalNetworkUrl');
-        if (urlEl) urlEl.textContent = detectedNetworkUrl || window.location.origin;
+        if (urlEl) urlEl.textContent = detectedNetworkUrl || 'http://192.168.0.107:3000';
 
         if (!isMongoConnected) {
           if (metaEl) metaEl.textContent = 'Working in Local Storage fallback mode (MongoDB offline)';
@@ -3875,20 +3944,30 @@
           if (!res.ok) return null;
           const data = await res.json();
           if (data && data.success) {
-            if (hasLocalStorage) {
-              if (data.monthlyExpenses) {
-                for (const [m, list] of Object.entries(data.monthlyExpenses)) {
-                  window.localStorage.setItem(`${LS_PREFIX}${username}:expenses:${m}`, JSON.stringify(list));
+            if (data.monthlyExpenses) {
+              for (const [m, list] of Object.entries(data.monthlyExpenses)) {
+                const k = `${LS_PREFIX}${username}:expenses:${m}`;
+                if (hasLocalStorage) {
+                  try { window.localStorage.setItem(k, JSON.stringify(list)); } catch (e) { }
                 }
+                memoryStore[k] = JSON.stringify(list);
               }
-              if (data.monthlyBudgets) {
-                for (const [m, b] of Object.entries(data.monthlyBudgets)) {
-                  window.localStorage.setItem(`${LS_PREFIX}${username}:budget:${m}`, JSON.stringify(b));
+            }
+            if (data.monthlyBudgets) {
+              for (const [m, b] of Object.entries(data.monthlyBudgets)) {
+                const k = `${LS_PREFIX}${username}:budget:${m}`;
+                if (hasLocalStorage) {
+                  try { window.localStorage.setItem(k, JSON.stringify(b)); } catch (e) { }
                 }
+                memoryStore[k] = JSON.stringify(b);
               }
-              if (data.udhariRecords) {
-                window.localStorage.setItem(`${LS_PREFIX}${username}:udhari:records`, JSON.stringify(data.udhariRecords));
+            }
+            if (data.udhariRecords) {
+              const k = `${LS_PREFIX}${username}:udhari:records`;
+              if (hasLocalStorage) {
+                try { window.localStorage.setItem(k, JSON.stringify(data.udhariRecords)); } catch (e) { }
               }
+              memoryStore[k] = JSON.stringify(data.udhariRecords);
             }
             return data;
           }
@@ -3911,6 +3990,11 @@
           feedback.textContent = `Connecting to account @${clean}…`;
         }
 
+        // Verify connection if offline
+        if (!isMongoConnected) {
+          await checkAndSyncData(false);
+        }
+
         currentUserId = clean;
         if (hasLocalStorage) {
           window.localStorage.setItem(USER_NAME_STORAGE_KEY, clean);
@@ -3918,11 +4002,24 @@
         }
         updateUserIdUI();
 
+        if (!isMongoConnected) {
+          if (feedback) {
+            feedback.style.color = '#B91C1C';
+            feedback.innerHTML = `⚠️ <strong>Server unreachable!</strong><br>Make sure <code>node server.js</code> is running on your host computer and this device is connected to the same Wi-Fi.`;
+          }
+          showToast(`Server offline · Switched @${clean} in local storage mode`, true);
+          await loadMonth();
+          await loadUdhari();
+          return false;
+        }
+
         // 1. Fetch full user data from MongoDB
         const allData = await loadAllUserDataFromMongo(clean);
 
-        // 2. If user has data in recent months but current month is empty, automatically navigate to latest month with data
+        // 2. If user has data in past months but current month is empty, automatically navigate to latest active month
+        let reportMsg = `Switched to @${clean}`;
         if (allData && allData.counts && allData.counts.expenses > 0) {
+          reportMsg = `Loaded ${allData.counts.expenses} expenses & ${allData.counts.udhari || 0} khata records for @${clean}!`;
           const currentK = monthKey(current);
           const currentHasExpenses = allData.monthlyExpenses && allData.monthlyExpenses[currentK] && allData.monthlyExpenses[currentK].length > 0;
           if (!currentHasExpenses && allData.monthlyExpenses) {
@@ -3939,7 +4036,7 @@
         await loadUdhari();
 
         closeUserModal();
-        showToast(`✨ Switched to @${clean} — all records loaded!`);
+        showToast(`✨ ${reportMsg}`);
         return true;
       }
 
@@ -3963,7 +4060,7 @@
       const modalCopyUrlBtn = document.getElementById('modalCopyUrlBtn');
       if (modalCopyUrlBtn) {
         modalCopyUrlBtn.addEventListener('click', async () => {
-          const url = detectedNetworkUrl || window.location.origin;
+          const url = detectedNetworkUrl || 'http://192.168.0.107:3000';
           try {
             if (navigator.clipboard && navigator.clipboard.writeText) {
               await navigator.clipboard.writeText(url);
@@ -3987,6 +4084,68 @@
           await loadUdhari();
           await updateModalSummaryStats();
           showToast('✨ Synced latest data from cloud!');
+        });
+      }
+
+      const saveServerBtn = document.getElementById('saveServerBtn');
+      if (saveServerBtn) {
+        saveServerBtn.addEventListener('click', async () => {
+          const serverInput = document.getElementById('customServerInput');
+          const serverFeedback = document.getElementById('customServerFeedback');
+          if (!serverInput) return;
+          let target = serverInput.value.trim().replace(/\/+$/, '');
+          if (!target) target = 'http://192.168.0.107:3000';
+          if (!target.startsWith('http://') && !target.startsWith('https://')) {
+            target = 'http://' + target;
+          }
+
+          if (serverFeedback) {
+            serverFeedback.style.color = 'var(--navy)';
+            serverFeedback.textContent = `Testing connection to ${target}…`;
+          }
+
+          try {
+            const testRes = await fetch(target + '/api/status', { cache: 'no-store' });
+            if (testRes.ok) {
+              const testData = await testRes.json();
+              if (testData.connected) {
+                if (hasLocalStorage) window.localStorage.setItem(API_SERVER_STORAGE_KEY, target);
+                determinedApiBase = target;
+                detectedNetworkUrl = target;
+                isMongoConnected = true;
+
+                const urlEl = document.getElementById('modalNetworkUrl');
+                if (urlEl) urlEl.textContent = target;
+
+                const sBadge = document.getElementById('serverStatusBadge');
+                if (sBadge) {
+                  sBadge.textContent = '🟢 Connected';
+                  sBadge.style.background = '#DEF7EC';
+                  sBadge.style.color = '#03543F';
+                }
+
+                if (serverFeedback) {
+                  serverFeedback.style.color = '#03543F';
+                  serverFeedback.innerHTML = `✅ Successfully connected to <strong>${target}</strong>!`;
+                }
+
+                await loadAllUserDataFromMongo(currentUserId);
+                await loadMonth();
+                await loadUdhari();
+                updateDbStatus(true, 'MongoDB Connected');
+                showToast(`✨ Connected to backend at ${target}!`);
+                return;
+              }
+            }
+          } catch (netErr) {
+            console.warn('Custom server connection failed:', netErr);
+          }
+
+          if (serverFeedback) {
+            serverFeedback.style.color = '#B91C1C';
+            serverFeedback.innerHTML = `❌ Failed to reach ${target}. Ensure "node server.js" is running on your PC and both devices are on the same Wi-Fi.`;
+          }
+          showToast(`Could not connect to ${target}`, true);
         });
       }
 
@@ -4464,7 +4623,64 @@
 
         const filtered = getFilteredSorted();
         if (expenses.length === 0) {
-          ledgerWrap.innerHTML = '<div class="ledger-empty">No transactions yet. Add your first expense from the left panel.</div>';
+          let jumpBannerHtml = '';
+          try {
+            const curK = monthKey(current);
+            const prefix = `${LS_PREFIX}${currentUserId || 'sahil'}:expenses:`;
+            const otherMonths = [];
+            for (let i = 0; i < window.localStorage.length; i++) {
+              const k = window.localStorage.key(i);
+              if (k && k.startsWith(prefix)) {
+                const m = k.slice(prefix.length);
+                if (m !== curK) {
+                  try {
+                    const parsed = JSON.parse(window.localStorage.getItem(k) || '[]');
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                      otherMonths.push({ month: m, count: parsed.length });
+                    }
+                  } catch (e) { }
+                }
+              }
+            }
+            otherMonths.sort((a, b) => b.month.localeCompare(a.month));
+            if (otherMonths.length > 0) {
+              const top = otherMonths[0];
+              const [yr, mo] = top.month.split('-').map(Number);
+              const topDate = new Date(yr, mo - 1, 1);
+              jumpBannerHtml = `<div style="margin-top: 14px; padding: 12px 14px; background: #EEF4FA; border: 1px solid #D5E2F0; border-radius: 10px; text-align: center;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--navy);">💡 Looking for your previous expenses?</div>
+                <div style="font-size: 12px; color: var(--ink-soft); margin-top: 3px;">
+                  You have <strong>${top.count} transactions</strong> logged in <strong>${fmtMonthLabel(topDate)}</strong>.
+                </div>
+                <button type="button" id="btnJumpToActiveMonth" class="btn-switch-submit" style="margin-top: 9px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px;">
+                  <span>👉 View ${fmtMonthLabel(topDate)} (${top.count} records)</span>
+                </button>
+              </div>`;
+            }
+          } catch (e) { }
+
+          ledgerWrap.innerHTML = `<div>
+            <div class="ledger-empty">No transactions yet for <strong>${fmtMonthLabel(current)}</strong>. Add your first expense from the left panel.</div>
+            ${jumpBannerHtml}
+          </div>`;
+
+          const jumpBtn = document.getElementById('btnJumpToActiveMonth');
+          if (jumpBtn) {
+            jumpBtn.addEventListener('click', () => {
+              const prefix = `${LS_PREFIX}${currentUserId || 'sahil'}:expenses:`;
+              const curK = monthKey(current);
+              for (let i = 0; i < window.localStorage.length; i++) {
+                const k = window.localStorage.key(i);
+                if (k && k.startsWith(prefix) && k.slice(prefix.length) !== curK) {
+                  const m = k.slice(prefix.length);
+                  const [yr, mo] = m.split('-').map(Number);
+                  current = new Date(yr, mo - 1, 1);
+                  loadMonth();
+                  break;
+                }
+              }
+            });
+          }
           return;
         }
         if (filtered.length === 0) {
