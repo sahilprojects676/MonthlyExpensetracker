@@ -127,8 +127,17 @@
       box-sizing: border-box;
     }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow-x: hidden;
+      width: 100%;
     }
 
     html,
@@ -139,10 +148,27 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    button,
+    input,
+    select,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    input[type="date"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
     .app {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 36px 24px 80px;
+      padding-top: calc(24px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+      padding-left: calc(20px + env(safe-area-inset-left, 0px));
+      padding-right: calc(20px + env(safe-area-inset-right, 0px));
+      box-sizing: border-box;
+      width: 100%;
     }
 
     /* ---------- Header ---------- */
@@ -765,12 +791,18 @@
     .legend-name {
       flex: 1;
       color: var(--ink);
+      min-width: 0;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .legend-amt {
       font-family: 'IBM Plex Mono', monospace;
       color: var(--ink-soft);
       font-size: 11.5px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      margin-left: 8px;
     }
 
     .cat-empty {
@@ -1365,6 +1397,7 @@
       flex-direction: column;
       gap: 10px;
       z-index: 999;
+      pointer-events: none;
     }
 
     .toast {
@@ -1378,6 +1411,7 @@
       align-items: center;
       gap: 10px;
       animation: toastIn .22s ease;
+      pointer-events: auto;
     }
 
     .toast.error {
@@ -1407,17 +1441,100 @@
       }
     }
 
+    /* Form 2-Column Responsive Layout */
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Header Actions Layout */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
+      text-decoration: none;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .export-btn:hover {
+      background: #F0F4FA;
+      border-color: var(--navy);
+      color: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.12);
+    }
+
+    .export-btn:active {
+      transform: translateY(0);
+    }
+
+    .export-btn svg {
+      flex-shrink: 0;
+    }
+
+    .export-btn.primary {
+      background: var(--navy);
+      color: #ffffff;
+      border-color: var(--navy);
+    }
+
+    .export-btn.primary:hover {
+      background: #1e3859;
+      color: #ffffff;
+    }
+
+    .backup-bar {
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
     /* ---------- Responsive Styles ---------- */
     @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden;
+        width: 100%;
+      }
+
       .app {
-        padding: 18px 14px calc(60px + env(safe-area-inset-bottom, 0px));
+        padding-top: calc(16px + env(safe-area-inset-top, 0px));
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+        padding-left: calc(14px + env(safe-area-inset-left, 0px));
+        padding-right: calc(14px + env(safe-area-inset-right, 0px));
       }
 
       header.top {
         flex-direction: column;
         align-items: stretch;
-        gap: 14px;
-        margin-bottom: 14px;
+        gap: 12px;
+        margin-bottom: 16px;
         padding-bottom: 14px;
       }
 
@@ -1425,35 +1542,89 @@
         justify-content: flex-start;
       }
 
-      .month-nav {
+      .header-actions {
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .header-actions .month-nav {
+        width: 100%;
+        order: 1;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
+        gap: 10px;
       }
 
       .month-nav button {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         font-size: 18px;
         border-radius: 8px;
+        flex-shrink: 0;
+        touch-action: manipulation;
       }
 
       .month-label {
-        font-size: 18px;
+        font-size: 17px;
         flex: 1;
         min-width: 0;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
+      .header-actions #headerDownloadPdfBtn {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        min-height: 42px;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
+
+      /* iOS-friendly segmented tabs (no border clipping or tab overlap) */
       .tab-nav {
         width: 100%;
+        display: flex;
         gap: 4px;
+        background: #EAECEF;
+        padding: 4px;
+        border-radius: 10px;
+        border-bottom: none;
         margin-bottom: 20px;
+        box-sizing: border-box;
       }
 
       .tab-btn {
-        flex: 1;
+        flex: 1 1 0;
+        min-width: 0;
+        top: 0;
+        position: static;
+        border: none;
+        border-radius: 7px;
+        padding: 10px 4px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        background: transparent;
         text-align: center;
-        padding: 12px 8px;
-        font-size: 14.5px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        transition: all .18s ease;
+        touch-action: manipulation;
+      }
+
+      .tab-btn.active {
+        background: #FFFFFF;
+        color: var(--navy-deep);
+        border: none;
+        box-shadow: 0 1px 4px rgba(21, 40, 64, 0.12);
       }
 
       .grid,
@@ -1473,41 +1644,79 @@
 
       .stat .budget-edit {
         margin-top: 10px;
-        flex-wrap: wrap;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: nowrap;
       }
 
       .stat .budget-edit input {
         flex: 1;
-        min-width: 120px;
+        min-width: 0;
         padding: 8px 10px;
-        font-size: 16px;
+        font-size: 16px !important;
+        min-height: 42px;
       }
 
       .stat .budget-edit button {
+        flex-shrink: 0;
         padding: 8px 16px;
         font-size: 13px;
-        min-height: 38px;
+        min-height: 42px;
+        touch-action: manipulation;
       }
 
+      /* 16px font-size prevents iOS Safari from automatically zooming the page on focus */
       .field input,
       .field select,
-      .search-box input {
-        font-size: 16px;
+      .edit-row input,
+      .edit-row select {
+        font-size: 16px !important;
         min-height: 44px;
         padding: 9px 12px;
+        box-sizing: border-box;
+      }
+
+      /* Fix search input padding so magnifying glass icon never overlaps user typed search text */
+      .search-box {
+        width: 100%;
+        position: relative;
+      }
+
+      .search-box input {
+        font-size: 16px !important;
+        min-height: 44px;
+        width: 100%;
+        padding: 9px 12px 9px 34px !important;
+        box-sizing: border-box;
+      }
+
+      .search-box::before {
+        left: 11px;
+        font-size: 15px;
+        z-index: 1;
       }
 
       .rupee-wrap span {
         font-size: 16px;
+        left: 12px;
+        bottom: 13px;
+        z-index: 1;
       }
 
       .rupee-wrap input {
-        padding-left: 28px;
+        padding-left: 32px !important;
+      }
+
+      .form-row-2col {
+        grid-template-columns: 1fr;
+        gap: 12px;
       }
 
       .submit-btn {
         min-height: 46px;
         font-size: 15px;
+        touch-action: manipulation;
       }
 
       .donut-wrap {
@@ -1528,7 +1737,7 @@
       .legend-row {
         padding: 8px 10px;
         font-size: 13.5px;
-        min-height: 36px;
+        min-height: 38px;
       }
 
       .ledger-header {
@@ -1541,18 +1750,36 @@
         width: 100%;
       }
 
-      .search-box {
+      /* Smooth iOS horizontal table scroll containers */
+      #ledgerWrap,
+      #udhariWrap {
         width: 100%;
-      }
-
-      .search-box input {
-        width: 100%;
-        box-sizing: border-box;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
       }
 
       table.ledger {
         font-size: 13px;
-        min-width: 440px;
+        width: 100%;
+        min-width: 400px;
+      }
+
+      table.ledger th,
+      table.ledger td {
+        padding: 10px 8px;
+      }
+
+      table.ledger td.date {
+        white-space: nowrap;
+        width: 1%;
+        font-size: 12px;
+      }
+
+      table.ledger td.desc {
+        min-width: 120px;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       table.ledger td.desc .cat-tag {
@@ -1560,16 +1787,39 @@
         margin-top: 4px;
       }
 
+      table.ledger td.num {
+        white-space: nowrap;
+        width: 1%;
+        text-align: right;
+      }
+
+      /* Table actions column: guarantees 3 buttons fit without overflowing into the amount */
+      table.ledger td.actions {
+        white-space: nowrap;
+        width: 1%;
+        text-align: right;
+        min-width: 84px;
+      }
+
+      #udhariWrap table.ledger td.actions {
+        min-width: 122px;
+      }
+
       .row-btn {
         min-width: 36px;
         min-height: 36px;
+        padding: 6px 8px;
         font-size: 16px;
+        touch-action: manipulation;
       }
 
       /* Responsive edit row */
       .edit-grid {
+        display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .edit-grid .edit-desc {
@@ -1603,9 +1853,11 @@
 
       .edit-grid input,
       .edit-grid select {
-        font-size: 16px;
+        font-size: 16px !important;
         padding: 8px 10px;
         min-height: 42px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .edit-grid .save-edit,
@@ -1614,6 +1866,7 @@
         min-height: 42px;
         font-size: 16px;
         border-radius: 6px;
+        touch-action: manipulation;
       }
 
       .edit-grid .save-edit {
@@ -1626,30 +1879,17 @@
         color: var(--ink);
       }
 
-      .toast-stack {
-        left: 14px;
-        right: 14px;
-        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-        width: auto;
-      }
-
-      .toast {
-        width: 100%;
-        justify-content: center;
-        box-sizing: border-box;
-      }
-
-      .trend-bars {
-        gap: 8px;
-      }
-
+      /* Udhari edit grid responsive layout */
       .udhari-summary {
         grid-template-columns: 1fr;
       }
 
       .udhari-edit-grid {
+        display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .udhari-edit-grid .edit-person {
@@ -1692,9 +1932,11 @@
 
       .udhari-edit-grid input,
       .udhari-edit-grid select {
-        font-size: 16px;
+        font-size: 16px !important;
         padding: 8px 10px;
         min-height: 42px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .udhari-edit-grid .save-edit,
@@ -1703,6 +1945,7 @@
         min-height: 42px;
         font-size: 16px;
         border-radius: 6px;
+        touch-action: manipulation;
       }
 
       .udhari-edit-grid .save-edit {
@@ -1714,11 +1957,68 @@
         background: #E2E5EA;
         color: var(--ink);
       }
+
+      /* Backup bar: Prevents "Download PDF Statement" from overlapping "Export JSON" */
+      .backup-bar {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 14px;
+        padding: 16px 14px;
+      }
+
+      .backup-bar .backup-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .backup-bar .backup-actions #footerDownloadPdfBtn {
+        grid-column: 1 / -1;
+        width: 100%;
+        font-size: 13px;
+        min-height: 42px;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .backup-bar .backup-actions .export-btn {
+        width: 100%;
+        padding: 10px 8px;
+        font-size: 12px;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        box-sizing: border-box;
+        min-height: 40px;
+      }
+
+      .toast-stack {
+        left: 14px;
+        right: 14px;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+        pointer-events: none;
+      }
+
+      .toast {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+        pointer-events: auto;
+      }
+
+      .trend-bars {
+        gap: 8px;
+      }
     }
 
     @media (max-width: 480px) {
       .app {
-        padding: 12px 10px calc(50px + env(safe-area-inset-bottom, 0px));
+        padding-top: calc(14px + env(safe-area-inset-top, 0px));
+        padding-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
+        padding-left: calc(12px + env(safe-area-inset-left, 0px));
+        padding-right: calc(12px + env(safe-area-inset-right, 0px));
       }
 
       .brand .brand-logo-img,
@@ -1734,6 +2034,32 @@
 
       .month-label {
         font-size: 16px;
+      }
+
+      .tab-btn {
+        padding: 9px 3px;
+        font-size: 12px;
+      }
+
+      .type-segmented {
+        gap: 4px;
+        padding: 3px;
+      }
+
+      .type-btn {
+        padding: 8px 5px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .filter-pills-row {
+        gap: 5px;
+        margin-bottom: 12px;
+      }
+
+      .udhari-filter-pill {
+        font-size: 11.5px;
+        padding: 6px 10px;
       }
 
       .stat {
@@ -1776,242 +2102,33 @@
         padding: 0 6px 8px;
         font-size: 10.5px;
       }
-    }
 
-    /* Form 2-Column Responsive Layout */
-    .form-row-2col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    /* Header Actions Layout */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .export-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 13px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      background: #ffffff;
-      border: 1px solid var(--border-strong);
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
-      text-decoration: none;
-      font-family: inherit;
-    }
-
-    .export-btn:hover {
-      background: var(--paper);
-      border-color: var(--navy);
-      color: var(--navy);
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.12);
-    }
-
-    .export-btn:active {
-      transform: translateY(0);
-    }
-
-    .export-btn svg {
-      flex-shrink: 0;
-    }
-
-    .export-btn.primary {
-      background: var(--navy);
-      color: #ffffff;
-      border-color: var(--navy);
-    }
-
-    .export-btn.primary:hover {
-      background: #1e3859;
-      color: #ffffff;
-    }
-
-    .backup-bar {
-      margin-top: 24px;
-      padding: 16px 20px;
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    /* Responsive Breakpoints */
-    @media (max-width: 680px) {
-      .header-actions {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .header-actions .month-nav {
-        width: 100%;
-        order: 3;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 4px;
-      }
-
-      .user-id-pill {
-        font-size: 11.5px;
-        padding: 6px 12px;
-        gap: 6px;
-        max-width: 52%;
-      }
-
-      .export-btn {
-        font-size: 11.5px;
-        padding: 6px 12px;
-        gap: 5px;
-        white-space: nowrap;
-      }
-
-      .backup-bar {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 14px;
-        padding: 14px 12px;
-      }
-
-      .backup-bar .backup-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        width: 100%;
-      }
-
-      .backup-bar .backup-actions .export-btn {
-        width: 100%;
-        padding: 8px 6px;
-        font-size: 11px;
-        justify-content: center;
-        text-align: center;
-        white-space: nowrap;
-        box-sizing: border-box;
-      }
-    }
-
-    @media (max-width: 540px) {
-      .form-row-2col {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-
-      html,
-      body {
-        overflow-x: hidden;
-        max-width: 100vw;
-      }
-
-      .app {
-        padding: 12px 10px calc(50px + env(safe-area-inset-bottom, 0px));
-        overflow-x: hidden;
-      }
-
-      .tab-nav {
-        gap: 3px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 18px;
-      }
-
-      .tab-btn {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 10px 4px;
-        font-size: 12.5px;
-        text-align: center;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      .type-segmented {
-        gap: 4px;
-        padding: 3px;
-      }
-
-      .type-btn {
-        padding: 8px 5px;
-        font-size: 11.5px;
-        white-space: nowrap;
-      }
-
-      .filter-pills-row {
-        gap: 5px;
-        margin-bottom: 12px;
-      }
-
-      .udhari-filter-pill {
-        font-size: 11px;
-        padding: 5px 8px;
-      }
-
-      .stat .budget-edit {
-        margin-top: 8px;
-        display: flex;
-        gap: 8px;
-      }
-
-      .stat .budget-edit input {
-        flex: 1;
-        min-width: 0;
-      }
-
-      #ledgerWrap,
-      #udhariWrap {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      table.ledger {
-        min-width: 420px;
+      .row-btn {
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 15px;
+        padding: 4px 6px;
       }
     }
 
     @media (max-width: 360px) {
-      .user-id-pill {
-        font-size: 10.5px;
-        padding: 4px 8px;
-      }
-
-      .export-btn {
-        font-size: 10.5px;
-        padding: 5px 8px;
-      }
-
       .brand h1 {
-        font-size: 19px;
+        font-size: 18px;
       }
 
       .brand .brand-logo-img,
       .brand .mark {
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
+      }
+
+      .tab-btn {
+        font-size: 11px;
+        padding: 8px 2px;
+      }
+
+      .month-label {
+        font-size: 15px;
       }
     }
 
@@ -2336,8 +2453,7 @@
     </main>
 
     <footer class="foot">
-      ExpenseTrackr &middot; All figures in Indian Rupees (INR).<br><br>
-      <br><br>
+      ExpenseTrackr &middot; All figures in Indian Rupees (INR).<br>
       &copy; 2026 ExpenseTrackr. Designed &amp; Developed by
       <a href="https://github.com/sahilprojects676" target="_blank" rel="noopener noreferrer">sahilprojects676</a>
       <div class="social-links">
