@@ -69,57 +69,131 @@ const Expense = mongoose.model('Expense', expenseSchema);
 const Budget = mongoose.model('Budget', budgetSchema);
 const Udhari = mongoose.model('Udhari', udhariSchema);
 
-// ---------- Helper: Clean & Normalize Username / User ID ----------
+// ---------- Multi-Device Shared Account Architecture ----------
+const PRIMARY_USER_ID = 'usr_sahil_primary';
+
+// Helper: Detect legacy unassigned, default, or random device auto-generated IDs (e.g. usr_mtr...)
+function isLegacyOrAutoId(str) {
+  if (!str) return true;
+  const s = String(str).trim().toLowerCase();
+  if (s === PRIMARY_USER_ID || s === 'sahil') return false;
+  // Old generated device IDs: usr_[timestamp]_[random] e.g. usr_mtrll8ye_5ynxny
+  if (/^usr_[a-z0-9]{6,10}_[a-z0-9]{4,10}$/i.test(s)) return true;
+  if (['default', 'usr_default', 'user', 'null', 'undefined', 'anonymous', ''].includes(s)) return true;
+  return false;
+}
+
+// Helper: Clean & Normalize Username / User ID (All devices default to usr_sahil_primary)
 function normalizeUsername(raw) {
-  if (!raw) return 'default';
-  let str = String(raw).trim().toLowerCase();
-  // Strip special characters except alphanumeric, hyphen, underscore
-  str = str.replace(/[^a-z0-9_-]/g, '');
-  if (!str) return 'default';
-  // Map legacy usr_sahil_primary to sahil so cross-device sync works seamlessly
-  if (str === 'usr_sahil_primary') return 'sahil';
+  if (!raw) return PRIMARY_USER_ID;
+  let str = String(raw).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  if (!str || str === 'sahil' || str === PRIMARY_USER_ID || isLegacyOrAutoId(str)) {
+    return PRIMARY_USER_ID;
+  }
   return str;
 }
 
-// ---------- Helper: Extract User ID from Request ----------
+// User filter helper: ensure 'usr_sahil_primary', 'sahil', and legacy device IDs query the same primary dataset
+function getUserFilter(userId) {
+  if (!userId || userId === PRIMARY_USER_ID || userId === 'sahil' || isLegacyOrAutoId(userId)) {
+    return { $in: [PRIMARY_USER_ID, 'sahil'] };
+  }
+  return userId;
+}
+
+// Helper: Extract User ID from Request (defaults to usr_sahil_primary across all devices)
 function getUserId(req) {
   const headerId = req.headers['x-user-id'] || req.headers['x-username'];
   const queryId = req.query ? (req.query.userId || req.query.username) : null;
   const bodyId = req.body && typeof req.body === 'object' ? (req.body.userId || req.body.username) : null;
-  const raw = headerId || queryId || bodyId || 'default';
+  const raw = headerId || queryId || bodyId || PRIMARY_USER_ID;
   return normalizeUsername(raw);
 }
 
-// ---------- Zero Data Loss: Claim Legacy Unassigned Records ----------
-async function claimLegacyDataIfNeeded(userId) {
-  if (!userId || userId === 'default' || userId === 'usr_default') return;
+// Universal Migration: Safely consolidate all legacy & device records into usr_sahil_primary
+async function migrateAllToSahilPrimary() {
   try {
-    const unassignedExpenses = await Expense.countDocuments({
-      $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }]
+    const rawExpUsers = await Expense.distinct('userId');
+    const rawBudUsers = await Budget.distinct('userId');
+    const rawUdhUsers = await Udhari.distinct('userId');
+    const allUsers = new Set([...rawExpUsers, ...rawBudUsers, ...rawUdhUsers]);
+
+    const legacyUsers = [];
+    for (const u of allUsers) {
+      if (u && u !== PRIMARY_USER_ID && (u === 'sahil' || isLegacyOrAutoId(u))) {
+        legacyUsers.push(u);
+      }
+    }
+
+    const unassignedCount = await Expense.countDocuments({
+      $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }]
     });
 
-    if (unassignedExpenses > 0) {
-      const userExpenses = await Expense.countDocuments({ userId });
-      if (userExpenses === 0) {
-        console.log(`[Migration] Attributing ${unassignedExpenses} legacy expenses to user: ${userId}`);
+    if (legacyUsers.length > 0 || unassignedCount > 0) {
+      console.log(`[Multi-Device Sync] Consolidating legacy/device accounts into '${PRIMARY_USER_ID}'...`);
+
+      for (const legUser of legacyUsers) {
+        // 1. Expenses
+        const exps = await Expense.find({ userId: legUser });
+        for (const exp of exps) {
+          const exists = await Expense.findOne({ userId: PRIMARY_USER_ID, id: exp.id });
+          if (!exists) {
+            await Expense.updateOne({ _id: exp._id }, { $set: { userId: PRIMARY_USER_ID } });
+          } else {
+            const newId = exp.id + '_' + Math.random().toString(36).slice(2, 6);
+            await Expense.updateOne({ _id: exp._id }, { $set: { userId: PRIMARY_USER_ID, id: newId } });
+          }
+        }
+
+        // 2. Budgets
+        const buds = await Budget.find({ userId: legUser });
+        for (const b of buds) {
+          const exists = await Budget.findOne({ userId: PRIMARY_USER_ID, month: b.month });
+          if (!exists) {
+            await Budget.updateOne({ _id: b._id }, { $set: { userId: PRIMARY_USER_ID } });
+          } else {
+            await Budget.deleteOne({ _id: b._id });
+          }
+        }
+
+        // 3. Udharis
+        const udhs = await Udhari.find({ userId: legUser });
+        for (const u of udhs) {
+          const exists = await Udhari.findOne({ userId: PRIMARY_USER_ID, id: u.id });
+          if (!exists) {
+            await Udhari.updateOne({ _id: u._id }, { $set: { userId: PRIMARY_USER_ID } });
+          } else {
+            const newId = u.id + '_' + Math.random().toString(36).slice(2, 6);
+            await Udhari.updateOne({ _id: u._id }, { $set: { userId: PRIMARY_USER_ID, id: newId } });
+          }
+        }
+      }
+
+      // Unassigned records
+      if (unassignedCount > 0) {
         await Expense.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
-          { $set: { userId } }
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }] },
+          { $set: { userId: PRIMARY_USER_ID } }
         );
         await Budget.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
-          { $set: { userId } }
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }] },
+          { $set: { userId: PRIMARY_USER_ID } }
         );
         await Udhari.updateMany(
-          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }, { userId: 'usr_default' }, { userId: 'default' }] },
-          { $set: { userId } }
+          { $or: [{ userId: { $exists: false } }, { userId: null }, { userId: '' }] },
+          { $set: { userId: PRIMARY_USER_ID } }
         );
-        console.log(`[Migration] Completed successfully for user: ${userId}`);
       }
+
+      console.log(`[Multi-Device Sync] All data successfully consolidated into '${PRIMARY_USER_ID}'.`);
     }
   } catch (err) {
     console.warn('[Migration Warning]:', err.message);
   }
+}
+
+async function claimLegacyDataIfNeeded(userId) {
+  await migrateAllToSahilPrimary();
 }
 
 // ---------- MongoDB Connection & Index Normalization ----------
@@ -127,19 +201,8 @@ mongoose.connect(MONGODB_URI)
   .then(async () => {
     console.log(`Connected to MongoDB successfully: ${MONGODB_URI}`);
 
-    // Automatically migrate legacy usr_sahil_primary records to sahil
-    try {
-      const legacySahil = await Expense.countDocuments({ userId: 'usr_sahil_primary' });
-      if (legacySahil > 0) {
-        console.log(`[Migration] Normalizing ${legacySahil} legacy records from 'usr_sahil_primary' to 'sahil'...`);
-        await Expense.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
-        await Budget.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
-        await Udhari.updateMany({ userId: 'usr_sahil_primary' }, { $set: { userId: 'sahil' } });
-        console.log(`[Migration] Legacy migration complete. All records attributed to 'sahil'.`);
-      }
-    } catch (e) {
-      console.warn('[Migration Notice]:', e.message);
-    }
+    // Automatically consolidate legacy & device records to usr_sahil_primary
+    await migrateAllToSahilPrimary();
 
     try {
       // Drop legacy single unique index month_1 on budgets if it exists
@@ -181,6 +244,7 @@ app.get('/api/status', async (req, res) => {
     status: 'ok',
     connected: isConnected,
     userId: userId,
+    defaultAccount: PRIMARY_USER_ID,
     database: isConnected ? mongoose.connection.name : null,
     networkIp: localIp,
     networkPort: PORT,
@@ -194,12 +258,13 @@ app.get('/api/user/summary', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
 
-    const expCount = await Expense.countDocuments({ userId });
-    const budCount = await Budget.countDocuments({ userId });
-    const udhariCount = await Udhari.countDocuments({ userId });
+    const expCount = await Expense.countDocuments({ userId: userFilter });
+    const budCount = await Budget.countDocuments({ userId: userFilter });
+    const udhariCount = await Udhari.countDocuments({ userId: userFilter });
 
-    const distinctMonths = await Expense.distinct('month', { userId });
+    const distinctMonths = await Expense.distinct('month', { userId: userFilter });
     distinctMonths.sort().reverse();
 
     res.json({
@@ -221,10 +286,11 @@ app.get('/api/user/all-data', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
 
-    const expenses = await Expense.find({ userId }).sort({ date: -1, createdAt: -1 });
-    const budgets = await Budget.find({ userId });
-    const udharis = await Udhari.find({ userId }).sort({ date: -1, createdAt: -1 });
+    const expenses = await Expense.find({ userId: userFilter }).sort({ date: -1, createdAt: -1 });
+    const budgets = await Budget.find({ userId: userFilter });
+    const udharis = await Udhari.find({ userId: userFilter }).sort({ date: -1, createdAt: -1 });
 
     const monthlyExpenses = {};
     for (const e of expenses) {
@@ -259,8 +325,9 @@ app.get('/api/expenses/:month', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
     const { month } = req.params;
-    const expenses = await Expense.find({ userId, month }).sort({ date: -1, createdAt: -1 });
+    const expenses = await Expense.find({ userId: userFilter, month }).sort({ date: -1, createdAt: -1 });
     res.json({ expenses, userId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -270,10 +337,11 @@ app.get('/api/expenses/:month', async (req, res) => {
 app.post('/api/expenses/:month', async (req, res) => {
   try {
     const userId = getUserId(req);
+    const userFilter = getUserFilter(userId);
     const { month } = req.params;
     const incoming = Array.isArray(req.body) ? req.body : req.body.expenses || [];
 
-    await Expense.deleteMany({ userId, month });
+    await Expense.deleteMany({ userId: userFilter, month });
     if (incoming.length > 0) {
       const docs = incoming.map(e => ({
         id: String(e.id),
@@ -287,7 +355,7 @@ app.post('/api/expenses/:month', async (req, res) => {
       }));
       await Expense.insertMany(docs);
     }
-    const updated = await Expense.find({ userId, month }).sort({ date: -1 });
+    const updated = await Expense.find({ userId: userFilter, month }).sort({ date: -1 });
     res.json({ success: true, expenses: updated, userId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -299,8 +367,9 @@ app.get('/api/budget/:month', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
     const { month } = req.params;
-    const doc = await Budget.findOne({ userId, month });
+    const doc = await Budget.findOne({ userId: userFilter, month });
     res.json({ budget: doc ? doc.amount : 0, userId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -310,10 +379,11 @@ app.get('/api/budget/:month', async (req, res) => {
 app.post('/api/budget/:month', async (req, res) => {
   try {
     const userId = getUserId(req);
+    const userFilter = getUserFilter(userId);
     const { month } = req.params;
     const amount = Number(req.body.amount || 0);
     const doc = await Budget.findOneAndUpdate(
-      { userId, month },
+      { userId: userFilter, month },
       { userId, month, amount, updatedAt: new Date() },
       { upsert: true, new: true }
     );
@@ -328,6 +398,7 @@ app.get('/api/trend/:currentMonth', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
     const [year, monthNum] = req.params.currentMonth.split('-').map(Number);
     const months = [];
     for (let i = 5; i >= 0; i--) {
@@ -338,7 +409,7 @@ app.get('/api/trend/:currentMonth', async (req, res) => {
 
     const monthKeys = months.map(m => m.key);
     const agg = await Expense.aggregate([
-      { $match: { userId, month: { $in: monthKeys } } },
+      { $match: { userId: userFilter, month: { $in: monthKeys } } },
       { $group: { _id: '$month', total: { $sum: '$amount' } } }
     ]);
 
@@ -362,7 +433,8 @@ app.get('/api/udhari', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
-    const records = await Udhari.find({ userId }).sort({ date: -1, createdAt: -1 });
+    const userFilter = getUserFilter(userId);
+    const records = await Udhari.find({ userId: userFilter }).sort({ date: -1, createdAt: -1 });
     res.json({ records, userId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -372,8 +444,9 @@ app.get('/api/udhari', async (req, res) => {
 app.post('/api/udhari', async (req, res) => {
   try {
     const userId = getUserId(req);
+    const userFilter = getUserFilter(userId);
     const incoming = Array.isArray(req.body) ? req.body : req.body.records || [];
-    await Udhari.deleteMany({ userId });
+    await Udhari.deleteMany({ userId: userFilter });
     if (incoming.length > 0) {
       const docs = incoming.map(r => ({
         id: String(r.id),
@@ -390,7 +463,7 @@ app.post('/api/udhari', async (req, res) => {
       }));
       await Udhari.insertMany(docs);
     }
-    const updated = await Udhari.find({ userId }).sort({ date: -1 });
+    const updated = await Udhari.find({ userId: userFilter }).sort({ date: -1 });
     res.json({ success: true, records: updated, userId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -402,6 +475,7 @@ app.post('/api/sync', async (req, res) => {
   try {
     const userId = getUserId(req);
     await claimLegacyDataIfNeeded(userId);
+    const userFilter = getUserFilter(userId);
     const { monthlyExpenses = {}, monthlyBudgets = {}, udhariRecords = [] } = req.body;
     let syncedExpenses = 0;
     let syncedBudgets = 0;
@@ -413,7 +487,7 @@ app.post('/api/sync', async (req, res) => {
         for (const e of expList) {
           if (e && e.id) {
             await Expense.findOneAndUpdate(
-              { userId, id: String(e.id) },
+              { userId: userFilter, id: String(e.id) },
               {
                 id: String(e.id),
                 userId: userId,
@@ -436,8 +510,8 @@ app.post('/api/sync', async (req, res) => {
       const num = Number(amt);
       if (!isNaN(num) && num > 0) {
         await Budget.findOneAndUpdate(
-          { userId, month },
-          { userId, month, amount: num, updatedAt: new Date() },
+          { userId: userFilter, month },
+          { userId: userId, month, amount: num, updatedAt: new Date() },
           { upsert: true }
         );
         syncedBudgets++;
@@ -449,7 +523,7 @@ app.post('/api/sync', async (req, res) => {
       for (const r of udhariRecords) {
         if (r && r.id) {
           await Udhari.findOneAndUpdate(
-            { userId, id: String(r.id) },
+            { userId: userFilter, id: String(r.id) },
             {
               id: String(r.id),
               userId: userId,

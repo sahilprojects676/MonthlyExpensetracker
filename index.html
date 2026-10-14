@@ -2510,9 +2510,9 @@
         </div>
       </a>
       <div class="header-actions">
-        <button type="button" class="user-id-pill" id="userIdPill" title="Account: sahil · Click to switch username or connect devices">
-          <span class="user-pill-avatar" id="headerUserAvatar">S</span>
-          <span class="user-pill-name" id="userIdLabel">sahil</span>
+        <button type="button" class="user-id-pill" id="userIdPill" title="Account: usr_sahil_primary · Click to switch username or connect devices">
+          <span class="user-pill-avatar" id="headerUserAvatar">U</span>
+          <span class="user-pill-name" id="userIdLabel">usr_sahil_primary</span>
           <span class="user-sync-badge" id="userSyncBadge">☁️ Synced</span>
         </button>
         <button type="button" class="export-btn primary" id="headerDownloadPdfBtn"
@@ -2768,7 +2768,7 @@
             <strong style="font-size: 13.5px; color: var(--navy); display: block;">Reports &amp; Device Backup</strong>
             <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">
               Active User: <strong id="footerUserId"
-                style="color:var(--navy); font-family: 'IBM Plex Mono', monospace;">sahil</strong> &middot; Synced across all your devices.
+                style="color:var(--navy); font-family: 'IBM Plex Mono', monospace;">usr_sahil_primary</strong> &middot; Synced across all your devices.
             </div>
           </div>
         </div>
@@ -2851,10 +2851,10 @@
       <div class="user-modal-body">
         <!-- Active User Account Card -->
         <div class="active-user-box">
-          <div class="active-user-avatar" id="modalUserAvatar">S</div>
+          <div class="active-user-avatar" id="modalUserAvatar">U</div>
           <div class="active-user-info">
             <div class="active-user-sub">Active Username</div>
-            <div class="active-user-name" id="modalCurrentUserName">sahil</div>
+            <div class="active-user-name" id="modalCurrentUserName">usr_sahil_primary</div>
             <div class="active-user-stats" id="modalUserMeta">Connecting to cloud database…</div>
           </div>
           <button type="button" class="btn-sync-refresh" id="modalSyncNowBtn" title="Sync now from MongoDB">
@@ -2879,18 +2879,25 @@
               <div class="step-text">
                 <span>Connect your phone/laptop to the <strong>same Wi-Fi network</strong>, then open this exact address:</span>
                 <div class="network-url-container">
-                  <code id="modalNetworkUrl">http://192.168.0.107:3000</code>
+                  <code id="modalNetworkUrl">http://192.168.0.103:3000</code>
                   <button type="button" class="btn-copy-chip" id="modalCopyUrlBtn">Copy Link</button>
+                </div>
+                <div class="network-qr-row" style="margin-top: 10px; display: flex; align-items: center; gap: 12px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                  <img id="modalQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http%3A%2F%2F192.168.0.103%3A3000" alt="QR Code for Mobile Access" width="80" height="80" style="border-radius: 6px; border: 1px solid #E2E8F0; flex-shrink: 0;">
+                  <div style="font-size: 11.5px; color: var(--ink-soft); line-height: 1.4;">
+                    <strong style="color: var(--navy); display: block; margin-bottom: 2px;">📷 Scan from Phone:</strong>
+                    Point your phone camera here to open ExpenseTracker on Wi-Fi instantly.
+                  </div>
                 </div>
               </div>
             </div>
             <div class="step-item">
               <span class="step-num">B</span>
               <div class="step-text">
-                <span>Log in with the exact same username:</span>
+                <span>Primary Multi-Device Shared Account:</span>
                 <div class="username-pill-row">
-                  <span class="username-code-pill" id="modalCodeUsername">sahil</span>
-                  <span class="pill-note">&mdash; all expenses, budgets &amp; udhari load automatically!</span>
+                  <span class="username-code-pill" id="modalCodeUsername">usr_sahil_primary</span>
+                  <span class="pill-note">&mdash; every device automatically loads &amp; edits this exact dataset in real time!</span>
                 </div>
               </div>
             </div>
@@ -2901,15 +2908,20 @@
         <div class="switch-account-box">
           <div class="switch-header">
             <span class="step-badge">2</span>
-            <h4>Switch or Log in to Username:</h4>
+            <h4>Account Management:</h4>
           </div>
-          <p class="switch-note">
-            Type any username to view its data. Switching accounts immediately loads all saved records from MongoDB.
+          <div style="margin-bottom: 12px;">
+            <button type="button" class="btn-switch-submit" id="modalRestorePrimaryBtn" style="width: 100%; justify-content: center; background: #1F3A5F; font-weight: 600; padding: 10px; font-size: 13px;">
+              ⚡ Switch to Primary Account (@usr_sahil_primary)
+            </button>
+          </div>
+          <p class="switch-note" style="margin-top: 10px;">
+            Or log in to a different custom username if desired. All devices default to <strong>usr_sahil_primary</strong>:
           </p>
           <form class="switch-form" id="switchUserForm" onsubmit="return false;">
             <div class="switch-input-group">
               <span class="input-at-symbol">@</span>
-              <input type="text" id="modalUsernameInput" placeholder="Enter username (e.g. sahil)" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+              <input type="text" id="modalUsernameInput" placeholder="Enter username (e.g. usr_sahil_primary)" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
             </div>
             <button type="submit" class="btn-switch-submit" id="modalSwitchConfirmBtn">Switch &amp; Load</button>
           </form>
@@ -2927,7 +2939,7 @@
               If another device cannot connect automatically or is opening via a different URL, specify this computer's backend API URL:
             </p>
             <div style="display: flex; gap: 8px;">
-              <input type="text" id="customServerInput" placeholder="http://192.168.0.107:3000" style="flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 12px; font-family: monospace; outline: none;">
+              <input type="text" id="customServerInput" placeholder="http://192.168.0.103:3000" style="flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 12px; font-family: monospace; outline: none;">
               <button type="button" id="saveServerBtn" class="btn-switch-submit" style="padding: 8px 14px; font-size: 11.5px;">Test &amp; Connect</button>
             </div>
             <div id="customServerFeedback" style="margin-top: 6px; font-size: 11.5px;"></div>
@@ -2973,36 +2985,78 @@
       }
 
       // ---- Multi-Device User Account Architecture & Normalization ----
+      const PRIMARY_USER_ID = 'usr_sahil_primary';
       const USER_NAME_STORAGE_KEY = 'expensetrackr_username';
       const USER_ID_STORAGE_KEY = 'expensetrackr_user_id';
       const API_SERVER_STORAGE_KEY = 'expensetrackr_api_server';
-      let currentUserId = '';
-      let detectedNetworkUrl = 'http://192.168.0.107:3000';
+      let currentUserId = PRIMARY_USER_ID;
+      let detectedNetworkUrl = 'http://192.168.0.103:3000';
+
+      function isLegacyOrAutoId(str) {
+        if (!str) return true;
+        const s = String(str).trim().toLowerCase();
+        if (s === PRIMARY_USER_ID || s === 'sahil') return false;
+        // Old random device IDs: usr_[timestamp]_[random] e.g. usr_mtrll8ye_5ynxny
+        if (/^usr_[a-z0-9]{6,10}_[a-z0-9]{4,10}$/i.test(s)) return true;
+        if (['default', 'usr_default', 'user', 'null', 'undefined', 'anonymous', ''].includes(s)) return true;
+        return false;
+      }
 
       function normalizeUsername(raw) {
-        if (!raw) return '';
-        let str = String(raw).trim().toLowerCase();
-        str = str.replace(/[^a-z0-9_-]/g, '');
-        if (str === 'usr_sahil_primary') str = 'sahil';
+        if (!raw) return PRIMARY_USER_ID;
+        let str = String(raw).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        if (!str || str === 'sahil' || str === PRIMARY_USER_ID || isLegacyOrAutoId(str)) {
+          return PRIMARY_USER_ID;
+        }
         return str;
       }
 
       function getUserStorageKey(key) {
-        const uid = currentUserId || 'sahil';
+        const uid = currentUserId || PRIMARY_USER_ID;
         return `${LS_PREFIX}${uid}:${key}`;
       }
 
       function getOrInitUserId() {
-        if (currentUserId && currentUserId.trim().length > 0) return currentUserId;
+        // 1. Check URL query parameters (e.g. ?user=usr_sahil_primary or ?u=usr_sahil_primary)
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const qUser = urlParams.get('user') || urlParams.get('username') || urlParams.get('u');
+          if (qUser && qUser.trim()) {
+            currentUserId = normalizeUsername(qUser);
+            if (hasLocalStorage) {
+              window.localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserId);
+              window.localStorage.setItem(USER_ID_STORAGE_KEY, currentUserId);
+            }
+            updateUserIdUI();
+            return currentUserId;
+          }
+        } catch (e) { }
+
+        // 2. If currentUserId in memory is valid and not legacy, use it
+        if (currentUserId && currentUserId.trim().length > 0 && !isLegacyOrAutoId(currentUserId)) {
+          return currentUserId;
+        }
+
+        // 3. Inspect localStorage on this device
         try {
           if (hasLocalStorage) {
             const storedName = window.localStorage.getItem(USER_NAME_STORAGE_KEY);
+            const storedId = window.localStorage.getItem(USER_ID_STORAGE_KEY);
+
+            // If this device was previously assigned an old auto-generated device ID (e.g. usr_mtr...), reset it to usr_sahil_primary
+            if (isLegacyOrAutoId(storedName) || isLegacyOrAutoId(storedId)) {
+              currentUserId = PRIMARY_USER_ID;
+              window.localStorage.setItem(USER_NAME_STORAGE_KEY, PRIMARY_USER_ID);
+              window.localStorage.setItem(USER_ID_STORAGE_KEY, PRIMARY_USER_ID);
+              updateUserIdUI();
+              return currentUserId;
+            }
+
             if (storedName && storedName.trim().length > 0) {
               currentUserId = normalizeUsername(storedName);
               updateUserIdUI();
               return currentUserId;
             }
-            const storedId = window.localStorage.getItem(USER_ID_STORAGE_KEY);
             if (storedId && storedId.trim().length > 0) {
               currentUserId = normalizeUsername(storedId);
               window.localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserId);
@@ -3012,12 +3066,12 @@
           }
         } catch (e) { }
 
-        // Primary default user is 'sahil' so existing data loads automatically across devices
-        currentUserId = 'sahil';
+        // Primary default user across ALL devices is 'usr_sahil_primary'
+        currentUserId = PRIMARY_USER_ID;
         try {
           if (hasLocalStorage) {
-            window.localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserId);
-            window.localStorage.setItem(USER_ID_STORAGE_KEY, currentUserId);
+            window.localStorage.setItem(USER_NAME_STORAGE_KEY, PRIMARY_USER_ID);
+            window.localStorage.setItem(USER_ID_STORAGE_KEY, PRIMARY_USER_ID);
           }
         } catch (e) { }
         updateUserIdUI();
@@ -3032,8 +3086,9 @@
         const modalAvatar = document.getElementById('modalUserAvatar');
         const modalCurrent = document.getElementById('modalCurrentUserName');
         const modalCode = document.getElementById('modalCodeUsername');
-        const uid = currentUserId || 'sahil';
-        const initial = (uid.charAt(0) || 'S').toUpperCase();
+        const uid = currentUserId || 'usr_sahil_primary';
+        const displayLetter = uid.startsWith('usr_') ? uid.replace(/^usr_/, '').charAt(0) : uid.charAt(0);
+        const initial = (displayLetter || 'S').toUpperCase();
 
         if (lbl) lbl.textContent = uid;
         if (foot) foot.textContent = uid;
@@ -3076,7 +3131,7 @@
         }
 
         // 5. Always include host machine Wi-Fi network IP for multi-device access
-        candidates.push('http://192.168.0.107:3000');
+        candidates.push('http://192.168.0.103:3000');
 
         return [...new Set(candidates)];
       }
@@ -3085,7 +3140,7 @@
         if (!path || path.startsWith('http://') || path.startsWith('https://')) return path;
         const base = determinedApiBase !== null ? determinedApiBase : (
           (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000'))
-            ? 'http://192.168.0.107:3000'
+            ? (detectedNetworkUrl || 'http://192.168.0.103:3000')
             : ''
         );
         return base + path;
@@ -3157,6 +3212,8 @@
             detectedNetworkUrl = connectedData.networkUrl;
             const urlEl = document.getElementById('modalNetworkUrl');
             if (urlEl) urlEl.textContent = connectedData.networkUrl;
+            const qrImg = document.getElementById('modalQrCodeImg');
+            if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(connectedData.networkUrl);
           }
 
           if (serverBadge) {
@@ -3183,7 +3240,7 @@
 
         const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
         const hint = isFileOrLiveServer
-          ? 'Server offline or unreachable. Ensure "node server.js" is running and open http://192.168.0.107:3000'
+          ? `Server offline or unreachable. Ensure "node server.js" is running and open ${detectedNetworkUrl || 'http://192.168.0.103:3000'}`
           : 'MongoDB unreachable · Saving to local browser storage';
         updateDbStatus(false, 'Local / Offline', hint);
         if (showUserFeedback) showToast('Working in offline local storage mode', true);
@@ -3193,7 +3250,7 @@
       async function syncLocalDataToMongo() {
         if (!hasLocalStorage || !isMongoConnected) return;
 
-        // Collect all localStorage keys that belong to this app
+        // Collect all localStorage keys that belong to this app (including previous device scoped keys)
         const monthlyExpenses = {};
         const monthlyBudgets = {};
         let udhariRecordsToSync = [];
@@ -3202,29 +3259,46 @@
         for (let i = 0; i < window.localStorage.length; i++) {
           const k = window.localStorage.key(i);
           if (k && k.startsWith(LS_PREFIX)) {
-            const subKey = k.slice(LS_PREFIX.length);
             const rawVal = window.localStorage.getItem(k);
             if (!rawVal) continue;
             try {
-              if (subKey.startsWith('expenses:')) {
-                const m = subKey.replace('expenses:', '');
+              // Match expenses: YYYY-MM either prefixed by userId or directly
+              const expMatch = k.match(/(?:^|:)expenses:(\d{4}-\d{2})$/);
+              if (expMatch) {
+                const m = expMatch[1];
                 const list = JSON.parse(rawVal);
                 if (Array.isArray(list) && list.length > 0) {
-                  monthlyExpenses[m] = list;
-                  totalItemsFound += list.length;
+                  if (!monthlyExpenses[m]) monthlyExpenses[m] = [];
+                  const existingIds = new Set(monthlyExpenses[m].map(e => String(e.id)));
+                  for (const item of list) {
+                    if (item && item.id && !existingIds.has(String(item.id))) {
+                      monthlyExpenses[m].push(item);
+                      existingIds.add(String(item.id));
+                      totalItemsFound++;
+                    }
+                  }
                 }
-              } else if (subKey.startsWith('budget:')) {
-                const m = subKey.replace('budget:', '');
-                const num = JSON.parse(rawVal);
-                if (num > 0) {
-                  monthlyBudgets[m] = num;
-                  totalItemsFound++;
-                }
-              } else if (subKey === 'udhari:records') {
-                const list = JSON.parse(rawVal);
-                if (Array.isArray(list) && list.length > 0) {
-                  udhariRecordsToSync = list;
-                  totalItemsFound += list.length;
+              } else {
+                const budMatch = k.match(/(?:^|:)budget:(\d{4}-\d{2})$/);
+                if (budMatch) {
+                  const m = budMatch[1];
+                  const num = JSON.parse(rawVal);
+                  if (num > 0 && !monthlyBudgets[m]) {
+                    monthlyBudgets[m] = num;
+                    totalItemsFound++;
+                  }
+                } else if (k.endsWith('udhari:records')) {
+                  const list = JSON.parse(rawVal);
+                  if (Array.isArray(list) && list.length > 0) {
+                    const existingUdhIds = new Set(udhariRecordsToSync.map(u => String(u.id)));
+                    for (const item of list) {
+                      if (item && item.id && !existingUdhIds.has(String(item.id))) {
+                        udhariRecordsToSync.push(item);
+                        existingUdhIds.add(String(item.id));
+                        totalItemsFound++;
+                      }
+                    }
+                  }
                 }
               }
             } catch (err) {
@@ -3233,7 +3307,7 @@
           }
         }
 
-        const syncMarker = `et_synced_v3_${currentUserId}`;
+        const syncMarker = `et_synced_v4_${currentUserId}`;
         const alreadySynced = window.localStorage.getItem(syncMarker);
 
         if (totalItemsFound > 0 && !alreadySynced) {
@@ -3889,7 +3963,7 @@
 
         const input = document.getElementById('modalUsernameInput');
         if (input) {
-          input.value = currentUserId || 'sahil';
+          input.value = currentUserId || 'usr_sahil_primary';
           setTimeout(() => input.select(), 100);
         }
 
@@ -3897,7 +3971,7 @@
         if (serverInput) {
           try {
             const savedServer = hasLocalStorage ? window.localStorage.getItem(API_SERVER_STORAGE_KEY) : '';
-            serverInput.value = savedServer || detectedNetworkUrl || 'http://192.168.0.107:3000';
+            serverInput.value = savedServer || detectedNetworkUrl || 'http://192.168.0.103:3000';
           } catch (e) { }
         }
 
@@ -3917,7 +3991,7 @@
       async function updateModalSummaryStats() {
         const metaEl = document.getElementById('modalUserMeta');
         const urlEl = document.getElementById('modalNetworkUrl');
-        if (urlEl) urlEl.textContent = detectedNetworkUrl || 'http://192.168.0.107:3000';
+        if (urlEl) urlEl.textContent = detectedNetworkUrl || 'http://192.168.0.103:3000';
 
         if (!isMongoConnected) {
           if (metaEl) metaEl.textContent = 'Working in Local Storage fallback mode (MongoDB offline)';
@@ -4060,7 +4134,7 @@
       const modalCopyUrlBtn = document.getElementById('modalCopyUrlBtn');
       if (modalCopyUrlBtn) {
         modalCopyUrlBtn.addEventListener('click', async () => {
-          const url = detectedNetworkUrl || 'http://192.168.0.107:3000';
+          const url = detectedNetworkUrl || 'http://192.168.0.103:3000';
           try {
             if (navigator.clipboard && navigator.clipboard.writeText) {
               await navigator.clipboard.writeText(url);
@@ -4094,7 +4168,7 @@
           const serverFeedback = document.getElementById('customServerFeedback');
           if (!serverInput) return;
           let target = serverInput.value.trim().replace(/\/+$/, '');
-          if (!target) target = 'http://192.168.0.107:3000';
+          if (!target) target = 'http://192.168.0.103:3000';
           if (!target.startsWith('http://') && !target.startsWith('https://')) {
             target = 'http://' + target;
           }
@@ -4166,6 +4240,13 @@
         });
       }
 
+      const modalRestorePrimaryBtn = document.getElementById('modalRestorePrimaryBtn');
+      if (modalRestorePrimaryBtn) {
+        modalRestorePrimaryBtn.addEventListener('click', () => {
+          switchUser(PRIMARY_USER_ID);
+        });
+      }
+
       const footerExportBtn = document.getElementById('footerExportBtn');
       if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
 
@@ -4217,6 +4298,13 @@
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') silentCloudRefresh();
       });
+
+      // Live multi-device background sync: automatically fetch updates every 12 seconds
+      setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          silentCloudRefresh();
+        }
+      }, 12000);
 
       async function storageGet(key) {
         const scopedKey = getUserStorageKey(key);
@@ -4626,7 +4714,7 @@
           let jumpBannerHtml = '';
           try {
             const curK = monthKey(current);
-            const prefix = `${LS_PREFIX}${currentUserId || 'sahil'}:expenses:`;
+            const prefix = `${LS_PREFIX}${currentUserId || 'usr_sahil_primary'}:expenses:`;
             const otherMonths = [];
             for (let i = 0; i < window.localStorage.length; i++) {
               const k = window.localStorage.key(i);
@@ -4667,7 +4755,7 @@
           const jumpBtn = document.getElementById('btnJumpToActiveMonth');
           if (jumpBtn) {
             jumpBtn.addEventListener('click', () => {
-              const prefix = `${LS_PREFIX}${currentUserId || 'sahil'}:expenses:`;
+              const prefix = `${LS_PREFIX}${currentUserId || 'usr_sahil_primary'}:expenses:`;
               const curK = monthKey(current);
               for (let i = 0; i < window.localStorage.length; i++) {
                 const k = window.localStorage.key(i);
