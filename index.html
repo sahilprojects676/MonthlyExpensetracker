@@ -12,7 +12,7 @@
   <!-- Primary SEO Meta Tags -->
   <meta name="title" content="ExpenseTrackr — Monthly Expense Tracker, Budget Planner &amp; Udhari Khata">
   <meta name="description"
-    content="ExpenseTrackr is a modern, privacy-focused monthly expense tracker and budget planner. Manage daily expenses, track borrowing &amp; lending (Udhari Khata), generate PDF statements, and sync with MongoDB.">
+    content="ExpenseTrackr is a modern, privacy-focused monthly expense tracker and budget planner. Manage daily expenses, track borrowing &amp; lending (Udhari Khata), generate PDF statements, and backup your data.">
   <meta name="keywords"
     content="expense tracker, monthly expense tracker, budget planner, udhari khata, money manager, personal finance tracker, borrowing lending ledger, pdf expense report, offline finance tracker, mongodb expense tracker">
   <meta name="author" content="Sahil (sahilprojects676)">
@@ -83,7 +83,7 @@
           "Monthly budget planning and real-time expense tracking",
           "Udhari Khata (borrowing and lending ledger with due dates)",
           "Automated professional PDF financial statement generation",
-          "Full MongoDB cloud and local synchronization with zero data loss",
+          "Full local and offline data storage with backup and export",
           "Unique client account ID and offline-first LocalStorage fallback",
           "Interactive 6-month visual expense trend breakdown"
         ]
@@ -2015,474 +2015,6 @@
       }
     }
 
-    /* ---------- Multi-Device Sync & User Profile Modal ---------- */
-    .user-id-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 13px;
-      border-radius: 999px;
-      background: #FFFFFF;
-      color: var(--navy);
-      border: 1.5px solid var(--border-strong, #DDE3EA);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.05);
-      user-select: none;
-      font-family: inherit;
-    }
-
-    .user-id-pill:hover {
-      background: var(--paper);
-      border-color: var(--navy);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(21, 40, 64, 0.12);
-    }
-
-    .user-pill-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: #FFFFFF;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      flex-shrink: 0;
-    }
-
-    .user-pill-name {
-      font-family: inherit;
-      letter-spacing: -0.1px;
-      color: var(--navy);
-    }
-
-    .user-sync-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 10.5px;
-      font-weight: 600;
-      color: #1a6f3e;
-      background: rgba(46, 155, 92, 0.1);
-      padding: 2px 7px;
-      border-radius: 999px;
-      line-height: 1.2;
-    }
-
-    .user-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      padding: 16px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
-    }
-
-    .user-modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .user-modal-card {
-      background: #FFFFFF;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.08);
-      overflow: hidden;
-      transform: translateY(12px) scale(0.97);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .user-modal-overlay.active .user-modal-card {
-      transform: translateY(0) scale(1);
-    }
-
-    .user-modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 22px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
-    }
-
-    .user-modal-title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-modal-icon-badge {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: rgba(21, 40, 64, 0.07);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .user-modal-header h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--navy);
-      margin: 0;
-      line-height: 1.3;
-    }
-
-    .user-modal-header p {
-      font-size: 12px;
-      color: var(--ink-soft);
-      margin: 2px 0 0;
-    }
-
-    .user-modal-close {
-      background: transparent;
-      border: none;
-      font-size: 24px;
-      line-height: 1;
-      color: var(--ink-soft);
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 8px;
-      transition: all 0.15s ease;
-    }
-
-    .user-modal-close:hover {
-      background: rgba(15, 23, 42, 0.06);
-      color: var(--ink);
-    }
-
-    .user-modal-body {
-      padding: 20px 22px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .active-user-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: #F4F7FB;
-      border: 1px solid rgba(21, 40, 64, 0.1);
-    }
-
-    .active-user-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--navy) 0%, #2A4365 100%);
-      color: #FFFFFF;
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: uppercase;
-      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.2);
-      flex-shrink: 0;
-    }
-
-    .active-user-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .active-user-sub {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--ink-soft);
-    }
-
-    .active-user-name {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--navy);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .active-user-stats {
-      font-size: 11.5px;
-      color: #1a6f3e;
-      font-weight: 500;
-      margin-top: 1px;
-    }
-
-    .btn-sync-refresh {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--navy);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-sync-refresh:hover {
-      background: var(--navy);
-      color: #FFFFFF;
-      border-color: var(--navy);
-    }
-
-    .device-connect-card {
-      background: #FFFBEB;
-      border: 1px solid #FDE68A;
-      border-radius: 14px;
-      padding: 15px 16px;
-    }
-
-    .connect-card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .step-badge {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: #FFFFFF;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .connect-card-header h4 {
-      margin: 0;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #92400E;
-    }
-
-    .connect-card-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .step-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 12.5px;
-      color: #78350F;
-      line-height: 1.45;
-    }
-
-    .step-num {
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      background: #F59E0B;
-      color: #FFFFFF;
-      font-size: 10px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .step-text {
-      flex: 1;
-    }
-
-    .network-url-container {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 5px;
-      background: #FFFFFF;
-      padding: 5px 8px 5px 10px;
-      border-radius: 8px;
-      border: 1px solid #FCD34D;
-      width: fit-content;
-      max-width: 100%;
-    }
-
-    .network-url-container code {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      user-select: all;
-      word-break: break-all;
-    }
-
-    .btn-copy-chip {
-      background: var(--navy);
-      color: #FFFFFF;
-      border: none;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s ease;
-      white-space: nowrap;
-    }
-
-    .btn-copy-chip:hover {
-      opacity: 0.9;
-    }
-
-    .username-pill-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-
-    .username-code-pill {
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 700;
-      font-size: 12.5px;
-      background: #FFFFFF;
-      border: 1px solid #FCD34D;
-      padding: 2px 8px;
-      border-radius: 6px;
-      color: var(--navy);
-    }
-
-    .pill-note {
-      font-size: 11.5px;
-      color: #92400E;
-      font-weight: 500;
-    }
-
-    .switch-account-box {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px 16px;
-    }
-
-    .switch-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .switch-header h4 {
-      margin: 0;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--navy);
-    }
-
-    .switch-note {
-      margin: 0 0 12px;
-      font-size: 12px;
-      color: var(--ink-soft);
-      line-height: 1.4;
-    }
-
-    .switch-form {
-      display: flex;
-      gap: 8px;
-    }
-
-    .switch-input-group {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-at-symbol {
-      position: absolute;
-      left: 11px;
-      color: var(--ink-soft);
-      font-weight: 700;
-      font-size: 14px;
-      pointer-events: none;
-    }
-
-    .switch-input-group input {
-      width: 100%;
-      padding: 9px 12px 9px 28px;
-      border-radius: 10px;
-      border: 1.5px solid var(--border);
-      font-size: 13.5px;
-      font-family: inherit;
-      color: var(--ink);
-      background: #FAFBFC;
-      transition: all 0.2s ease;
-      outline: none;
-    }
-
-    .switch-input-group input:focus {
-      border-color: var(--navy);
-      background: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(21, 40, 64, 0.1);
-    }
-
-    .btn-switch-submit {
-      padding: 9px 16px;
-      border-radius: 10px;
-      background: var(--navy);
-      color: #FFFFFF;
-      border: none;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .btn-switch-submit:hover {
-      background: #1e3859;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(21, 40, 64, 0.15);
-    }
-
-    .modal-switch-feedback {
-      margin-top: 8px;
-      font-size: 12px;
-      line-height: 1.35;
-    }
   </style>
 
   <!-- jsPDF & AutoTable for High-Quality PDF Statement Generation (Local with CDN fallback) -->
@@ -2510,11 +2042,7 @@
         </div>
       </a>
       <div class="header-actions">
-        <button type="button" class="user-id-pill" id="userIdPill" title="Account: usr_sahil_primary · Click to switch username or connect devices">
-          <span class="user-pill-avatar" id="headerUserAvatar">U</span>
-          <span class="user-pill-name" id="userIdLabel">usr_sahil_primary</span>
-          <span class="user-sync-badge" id="userSyncBadge">☁️ Synced</span>
-        </button>
+        
         <button type="button" class="export-btn primary" id="headerDownloadPdfBtn"
           title="Download well-formatted PDF statement for this month">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
@@ -2767,22 +2295,11 @@
           <div>
             <strong style="font-size: 13.5px; color: var(--navy); display: block;">Reports &amp; Device Backup</strong>
             <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 2px;">
-              Active User: <strong id="footerUserId"
-                style="color:var(--navy); font-family: 'IBM Plex Mono', monospace;">usr_sahil_primary</strong> &middot; Synced across all your devices.
+              Backup and permanently restore your data on this device or export monthly PDF statements.
             </div>
           </div>
         </div>
         <div class="backup-actions" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-          <button type="button" class="export-btn" id="switchUserBtn"
-            title="Switch username or sync across devices">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="8.5" cy="7" r="4" />
-              <polyline points="17 11 19 13 23 9" />
-            </svg>
-            <span>Switch User / Device Sync</span>
-          </button>
           <button type="button" class="export-btn primary" id="footerDownloadPdfBtn"
             title="Download well-formatted PDF statement for this month">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
@@ -2834,121 +2351,6 @@
 
   </div>
 
-  <!-- Multi-Device Sync & User Profile Modal Dialog -->
-  <div class="user-modal-overlay" id="userModalOverlay" aria-hidden="true">
-    <div class="user-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalUserTitle">
-      <div class="user-modal-header">
-        <div class="user-modal-title-group">
-          <div class="user-modal-icon-badge">📱💻</div>
-          <div>
-            <h3 id="modalUserTitle">Multi-Device Sync &amp; User Profile</h3>
-            <p>Access the same data on any phone, laptop, or tablet using the same username</p>
-          </div>
-        </div>
-        <button type="button" class="user-modal-close" id="userModalCloseBtn" aria-label="Close dialog">&times;</button>
-      </div>
-
-      <div class="user-modal-body">
-        <!-- Active User Account Card -->
-        <div class="active-user-box">
-          <div class="active-user-avatar" id="modalUserAvatar">U</div>
-          <div class="active-user-info">
-            <div class="active-user-sub">Active Username</div>
-            <div class="active-user-name" id="modalCurrentUserName">usr_sahil_primary</div>
-            <div class="active-user-stats" id="modalUserMeta">Connecting to cloud database…</div>
-          </div>
-          <button type="button" class="btn-sync-refresh" id="modalSyncNowBtn" title="Sync now from MongoDB">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            <span>Sync Now</span>
-          </button>
-        </div>
-
-        <!-- How to connect other device -->
-        <div class="device-connect-card">
-          <div class="connect-card-header">
-            <span class="step-badge">1</span>
-            <h4>How to access on Phone or another Laptop:</h4>
-          </div>
-          <div class="connect-card-steps">
-            <div class="step-item">
-              <span class="step-num">A</span>
-              <div class="step-text">
-                <span>Connect your phone/laptop to the <strong>same Wi-Fi network</strong>, then open this exact address:</span>
-                <div class="network-url-container">
-                  <code id="modalNetworkUrl">http://192.168.0.103:3000</code>
-                  <button type="button" class="btn-copy-chip" id="modalCopyUrlBtn">Copy Link</button>
-                </div>
-                <div class="network-qr-row" style="margin-top: 10px; display: flex; align-items: center; gap: 12px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
-                  <img id="modalQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http%3A%2F%2F192.168.0.103%3A3000" alt="QR Code for Mobile Access" width="80" height="80" style="border-radius: 6px; border: 1px solid #E2E8F0; flex-shrink: 0;">
-                  <div style="font-size: 11.5px; color: var(--ink-soft); line-height: 1.4;">
-                    <strong style="color: var(--navy); display: block; margin-bottom: 2px;">📷 Scan from Phone:</strong>
-                    Point your phone camera here to open ExpenseTracker on Wi-Fi instantly.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="step-item">
-              <span class="step-num">B</span>
-              <div class="step-text">
-                <span>Primary Multi-Device Shared Account:</span>
-                <div class="username-pill-row">
-                  <span class="username-code-pill" id="modalCodeUsername">usr_sahil_primary</span>
-                  <span class="pill-note">&mdash; every device automatically loads &amp; edits this exact dataset in real time!</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Switch or Change Username Form -->
-        <div class="switch-account-box">
-          <div class="switch-header">
-            <span class="step-badge">2</span>
-            <h4>Account Management:</h4>
-          </div>
-          <div style="margin-bottom: 12px;">
-            <button type="button" class="btn-switch-submit" id="modalRestorePrimaryBtn" style="width: 100%; justify-content: center; background: #1F3A5F; font-weight: 600; padding: 10px; font-size: 13px;">
-              ⚡ Switch to Primary Account (@usr_sahil_primary)
-            </button>
-          </div>
-          <p class="switch-note" style="margin-top: 10px;">
-            Or log in to a different custom username if desired. All devices default to <strong>usr_sahil_primary</strong>:
-          </p>
-          <form class="switch-form" id="switchUserForm" onsubmit="return false;">
-            <div class="switch-input-group">
-              <span class="input-at-symbol">@</span>
-              <input type="text" id="modalUsernameInput" placeholder="Enter username (e.g. usr_sahil_primary)" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
-            </div>
-            <button type="submit" class="btn-switch-submit" id="modalSwitchConfirmBtn">Switch &amp; Load</button>
-          </form>
-          <div class="modal-switch-feedback" id="modalSwitchFeedback"></div>
-        </div>
-
-        <!-- Backend Server Connection Details (for custom networks / IP) -->
-        <details class="server-config-details" id="serverConfigDetails" style="margin-top: 14px; font-size: 12px; background: #FAFBFC; border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;">
-          <summary style="cursor: pointer; font-weight: 600; color: var(--navy); display: flex; align-items: center; justify-content: space-between; user-select: none;">
-            <span>⚙️ Server Connection Settings</span>
-            <span id="serverStatusBadge" style="font-size: 11px; padding: 2px 8px; border-radius: 99px; background: #DEF7EC; color: #03543F; font-weight: 700;">🟢 Online</span>
-          </summary>
-          <div style="margin-top: 10px;">
-            <p style="margin: 0 0 8px; color: var(--ink-soft); line-height: 1.45; font-size: 11.5px;">
-              If another device cannot connect automatically or is opening via a different URL, specify this computer's backend API URL:
-            </p>
-            <div style="display: flex; gap: 8px;">
-              <input type="text" id="customServerInput" placeholder="http://192.168.0.103:3000" style="flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 12px; font-family: monospace; outline: none;">
-              <button type="button" id="saveServerBtn" class="btn-switch-submit" style="padding: 8px 14px; font-size: 11.5px;">Test &amp; Connect</button>
-            </div>
-            <div id="customServerFeedback" style="margin-top: 6px; font-size: 11.5px;"></div>
-          </div>
-        </details>
-      </div>
-    </div>
-  </div>
-
   <div class="toast-stack" id="toastStack"></div>
 
   <script>
@@ -2971,9 +2373,10 @@
         "Entertainment": "#B0455C", "Shopping": "#6B5B95", "Mobile & Internet": "#4E6E8E", "Other": "#8A8F98"
       };
 
-      // ---- Storage Architecture: MongoDB Backend with LocalStorage Offline Fallback & Zero Data Loss ----
+      // ---- Device Storage Architecture: Permanent Local Device Storage & MongoDB Backup ----
       const LS_PREFIX = 'expense-tracker:';
-      const hasRealStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
+      const memoryStore = {};
+      let isMongoConnected = false;
       let hasLocalStorage = false;
       try {
         const testKey = '__et_test__';
@@ -2984,155 +2387,66 @@
         hasLocalStorage = false;
       }
 
-      // ---- Multi-Device User Account Architecture & Normalization ----
-      const PRIMARY_USER_ID = 'usr_sahil_primary';
-      const USER_NAME_STORAGE_KEY = 'expensetrackr_username';
-      const USER_ID_STORAGE_KEY = 'expensetrackr_user_id';
-      const API_SERVER_STORAGE_KEY = 'expensetrackr_api_server';
-      let currentUserId = PRIMARY_USER_ID;
-      let detectedNetworkUrl = 'http://192.168.0.103:3000';
+      // Automatically migrate any past scoped keys on this device so existing data is preserved under standard keys
+      (function migrateLegacyScopedKeys() {
+        if (!hasLocalStorage) return;
+        try {
+          const keysToMigrate = [];
+          for (let i = 0; i < window.localStorage.length; i++) {
+            const k = window.localStorage.key(i);
+            if (k && k.startsWith(LS_PREFIX) && k.includes(':usr_')) {
+              keysToMigrate.push(k);
+            }
+          }
 
-      function isLegacyOrAutoId(str) {
-        if (!str) return true;
-        const s = String(str).trim().toLowerCase();
-        if (s === PRIMARY_USER_ID || s === 'sahil') return false;
-        // Old random device IDs: usr_[timestamp]_[random] e.g. usr_mtrll8ye_5ynxny
-        if (/^usr_[a-z0-9]{6,10}_[a-z0-9]{4,10}$/i.test(s)) return true;
-        if (['default', 'usr_default', 'user', 'null', 'undefined', 'anonymous', ''].includes(s)) return true;
-        return false;
-      }
+          for (const oldKey of keysToMigrate) {
+            const val = window.localStorage.getItem(oldKey);
+            if (!val) continue;
+            const expMatch = oldKey.match(/(?:^|:)expenses:(\d{4}-\d{2})$/);
+            if (expMatch) {
+              const newKey = LS_PREFIX + 'expenses:' + expMatch[1];
+              if (!window.localStorage.getItem(newKey)) {
+                window.localStorage.setItem(newKey, val);
+              }
+            } else {
+              const budMatch = oldKey.match(/(?:^|:)budget:(\d{4}-\d{2})$/);
+              if (budMatch) {
+                const newKey = LS_PREFIX + 'budget:' + budMatch[1];
+                if (!window.localStorage.getItem(newKey)) {
+                  window.localStorage.setItem(newKey, val);
+                }
+              } else if (oldKey.endsWith('udhari:records')) {
+                const newKey = LS_PREFIX + 'udhari:records';
+                if (!window.localStorage.getItem(newKey)) {
+                  window.localStorage.setItem(newKey, val);
+                }
+              }
+            }
+          }
 
-      function normalizeUsername(raw) {
-        if (!raw) return PRIMARY_USER_ID;
-        let str = String(raw).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        if (!str || str === 'sahil' || str === PRIMARY_USER_ID || isLegacyOrAutoId(str)) {
-          return PRIMARY_USER_ID;
+          // Clean up obsolete user account keys
+          window.localStorage.removeItem('expensetrackr_username');
+          window.localStorage.removeItem('expensetrackr_user_id');
+          window.localStorage.removeItem('expensetrackr_api_server');
+        } catch (e) {
+          console.warn('Legacy key migration notice:', e);
         }
-        return str;
-      }
+      })();
 
-      function getUserStorageKey(key) {
-        const uid = currentUserId || PRIMARY_USER_ID;
-        return `${LS_PREFIX}${uid}:${key}`;
-      }
-
-      function getOrInitUserId() {
-        // 1. Check URL query parameters (e.g. ?user=usr_sahil_primary or ?u=usr_sahil_primary)
-        try {
-          const urlParams = new URLSearchParams(window.location.search);
-          const qUser = urlParams.get('user') || urlParams.get('username') || urlParams.get('u');
-          if (qUser && qUser.trim()) {
-            currentUserId = normalizeUsername(qUser);
-            if (hasLocalStorage) {
-              window.localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserId);
-              window.localStorage.setItem(USER_ID_STORAGE_KEY, currentUserId);
-            }
-            updateUserIdUI();
-            return currentUserId;
-          }
-        } catch (e) { }
-
-        // 2. If currentUserId in memory is valid and not legacy, use it
-        if (currentUserId && currentUserId.trim().length > 0 && !isLegacyOrAutoId(currentUserId)) {
-          return currentUserId;
-        }
-
-        // 3. Inspect localStorage on this device
-        try {
-          if (hasLocalStorage) {
-            const storedName = window.localStorage.getItem(USER_NAME_STORAGE_KEY);
-            const storedId = window.localStorage.getItem(USER_ID_STORAGE_KEY);
-
-            // If this device was previously assigned an old auto-generated device ID (e.g. usr_mtr...), reset it to usr_sahil_primary
-            if (isLegacyOrAutoId(storedName) || isLegacyOrAutoId(storedId)) {
-              currentUserId = PRIMARY_USER_ID;
-              window.localStorage.setItem(USER_NAME_STORAGE_KEY, PRIMARY_USER_ID);
-              window.localStorage.setItem(USER_ID_STORAGE_KEY, PRIMARY_USER_ID);
-              updateUserIdUI();
-              return currentUserId;
-            }
-
-            if (storedName && storedName.trim().length > 0) {
-              currentUserId = normalizeUsername(storedName);
-              updateUserIdUI();
-              return currentUserId;
-            }
-            if (storedId && storedId.trim().length > 0) {
-              currentUserId = normalizeUsername(storedId);
-              window.localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserId);
-              updateUserIdUI();
-              return currentUserId;
-            }
-          }
-        } catch (e) { }
-
-        // Primary default user across ALL devices is 'usr_sahil_primary'
-        currentUserId = PRIMARY_USER_ID;
-        try {
-          if (hasLocalStorage) {
-            window.localStorage.setItem(USER_NAME_STORAGE_KEY, PRIMARY_USER_ID);
-            window.localStorage.setItem(USER_ID_STORAGE_KEY, PRIMARY_USER_ID);
-          }
-        } catch (e) { }
-        updateUserIdUI();
-        return currentUserId;
-      }
-
-      function updateUserIdUI() {
-        const lbl = document.getElementById('userIdLabel');
-        const foot = document.getElementById('footerUserId');
-        const pill = document.getElementById('userIdPill');
-        const headerAvatar = document.getElementById('headerUserAvatar');
-        const modalAvatar = document.getElementById('modalUserAvatar');
-        const modalCurrent = document.getElementById('modalCurrentUserName');
-        const modalCode = document.getElementById('modalCodeUsername');
-        const uid = currentUserId || 'usr_sahil_primary';
-        const displayLetter = uid.startsWith('usr_') ? uid.replace(/^usr_/, '').charAt(0) : uid.charAt(0);
-        const initial = (displayLetter || 'S').toUpperCase();
-
-        if (lbl) lbl.textContent = uid;
-        if (foot) foot.textContent = uid;
-        if (headerAvatar) headerAvatar.textContent = initial;
-        if (modalAvatar) modalAvatar.textContent = initial;
-        if (modalCurrent) modalCurrent.textContent = uid;
-        if (modalCode) modalCode.textContent = uid;
-        if (pill) pill.title = `Active Username: ${uid} (Click to switch username or sync devices)`;
-      }
-
-      // Dynamic API base detection (supports http://localhost:3000, local IP, file:/// protocol, and Live Server)
+      // Dynamic API base detection
       let determinedApiBase = null;
 
       function getApiBaseCandidates() {
         const loc = window.location;
         const candidates = [];
-
-        // 1. Check user-configured custom server URL if previously set in modal
-        try {
-          if (hasLocalStorage) {
-            const customServer = window.localStorage.getItem(API_SERVER_STORAGE_KEY);
-            if (customServer && customServer.trim()) {
-              candidates.push(customServer.trim().replace(/\/+$/, ''));
-            }
-          }
-        } catch (e) { }
-
-        // 2. If served from backend port 3000 or production host
         if (loc && loc.protocol.startsWith('http') && (loc.port === '3000' || !loc.port)) {
           candidates.push('');
         }
-
-        // 3. Always include localhost:3000 and 127.0.0.1:3000
         candidates.push('http://localhost:3000');
         candidates.push('http://127.0.0.1:3000');
-
-        // 4. If opened on LAN or custom hostname
         if (loc && loc.hostname && loc.hostname !== 'localhost' && loc.hostname !== '127.0.0.1') {
           candidates.push(`http://${loc.hostname}:3000`);
         }
-
-        // 5. Always include host machine Wi-Fi network IP for multi-device access
-        candidates.push('http://192.168.0.103:3000');
-
         return [...new Set(candidates)];
       }
 
@@ -3140,28 +2454,16 @@
         if (!path || path.startsWith('http://') || path.startsWith('https://')) return path;
         const base = determinedApiBase !== null ? determinedApiBase : (
           (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000'))
-            ? (detectedNetworkUrl || 'http://192.168.0.103:3000')
+            ? 'http://localhost:3000'
             : ''
         );
         return base + path;
       }
 
-      // Universal API caller that automatically passes current User ID / Username
-      async function userFetch(url, options = {}) {
-        const uid = getOrInitUserId();
-        const headers = Object.assign({}, options.headers || {}, {
-          'X-User-Id': uid,
-          'X-Username': uid
-        });
+      async function apiFetch(url, options = {}) {
         const targetUrl = resolveApiUrl(url);
-        return fetch(targetUrl, Object.assign({}, options, { headers }));
+        return fetch(targetUrl, options);
       }
-
-      // Initialize User ID immediately
-      getOrInitUserId();
-
-      const memoryStore = {};
-      let isMongoConnected = false;
 
       const dbStatusPill = document.getElementById('dbStatusPill');
       const dbStatusText = document.getElementById('dbStatusText');
@@ -3176,7 +2478,7 @@
         }
       }
 
-      // Check MongoDB status & perform automatic migration of existing localStorage data
+      // Check MongoDB status & save local device data to MongoDB if connected
       async function checkAndSyncData(showUserFeedback) {
         const candidates = getApiBaseCandidates();
         let connectedData = null;
@@ -3184,11 +2486,7 @@
 
         for (const base of candidates) {
           try {
-            const uid = getOrInitUserId();
-            const res = await fetch(base + '/api/status', {
-              cache: 'no-store',
-              headers: { 'X-User-Id': uid }
-            });
+            const res = await fetch(base + '/api/status', { cache: 'no-store' });
             if (res.ok) {
               const data = await res.json();
               if (data.connected) {
@@ -3197,52 +2495,20 @@
                 break;
               }
             }
-          } catch (e) {
-            // Try next candidate port / host
-          }
+          } catch (e) { }
         }
-
-        const serverBadge = document.getElementById('serverStatusBadge');
 
         if (connectedData) {
           determinedApiBase = successfulBase;
           isMongoConnected = true;
-
-          if (connectedData.networkUrl) {
-            detectedNetworkUrl = connectedData.networkUrl;
-            const urlEl = document.getElementById('modalNetworkUrl');
-            if (urlEl) urlEl.textContent = connectedData.networkUrl;
-            const qrImg = document.getElementById('modalQrCodeImg');
-            if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(connectedData.networkUrl);
-          }
-
-          if (serverBadge) {
-            serverBadge.textContent = '🟢 Online';
-            serverBadge.style.background = '#DEF7EC';
-            serverBadge.style.color = '#03543F';
-          }
-
-          updateDbStatus(true, 'MongoDB Connected', `Database: ${connectedData.database || 'expensetracker'} · Account: ${connectedData.userId || currentUserId}`);
-          updateUserIdUI();
-
-          // Check if we have local data to sync to MongoDB
+          updateDbStatus(true, 'MongoDB Connected', `Database: ${connectedData.database || 'expensetracker'}`);
           await syncLocalDataToMongo();
-          if (showUserFeedback) showToast('MongoDB connection verified & synced');
+          if (showUserFeedback) showToast('MongoDB connected & synced with device storage');
           return true;
         }
 
         isMongoConnected = false;
-        if (serverBadge) {
-          serverBadge.textContent = '🔴 Offline';
-          serverBadge.style.background = '#FDE8E8';
-          serverBadge.style.color = '#9B1C1C';
-        }
-
-        const isFileOrLiveServer = window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000');
-        const hint = isFileOrLiveServer
-          ? `Server offline or unreachable. Ensure "node server.js" is running and open ${detectedNetworkUrl || 'http://192.168.0.103:3000'}`
-          : 'MongoDB unreachable · Saving to local browser storage';
-        updateDbStatus(false, 'Local / Offline', hint);
+        updateDbStatus(false, 'Local / Offline', 'MongoDB unreachable · Operating in local device storage mode');
         if (showUserFeedback) showToast('Working in offline local storage mode', true);
         return false;
       }
@@ -3250,7 +2516,6 @@
       async function syncLocalDataToMongo() {
         if (!hasLocalStorage || !isMongoConnected) return;
 
-        // Collect all localStorage keys that belong to this app (including previous device scoped keys)
         const monthlyExpenses = {};
         const monthlyBudgets = {};
         let udhariRecordsToSync = [];
@@ -3262,73 +2527,48 @@
             const rawVal = window.localStorage.getItem(k);
             if (!rawVal) continue;
             try {
-              // Match expenses: YYYY-MM either prefixed by userId or directly
               const expMatch = k.match(/(?:^|:)expenses:(\d{4}-\d{2})$/);
               if (expMatch) {
                 const m = expMatch[1];
                 const list = JSON.parse(rawVal);
                 if (Array.isArray(list) && list.length > 0) {
-                  if (!monthlyExpenses[m]) monthlyExpenses[m] = [];
-                  const existingIds = new Set(monthlyExpenses[m].map(e => String(e.id)));
-                  for (const item of list) {
-                    if (item && item.id && !existingIds.has(String(item.id))) {
-                      monthlyExpenses[m].push(item);
-                      existingIds.add(String(item.id));
-                      totalItemsFound++;
-                    }
-                  }
+                  monthlyExpenses[m] = list;
+                  totalItemsFound += list.length;
                 }
               } else {
                 const budMatch = k.match(/(?:^|:)budget:(\d{4}-\d{2})$/);
                 if (budMatch) {
                   const m = budMatch[1];
                   const num = JSON.parse(rawVal);
-                  if (num > 0 && !monthlyBudgets[m]) {
+                  if (num > 0) {
                     monthlyBudgets[m] = num;
                     totalItemsFound++;
                   }
                 } else if (k.endsWith('udhari:records')) {
                   const list = JSON.parse(rawVal);
                   if (Array.isArray(list) && list.length > 0) {
-                    const existingUdhIds = new Set(udhariRecordsToSync.map(u => String(u.id)));
-                    for (const item of list) {
-                      if (item && item.id && !existingUdhIds.has(String(item.id))) {
-                        udhariRecordsToSync.push(item);
-                        existingUdhIds.add(String(item.id));
-                        totalItemsFound++;
-                      }
-                    }
+                    udhariRecordsToSync = list;
+                    totalItemsFound += list.length;
                   }
                 }
               }
-            } catch (err) {
-              console.warn('Failed parsing local item:', k, err);
-            }
+            } catch (err) { }
           }
         }
 
-        const syncMarker = `et_synced_v4_${currentUserId}`;
-        const alreadySynced = window.localStorage.getItem(syncMarker);
-
-        if (totalItemsFound > 0 && !alreadySynced) {
+        if (totalItemsFound > 0) {
           try {
-            const resp = await userFetch('/api/sync', {
+            await apiFetch('/api/sync', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                userId: currentUserId,
                 monthlyExpenses,
                 monthlyBudgets,
                 udhariRecords: udhariRecordsToSync
               })
             });
-            if (resp.ok) {
-              const resJson = await resp.json();
-              window.localStorage.setItem(syncMarker, 'true');
-              showToast(`✨ Synced ${resJson.counts.expenses + resJson.counts.udhari} records to MongoDB for ${currentUserId}!`);
-            }
           } catch (syncErr) {
-            console.warn('Sync request failed:', syncErr);
+            console.warn('Background sync notice:', syncErr);
           }
         }
       }
@@ -3362,9 +2602,7 @@
               totalBudgets: 0,
               totalUdhariRecords: 0
             },
-            // Complete raw key-value store for 100% loss-free recovery
             rawLocalStorage: {},
-            // Formatted JSON structure for easy human reading / data analysis
             parsedData: {
               expensesByMonth: {},
               budgetsByMonth: {},
@@ -3414,7 +2652,7 @@
           const now = new Date();
           const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
           const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
-          const fileName = `ExpenseTrackr-phone-backup-${dateStr}-${timeStr}.json`;
+          const fileName = `ExpenseTrackr-backup-${dateStr}-${timeStr}.json`;
 
           const jsonContent = JSON.stringify(exportData, null, 2);
           const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
@@ -3445,46 +2683,187 @@
         reader.onload = async function (e) {
           try {
             const data = JSON.parse(e.target.result);
-            if (!data || (!data.rawLocalStorage && !data.parsedData)) {
-              showToast('Invalid backup file. Missing localStorage data.', true);
+            if (!data || typeof data !== 'object') {
+              showToast('Invalid backup file. JSON object required.', true);
               return;
             }
 
-            let restoredCount = 0;
-            // 1. Restore raw localStorage keys
+            const extractedExpensesByMonth = {};
+            const extractedBudgetsByMonth = {};
+            let extractedUdhari = [];
+
+            // 1. From parsedData (Standard ExpenseTrackr backup format)
+            if (data.parsedData) {
+              if (data.parsedData.expensesByMonth && typeof data.parsedData.expensesByMonth === 'object') {
+                for (const [m, list] of Object.entries(data.parsedData.expensesByMonth)) {
+                  if (Array.isArray(list)) {
+                    if (!extractedExpensesByMonth[m]) extractedExpensesByMonth[m] = [];
+                    extractedExpensesByMonth[m].push(...list);
+                  }
+                }
+              }
+              if (data.parsedData.budgetsByMonth && typeof data.parsedData.budgetsByMonth === 'object') {
+                for (const [m, amt] of Object.entries(data.parsedData.budgetsByMonth)) {
+                  extractedBudgetsByMonth[m] = Number(amt) || 0;
+                }
+              }
+              if (Array.isArray(data.parsedData.udhariRecords)) {
+                extractedUdhari.push(...data.parsedData.udhariRecords);
+              }
+            }
+
+            // 2. From rawLocalStorage (Captures any raw keys exported from localStorage)
             if (data.rawLocalStorage && typeof data.rawLocalStorage === 'object') {
               for (const [k, v] of Object.entries(data.rawLocalStorage)) {
-                if (typeof v === 'string') {
-                  window.localStorage.setItem(k, v);
-                  restoredCount++;
+                if (typeof v !== 'string') continue;
+                try {
+                  const expMatch = k.match(/(?:^|:)expenses:(\d{4}-\d{2})$/);
+                  if (expMatch) {
+                    const m = expMatch[1];
+                    const list = JSON.parse(v);
+                    if (Array.isArray(list)) {
+                      if (!extractedExpensesByMonth[m]) extractedExpensesByMonth[m] = [];
+                      extractedExpensesByMonth[m].push(...list);
+                    }
+                    continue;
+                  }
+                  const budMatch = k.match(/(?:^|:)budget:(\d{4}-\d{2})$/);
+                  if (budMatch) {
+                    const m = budMatch[1];
+                    const amt = JSON.parse(v);
+                    extractedBudgetsByMonth[m] = Number(amt) || 0;
+                    continue;
+                  }
+                  if (k.endsWith('udhari:records')) {
+                    const list = JSON.parse(v);
+                    if (Array.isArray(list)) {
+                      extractedUdhari.push(...list);
+                    }
+                    continue;
+                  }
+                } catch (err) { }
+              }
+            }
+
+            // 3. Direct top-level format: { monthlyExpenses, monthlyBudgets, udhariRecords }
+            if (data.monthlyExpenses && typeof data.monthlyExpenses === 'object') {
+              for (const [m, list] of Object.entries(data.monthlyExpenses)) {
+                if (Array.isArray(list)) {
+                  if (!extractedExpensesByMonth[m]) extractedExpensesByMonth[m] = [];
+                  extractedExpensesByMonth[m].push(...list);
+                }
+              }
+            }
+            if (data.monthlyBudgets && typeof data.monthlyBudgets === 'object') {
+              for (const [m, amt] of Object.entries(data.monthlyBudgets)) {
+                extractedBudgetsByMonth[m] = Number(amt) || 0;
+              }
+            }
+            if (Array.isArray(data.udhariRecords)) {
+              extractedUdhari.push(...data.udhariRecords);
+            }
+
+            // 4. Direct list format if single array of expenses: [ { id, date, amount, ... } ]
+            if (Array.isArray(data)) {
+              for (const item of data) {
+                if (item && item.date && item.amount) {
+                  const m = item.date.slice(0, 7);
+                  if (!extractedExpensesByMonth[m]) extractedExpensesByMonth[m] = [];
+                  extractedExpensesByMonth[m].push(item);
                 }
               }
             }
 
-            // 2. Also restore from parsedData if present
-            if (data.parsedData) {
-              if (data.parsedData.expensesByMonth) {
-                for (const [m, list] of Object.entries(data.parsedData.expensesByMonth)) {
-                  window.localStorage.setItem(LS_PREFIX + 'expenses:' + m, JSON.stringify(list));
+            // Deduplicate expenses per month by item id
+            let totalImportedExpenses = 0;
+            const finalExpensesByMonth = {};
+            for (const [m, list] of Object.entries(extractedExpensesByMonth)) {
+              const uniqueMap = new Map();
+              for (const exp of list) {
+                if (exp && exp.amount) {
+                  const id = exp.id || ('exp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6));
+                  exp.id = id;
+                  uniqueMap.set(String(id), exp);
                 }
               }
-              if (data.parsedData.budgetsByMonth) {
-                for (const [m, b] of Object.entries(data.parsedData.budgetsByMonth)) {
-                  window.localStorage.setItem(LS_PREFIX + 'budget:' + m, JSON.stringify(b));
-                }
+              const cleanedList = Array.from(uniqueMap.values());
+              finalExpensesByMonth[m] = cleanedList;
+              totalImportedExpenses += cleanedList.length;
+            }
+
+            // Deduplicate udhari records by id
+            const uniqueUdhariMap = new Map();
+            for (const rec of extractedUdhari) {
+              if (rec && rec.person && rec.amount) {
+                const id = rec.id || ('udh_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6));
+                rec.id = id;
+                uniqueUdhariMap.set(String(id), rec);
               }
-              if (data.parsedData.udhariRecords) {
-                window.localStorage.setItem(LS_PREFIX + 'udhari:records', JSON.stringify(data.parsedData.udhariRecords));
+            }
+            const finalUdhari = Array.from(uniqueUdhariMap.values());
+            const totalImportedUdhari = finalUdhari.length;
+            const totalImportedBudgets = Object.keys(extractedBudgetsByMonth).length;
+
+            if (totalImportedExpenses === 0 && totalImportedUdhari === 0 && totalImportedBudgets === 0) {
+              showToast('No expense or udhari records found in backup file.', true);
+              return;
+            }
+
+            // 5. PERMANENTLY STORE IN THIS DEVICE (localStorage & memoryStore)
+            if (hasLocalStorage) {
+              for (const [m, list] of Object.entries(finalExpensesByMonth)) {
+                const key = LS_PREFIX + 'expenses:' + m;
+                const str = JSON.stringify(list);
+                window.localStorage.setItem(key, str);
+                memoryStore[key] = str;
+              }
+              for (const [m, amt] of Object.entries(extractedBudgetsByMonth)) {
+                const key = LS_PREFIX + 'budget:' + m;
+                const str = JSON.stringify(amt);
+                window.localStorage.setItem(key, str);
+                memoryStore[key] = str;
+              }
+              if (finalUdhari.length > 0) {
+                const key = LS_PREFIX + 'udhari:records';
+                const str = JSON.stringify(finalUdhari);
+                window.localStorage.setItem(key, str);
+                memoryStore[key] = str;
               }
             }
 
-            // Force resync to MongoDB if connected
-            window.localStorage.removeItem('et_synced_to_mongodb_v2');
-            await checkAndSyncData(false);
+            // 6. IF MONGODB IS RUNNING, PERSIST IMPORTED DATA TO MONGODB AS WELL
+            if (isMongoConnected) {
+              try {
+                await apiFetch('/api/sync', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    monthlyExpenses: finalExpensesByMonth,
+                    monthlyBudgets: extractedBudgetsByMonth,
+                    udhariRecords: finalUdhari
+                  })
+                });
+              } catch (syncErr) {
+                console.warn('MongoDB sync notice (data is permanently preserved in device storage):', syncErr);
+              }
+            }
+
+            // 7. Auto-navigate to latest active month in the imported data
+            const importedMonths = Object.keys(finalExpensesByMonth).filter(m => finalExpensesByMonth[m].length > 0).sort().reverse();
+            const currentK = monthKey(current);
+            if (!finalExpensesByMonth[currentK] || finalExpensesByMonth[currentK].length === 0) {
+              if (importedMonths.length > 0) {
+                const [yr, mo] = importedMonths[0].split('-').map(Number);
+                current = new Date(yr, mo - 1, 1);
+              }
+            }
+
+            // 8. Re-load views immediately
             await loadMonth();
             await loadUdhari();
 
-            showToast('🎉 Successfully imported backup into phone storage!');
+            const monthSummary = importedMonths.length > 0 ? ` across ${importedMonths.length} month(s)` : '';
+            showToast(`🎉 Permanently imported ${totalImportedExpenses} expenses${monthSummary} & ${totalImportedUdhari} khata records into this device!`);
           } catch (err) {
             console.error('Import parse error:', err);
             showToast('Error reading backup file: ' + err.message, true);
@@ -3493,7 +2872,7 @@
         reader.readAsText(file);
       }
 
-      // ==========================================
+// ==========================================
       // ---------- WELL-FORMATTED PDF STATEMENT --
       // ==========================================
       function renderPdfTable(doc, options) {
@@ -3950,303 +3329,6 @@
         });
       }
 
-      // ---------- Multi-Device Sync Modal & Account Management ----------
-      function openUserModal() {
-        const modal = document.getElementById('userModalOverlay');
-        if (!modal) return;
-        updateUserIdUI();
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-
-        // Refresh live cloud statistics & network IP
-        updateModalSummaryStats();
-
-        const input = document.getElementById('modalUsernameInput');
-        if (input) {
-          input.value = currentUserId || 'usr_sahil_primary';
-          setTimeout(() => input.select(), 100);
-        }
-
-        const serverInput = document.getElementById('customServerInput');
-        if (serverInput) {
-          try {
-            const savedServer = hasLocalStorage ? window.localStorage.getItem(API_SERVER_STORAGE_KEY) : '';
-            serverInput.value = savedServer || detectedNetworkUrl || 'http://192.168.0.103:3000';
-          } catch (e) { }
-        }
-
-        const feedback = document.getElementById('modalSwitchFeedback');
-        if (feedback) feedback.textContent = '';
-        const serverFeedback = document.getElementById('customServerFeedback');
-        if (serverFeedback) serverFeedback.textContent = '';
-      }
-
-      function closeUserModal() {
-        const modal = document.getElementById('userModalOverlay');
-        if (!modal) return;
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-      }
-
-      async function updateModalSummaryStats() {
-        const metaEl = document.getElementById('modalUserMeta');
-        const urlEl = document.getElementById('modalNetworkUrl');
-        if (urlEl) urlEl.textContent = detectedNetworkUrl || 'http://192.168.0.103:3000';
-
-        if (!isMongoConnected) {
-          if (metaEl) metaEl.textContent = 'Working in Local Storage fallback mode (MongoDB offline)';
-          return;
-        }
-
-        try {
-          const res = await userFetch('/api/user/summary');
-          if (res.ok) {
-            const data = await res.json();
-            if (metaEl) {
-              metaEl.textContent = `🟢 Cloud Synced · ${data.totalExpenses} Expenses · ${data.totalUdharis} Khata Records in MongoDB`;
-            }
-          }
-        } catch (e) {
-          if (metaEl) metaEl.textContent = '🟢 Connected to MongoDB';
-        }
-      }
-
-      async function loadAllUserDataFromMongo(username) {
-        if (!isMongoConnected) return null;
-        try {
-          const res = await userFetch('/api/user/all-data');
-          if (!res.ok) return null;
-          const data = await res.json();
-          if (data && data.success) {
-            if (data.monthlyExpenses) {
-              for (const [m, list] of Object.entries(data.monthlyExpenses)) {
-                const k = `${LS_PREFIX}${username}:expenses:${m}`;
-                if (hasLocalStorage) {
-                  try { window.localStorage.setItem(k, JSON.stringify(list)); } catch (e) { }
-                }
-                memoryStore[k] = JSON.stringify(list);
-              }
-            }
-            if (data.monthlyBudgets) {
-              for (const [m, b] of Object.entries(data.monthlyBudgets)) {
-                const k = `${LS_PREFIX}${username}:budget:${m}`;
-                if (hasLocalStorage) {
-                  try { window.localStorage.setItem(k, JSON.stringify(b)); } catch (e) { }
-                }
-                memoryStore[k] = JSON.stringify(b);
-              }
-            }
-            if (data.udhariRecords) {
-              const k = `${LS_PREFIX}${username}:udhari:records`;
-              if (hasLocalStorage) {
-                try { window.localStorage.setItem(k, JSON.stringify(data.udhariRecords)); } catch (e) { }
-              }
-              memoryStore[k] = JSON.stringify(data.udhariRecords);
-            }
-            return data;
-          }
-        } catch (e) {
-          console.warn('Failed to load all user data from cloud:', e);
-        }
-        return null;
-      }
-
-      async function switchUser(newUsername) {
-        const clean = normalizeUsername(newUsername);
-        if (!clean) {
-          showToast('Please enter a valid username', true);
-          return false;
-        }
-
-        const feedback = document.getElementById('modalSwitchFeedback');
-        if (feedback) {
-          feedback.style.color = 'var(--navy)';
-          feedback.textContent = `Connecting to account @${clean}…`;
-        }
-
-        // Verify connection if offline
-        if (!isMongoConnected) {
-          await checkAndSyncData(false);
-        }
-
-        currentUserId = clean;
-        if (hasLocalStorage) {
-          window.localStorage.setItem(USER_NAME_STORAGE_KEY, clean);
-          window.localStorage.setItem(USER_ID_STORAGE_KEY, clean);
-        }
-        updateUserIdUI();
-
-        if (!isMongoConnected) {
-          if (feedback) {
-            feedback.style.color = '#B91C1C';
-            feedback.innerHTML = `⚠️ <strong>Server unreachable!</strong><br>Make sure <code>node server.js</code> is running on your host computer and this device is connected to the same Wi-Fi.`;
-          }
-          showToast(`Server offline · Switched @${clean} in local storage mode`, true);
-          await loadMonth();
-          await loadUdhari();
-          return false;
-        }
-
-        // 1. Fetch full user data from MongoDB
-        const allData = await loadAllUserDataFromMongo(clean);
-
-        // 2. If user has data in past months but current month is empty, automatically navigate to latest active month
-        let reportMsg = `Switched to @${clean}`;
-        if (allData && allData.counts && allData.counts.expenses > 0) {
-          reportMsg = `Loaded ${allData.counts.expenses} expenses & ${allData.counts.udhari || 0} khata records for @${clean}!`;
-          const currentK = monthKey(current);
-          const currentHasExpenses = allData.monthlyExpenses && allData.monthlyExpenses[currentK] && allData.monthlyExpenses[currentK].length > 0;
-          if (!currentHasExpenses && allData.monthlyExpenses) {
-            const months = Object.keys(allData.monthlyExpenses).sort().reverse();
-            if (months.length > 0) {
-              const [yr, mo] = months[0].split('-').map(Number);
-              current = new Date(yr, mo - 1, 1);
-            }
-          }
-        }
-
-        // 3. Re-render views
-        await loadMonth();
-        await loadUdhari();
-
-        closeUserModal();
-        showToast(`✨ ${reportMsg}`);
-        return true;
-      }
-
-      // Modal Triggers & Event Listeners
-      const userIdPill = document.getElementById('userIdPill');
-      if (userIdPill) userIdPill.addEventListener('click', openUserModal);
-
-      const switchUserBtn = document.getElementById('switchUserBtn');
-      if (switchUserBtn) switchUserBtn.addEventListener('click', openUserModal);
-
-      const userModalCloseBtn = document.getElementById('userModalCloseBtn');
-      if (userModalCloseBtn) userModalCloseBtn.addEventListener('click', closeUserModal);
-
-      const userModalOverlay = document.getElementById('userModalOverlay');
-      if (userModalOverlay) {
-        userModalOverlay.addEventListener('click', (e) => {
-          if (e.target === userModalOverlay) closeUserModal();
-        });
-      }
-
-      const modalCopyUrlBtn = document.getElementById('modalCopyUrlBtn');
-      if (modalCopyUrlBtn) {
-        modalCopyUrlBtn.addEventListener('click', async () => {
-          const url = detectedNetworkUrl || 'http://192.168.0.103:3000';
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              await navigator.clipboard.writeText(url);
-              modalCopyUrlBtn.textContent = 'Copied!';
-              setTimeout(() => { modalCopyUrlBtn.textContent = 'Copy Link'; }, 2000);
-              showToast(`📋 Copied device link: ${url}`);
-            }
-          } catch (err) {
-            showToast(`Device address: ${url}`);
-          }
-        });
-      }
-
-      const modalSyncNowBtn = document.getElementById('modalSyncNowBtn');
-      if (modalSyncNowBtn) {
-        modalSyncNowBtn.addEventListener('click', async () => {
-          showToast('Syncing with MongoDB…');
-          await checkAndSyncData(false);
-          await loadAllUserDataFromMongo(currentUserId);
-          await loadMonth();
-          await loadUdhari();
-          await updateModalSummaryStats();
-          showToast('✨ Synced latest data from cloud!');
-        });
-      }
-
-      const saveServerBtn = document.getElementById('saveServerBtn');
-      if (saveServerBtn) {
-        saveServerBtn.addEventListener('click', async () => {
-          const serverInput = document.getElementById('customServerInput');
-          const serverFeedback = document.getElementById('customServerFeedback');
-          if (!serverInput) return;
-          let target = serverInput.value.trim().replace(/\/+$/, '');
-          if (!target) target = 'http://192.168.0.103:3000';
-          if (!target.startsWith('http://') && !target.startsWith('https://')) {
-            target = 'http://' + target;
-          }
-
-          if (serverFeedback) {
-            serverFeedback.style.color = 'var(--navy)';
-            serverFeedback.textContent = `Testing connection to ${target}…`;
-          }
-
-          try {
-            const testRes = await fetch(target + '/api/status', { cache: 'no-store' });
-            if (testRes.ok) {
-              const testData = await testRes.json();
-              if (testData.connected) {
-                if (hasLocalStorage) window.localStorage.setItem(API_SERVER_STORAGE_KEY, target);
-                determinedApiBase = target;
-                detectedNetworkUrl = target;
-                isMongoConnected = true;
-
-                const urlEl = document.getElementById('modalNetworkUrl');
-                if (urlEl) urlEl.textContent = target;
-
-                const sBadge = document.getElementById('serverStatusBadge');
-                if (sBadge) {
-                  sBadge.textContent = '🟢 Connected';
-                  sBadge.style.background = '#DEF7EC';
-                  sBadge.style.color = '#03543F';
-                }
-
-                if (serverFeedback) {
-                  serverFeedback.style.color = '#03543F';
-                  serverFeedback.innerHTML = `✅ Successfully connected to <strong>${target}</strong>!`;
-                }
-
-                await loadAllUserDataFromMongo(currentUserId);
-                await loadMonth();
-                await loadUdhari();
-                updateDbStatus(true, 'MongoDB Connected');
-                showToast(`✨ Connected to backend at ${target}!`);
-                return;
-              }
-            }
-          } catch (netErr) {
-            console.warn('Custom server connection failed:', netErr);
-          }
-
-          if (serverFeedback) {
-            serverFeedback.style.color = '#B91C1C';
-            serverFeedback.innerHTML = `❌ Failed to reach ${target}. Ensure "node server.js" is running on your PC and both devices are on the same Wi-Fi.`;
-          }
-          showToast(`Could not connect to ${target}`, true);
-        });
-      }
-
-      const switchUserForm = document.getElementById('switchUserForm');
-      if (switchUserForm) {
-        switchUserForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const input = document.getElementById('modalUsernameInput');
-          if (input) switchUser(input.value);
-        });
-      }
-
-      const modalSwitchConfirmBtn = document.getElementById('modalSwitchConfirmBtn');
-      if (modalSwitchConfirmBtn) {
-        modalSwitchConfirmBtn.addEventListener('click', () => {
-          const input = document.getElementById('modalUsernameInput');
-          if (input) switchUser(input.value);
-        });
-      }
-
-      const modalRestorePrimaryBtn = document.getElementById('modalRestorePrimaryBtn');
-      if (modalRestorePrimaryBtn) {
-        modalRestorePrimaryBtn.addEventListener('click', () => {
-          switchUser(PRIMARY_USER_ID);
-        });
-      }
-
       const footerExportBtn = document.getElementById('footerExportBtn');
       if (footerExportBtn) footerExportBtn.addEventListener('click', exportLocalStorageToJson);
 
@@ -4260,120 +3342,65 @@
         });
       }
 
-      // Live Cross-Device Silent Refresh: When tab regains focus or visibility, sync latest updates
-      async function silentCloudRefresh() {
-        if (!isMongoConnected) return;
-        const activeTag = document.activeElement ? document.activeElement.tagName : '';
-        const isTyping = activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'TEXTAREA';
-        if (isTyping || editingId || udhariEditingId) return;
-
-        try {
-          const k = monthKey(current);
-          const expRes = await userFetch('/api/expenses/' + encodeURIComponent(k));
-          if (expRes.ok) {
-            const data = await expRes.json();
-            expenses = data.expenses || [];
-            if (hasLocalStorage) window.localStorage.setItem(getUserStorageKey('expenses:' + k), JSON.stringify(expenses));
-            render(true);
-          }
-          const budRes = await userFetch('/api/budget/' + encodeURIComponent(k));
-          if (budRes.ok) {
-            const data = await budRes.json();
-            budget = data.budget || 0;
-            if (hasLocalStorage) window.localStorage.setItem(getUserStorageKey('budget:' + k), JSON.stringify(budget));
-            render(true);
-          }
-          const udhRes = await userFetch('/api/udhari');
-          if (udhRes.ok) {
-            const data = await udhRes.json();
-            udhariRecords = data.records || [];
-            if (hasLocalStorage) window.localStorage.setItem(getUserStorageKey('udhari:records'), JSON.stringify(udhariRecords));
-            updatePersonSuggestions();
-            renderUdhari();
-          }
-        } catch (e) { }
-      }
-
-      window.addEventListener('focus', silentCloudRefresh);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') silentCloudRefresh();
-      });
-
-      // Live multi-device background sync: automatically fetch updates every 12 seconds
-      setInterval(() => {
-        if (document.visibilityState === 'visible') {
-          silentCloudRefresh();
-        }
-      }, 12000);
-
       async function storageGet(key) {
-        const scopedKey = getUserStorageKey(key);
-        // 1. Try MongoDB API if connected
+        const fullKey = LS_PREFIX + key;
+
+        // 1. First priority: Check local device storage (instant, permanent on this device)
+        if (hasLocalStorage) {
+          const raw = window.localStorage.getItem(fullKey);
+          if (raw !== null) {
+            return { value: raw };
+          }
+        }
+        if (Object.prototype.hasOwnProperty.call(memoryStore, fullKey)) {
+          return { value: memoryStore[fullKey] };
+        }
+
+        // 2. Fallback: Query MongoDB API if connected and key was not found in device storage
         if (isMongoConnected) {
           try {
             if (key.startsWith('expenses:')) {
               const m = key.replace('expenses:', '');
-              const res = await userFetch('/api/expenses/' + encodeURIComponent(m));
+              const res = await apiFetch('/api/expenses/' + encodeURIComponent(m));
               if (res.ok) {
                 const data = await res.json();
                 const str = JSON.stringify(data.expenses || []);
-                if (hasLocalStorage) window.localStorage.setItem(scopedKey, str);
+                if (hasLocalStorage) window.localStorage.setItem(fullKey, str);
                 return { value: str };
               }
             } else if (key.startsWith('budget:')) {
               const m = key.replace('budget:', '');
-              const res = await userFetch('/api/budget/' + encodeURIComponent(m));
+              const res = await apiFetch('/api/budget/' + encodeURIComponent(m));
               if (res.ok) {
                 const data = await res.json();
                 const str = JSON.stringify(data.budget || 0);
-                if (hasLocalStorage) window.localStorage.setItem(scopedKey, str);
+                if (hasLocalStorage) window.localStorage.setItem(fullKey, str);
                 return { value: str };
               }
             } else if (key === 'udhari:records') {
-              const res = await userFetch('/api/udhari');
+              const res = await apiFetch('/api/udhari');
               if (res.ok) {
                 const data = await res.json();
                 const str = JSON.stringify(data.records || []);
-                if (hasLocalStorage) window.localStorage.setItem(scopedKey, str);
+                if (hasLocalStorage) window.localStorage.setItem(fullKey, str);
                 return { value: str };
               }
             }
           } catch (e) {
-            console.warn('API get error, falling back to local cache', e);
+            console.warn('API get error, falling back to local memory', e);
           }
         }
 
-        // 2. Fallback to Claude window.storage if present
-        if (hasRealStorage) {
-          try { return await window.storage.get(scopedKey); } catch (e) { return null; }
-        }
-
-        // 3. Fallback to localStorage (scopedKey first, then legacy un-scoped key)
-        if (hasLocalStorage) {
-          let raw = window.localStorage.getItem(scopedKey);
-          if (raw === null) {
-            raw = window.localStorage.getItem(LS_PREFIX + key);
-            if (raw !== null) {
-              try { window.localStorage.setItem(scopedKey, raw); } catch (e) { }
-            }
-          }
-          return raw !== null ? { value: raw } : null;
-        }
-
-        return Object.prototype.hasOwnProperty.call(memoryStore, scopedKey) ? { value: memoryStore[scopedKey] } : null;
+        return null;
       }
 
       async function storageSet(key, value) {
-        const scopedKey = getUserStorageKey(key);
-        // 1. Keep local storage up to date for instant offline fallback
+        const fullKey = LS_PREFIX + key;
+        // 1. Permanently persist to this device's storage
         if (hasLocalStorage) {
-          try { window.localStorage.setItem(scopedKey, value); } catch (e) { }
+          try { window.localStorage.setItem(fullKey, value); } catch (e) { }
         }
-        memoryStore[scopedKey] = value;
-
-        if (hasRealStorage) {
-          try { await window.storage.set(scopedKey, value); } catch (e) { }
-        }
+        memoryStore[fullKey] = value;
 
         // 2. Persist to MongoDB API if connected
         if (isMongoConnected) {
@@ -4381,33 +3408,33 @@
             if (key.startsWith('expenses:')) {
               const m = key.replace('expenses:', '');
               const parsed = JSON.parse(value);
-              const res = await userFetch('/api/expenses/' + encodeURIComponent(m), {
+              const res = await apiFetch('/api/expenses/' + encodeURIComponent(m), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUserId, expenses: parsed })
+                body: JSON.stringify({ expenses: parsed })
               });
               return res.ok;
             } else if (key.startsWith('budget:')) {
               const m = key.replace('budget:', '');
               const parsed = JSON.parse(value);
-              const res = await userFetch('/api/budget/' + encodeURIComponent(m), {
+              const res = await apiFetch('/api/budget/' + encodeURIComponent(m), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUserId, amount: parsed })
+                body: JSON.stringify({ amount: parsed })
               });
               return res.ok;
             } else if (key === 'udhari:records') {
               const parsed = JSON.parse(value);
-              const res = await userFetch('/api/udhari', {
+              const res = await apiFetch('/api/udhari', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUserId, records: parsed })
+                body: JSON.stringify({ records: parsed })
               });
               return res.ok;
             }
             return true;
           } catch (e) {
-            console.warn('API set error, saved to local cache', e);
+            console.warn('API set error, saved to local device storage', e);
             return true;
           }
         }
@@ -4714,7 +3741,7 @@
           let jumpBannerHtml = '';
           try {
             const curK = monthKey(current);
-            const prefix = `${LS_PREFIX}${currentUserId || 'usr_sahil_primary'}:expenses:`;
+            const prefix = `${LS_PREFIX}expenses:`;
             const otherMonths = [];
             for (let i = 0; i < window.localStorage.length; i++) {
               const k = window.localStorage.key(i);
@@ -4740,7 +3767,7 @@
                 <div style="font-size: 12px; color: var(--ink-soft); margin-top: 3px;">
                   You have <strong>${top.count} transactions</strong> logged in <strong>${fmtMonthLabel(topDate)}</strong>.
                 </div>
-                <button type="button" id="btnJumpToActiveMonth" class="btn-switch-submit" style="margin-top: 9px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px;">
+                <button type="button" id="btnJumpToActiveMonth" class="export-btn primary" style="margin-top: 9px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px;">
                   <span>👉 View ${fmtMonthLabel(topDate)} (${top.count} records)</span>
                 </button>
               </div>`;
@@ -4755,7 +3782,7 @@
           const jumpBtn = document.getElementById('btnJumpToActiveMonth');
           if (jumpBtn) {
             jumpBtn.addEventListener('click', () => {
-              const prefix = `${LS_PREFIX}${currentUserId || 'usr_sahil_primary'}:expenses:`;
+              const prefix = `${LS_PREFIX}expenses:`;
               const curK = monthKey(current);
               for (let i = 0; i < window.localStorage.length; i++) {
                 const k = window.localStorage.key(i);
@@ -5295,31 +4322,9 @@
         }
       });
 
-      // Startup: check MongoDB connection, auto-sync data for current user, then load views
+      // Startup: check MongoDB connection, sync local device data, then load views
       (async function init() {
-        updateUserIdUI();
-        const connected = await checkAndSyncData();
-        if (connected) {
-          try {
-            // Load all months and khata records from MongoDB for current user
-            const allData = await loadAllUserDataFromMongo(currentUserId);
-
-            // If current month has no transactions but user has recent past transactions, navigate to the latest month
-            const currentK = monthKey(current);
-            const expRes = await storageGet('expenses:' + currentK);
-            const currExpenses = expRes ? (JSON.parse(expRes.value || '[]') || []) : [];
-            if (currExpenses.length === 0 && allData && allData.counts && allData.counts.expenses > 0 && allData.monthlyExpenses) {
-              const activeMonths = Object.keys(allData.monthlyExpenses).filter(m => Array.isArray(allData.monthlyExpenses[m]) && allData.monthlyExpenses[m].length > 0).sort().reverse();
-              if (activeMonths.length > 0 && activeMonths[0] !== currentK) {
-                const [yr, mo] = activeMonths[0].split('-').map(Number);
-                current = new Date(yr, mo - 1, 1);
-                console.log(`[Startup] Navigated to latest active month with records: ${activeMonths[0]}`);
-              }
-            }
-          } catch (initErr) {
-            console.warn('[Startup] Sync notice:', initErr);
-          }
-        }
+        await checkAndSyncData();
         await loadMonth();
         await loadUdhari();
       })();
