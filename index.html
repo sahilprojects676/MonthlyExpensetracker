@@ -1642,6 +1642,11 @@
         padding: 16px 18px;
       }
 
+      .panel {
+        padding: 16px 10px;
+        box-sizing: border-box;
+      }
+
       .stat .budget-edit {
         margin-top: 10px;
         display: flex;
@@ -1750,67 +1755,123 @@
         width: 100%;
       }
 
-      /* Smooth iOS horizontal table scroll containers */
+      /* Smooth iOS table container: no horizontal scroll blowout, 100% fits phone screen */
       #ledgerWrap,
       #udhariWrap {
         width: 100%;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         touch-action: pan-x;
+        margin: 0;
+        padding: 0;
       }
 
       table.ledger {
-        font-size: 13px;
-        width: 100%;
-        min-width: 400px;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        table-layout: fixed;
+        border-collapse: collapse;
       }
 
       table.ledger th,
       table.ledger td {
-        padding: 10px 8px;
+        padding: 8px 3px;
+        box-sizing: border-box;
       }
 
+      table.ledger thead th {
+        padding: 0 3px 8px;
+        font-size: 10.5px;
+        letter-spacing: 0.3px;
+      }
+
+      /* Column width allocation guarantees options (Edit & Delete) stay 100% on screen */
+      table.ledger th:nth-child(1),
       table.ledger td.date {
+        width: 54px;
+        font-size: 11px;
         white-space: nowrap;
-        width: 1%;
-        font-size: 12px;
+        padding-left: 2px;
+        padding-right: 2px;
       }
 
+      table.ledger th:nth-child(2),
       table.ledger td.desc {
-        min-width: 120px;
+        width: auto;
         word-break: break-word;
-        overflow-wrap: break-word;
+        overflow-wrap: anywhere;
+        font-size: 12.5px;
+        line-height: 1.25;
+        padding-left: 3px;
+        padding-right: 3px;
       }
 
       table.ledger td.desc .cat-tag {
         display: inline-block;
-        margin-top: 4px;
+        margin-top: 2px;
+        font-size: 9.5px;
+        padding: 1px 5px;
+        border-radius: 10px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
+      table.ledger th:nth-child(3),
       table.ledger td.num {
+        width: 66px;
         white-space: nowrap;
-        width: 1%;
         text-align: right;
+        font-size: 13px;
+        font-weight: 600;
+        padding-left: 2px;
+        padding-right: 3px;
       }
 
-      /* Table actions column: guarantees 3 buttons fit without overflowing into the amount */
+      /* Options column (Edit and Delete): 100% visible on screen without scroll */
+      table.ledger th:nth-child(4),
       table.ledger td.actions {
+        width: 58px;
         white-space: nowrap;
-        width: 1%;
         text-align: right;
-        min-width: 84px;
+        padding-left: 1px;
+        padding-right: 1px;
       }
 
+      /* Udhari table column width allocation */
+      #udhariWrap table.ledger th:nth-child(1),
+      #udhariWrap table.ledger td.date {
+        width: 50px;
+      }
+
+      #udhariWrap table.ledger th:nth-child(3),
+      #udhariWrap table.ledger td.num {
+        width: 64px;
+      }
+
+      #udhariWrap table.ledger th:nth-child(4),
       #udhariWrap table.ledger td.actions {
-        min-width: 122px;
+        width: 86px;
       }
 
       .row-btn {
-        min-width: 36px;
-        min-height: 36px;
-        padding: 6px 8px;
-        font-size: 16px;
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        min-height: 26px;
+        padding: 0;
+        font-size: 12.5px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        margin: 0 1px;
         touch-action: manipulation;
+        box-sizing: border-box;
+        background: transparent;
       }
 
       /* Responsive edit row */
@@ -2017,8 +2078,8 @@
       .app {
         padding-top: calc(14px + env(safe-area-inset-top, 0px));
         padding-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
-        padding-left: calc(12px + env(safe-area-inset-left, 0px));
-        padding-right: calc(12px + env(safe-area-inset-right, 0px));
+        padding-left: calc(8px + env(safe-area-inset-left, 0px));
+        padding-right: calc(8px + env(safe-area-inset-right, 0px));
       }
 
       .brand .brand-logo-img,
@@ -2071,11 +2132,12 @@
       }
 
       .panel {
-        padding: 16px 14px;
+        padding: 14px 8px;
+        box-sizing: border-box;
       }
 
       .trend-panel {
-        padding: 14px 14px 10px;
+        padding: 14px 10px;
       }
 
       .trend-bars {
@@ -2088,26 +2150,6 @@
 
       .social-links {
         gap: 14px;
-      }
-
-      table.ledger td {
-        padding: 10px 6px;
-      }
-
-      table.ledger td.date {
-        font-size: 11.5px;
-      }
-
-      table.ledger thead th {
-        padding: 0 6px 8px;
-        font-size: 10.5px;
-      }
-
-      .row-btn {
-        min-width: 32px;
-        min-height: 32px;
-        font-size: 15px;
-        padding: 4px 6px;
       }
     }
 
