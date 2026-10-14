@@ -2597,12 +2597,20 @@
       function getApiBaseCandidates() {
         const loc = window.location;
         const candidates = [];
-        if (loc && loc.protocol.startsWith('http') && (loc.port === '3000' || !loc.port)) {
+        if (!loc || !loc.protocol.startsWith('http')) {
+          return ['http://localhost:3000'];
+        }
+        if (loc.protocol === 'https:') {
+          // On HTTPS (e.g. GitHub Pages), mixed content blocks http:// so test relative only
+          candidates.push('');
+          return candidates;
+        }
+        if (loc.port === '3000' || !loc.port) {
           candidates.push('');
         }
         candidates.push('http://localhost:3000');
         candidates.push('http://127.0.0.1:3000');
-        if (loc && loc.hostname && loc.hostname !== 'localhost' && loc.hostname !== '127.0.0.1') {
+        if (loc.hostname && loc.hostname !== 'localhost' && loc.hostname !== '127.0.0.1') {
           candidates.push(`http://${loc.hostname}:3000`);
         }
         return [...new Set(candidates)];
@@ -2620,7 +2628,16 @@
 
       async function apiFetch(url, options = {}) {
         const targetUrl = resolveApiUrl(url);
-        return fetch(targetUrl, options);
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 3500);
+        try {
+          const res = await fetch(targetUrl, { ...options, signal: controller.signal });
+          clearTimeout(tid);
+          return res;
+        } catch (err) {
+          clearTimeout(tid);
+          throw err;
+        }
       }
 
       const dbStatusPill = document.getElementById('dbStatusPill');
@@ -2636,7 +2653,7 @@
         }
       }
 
-      // Check MongoDB status & save local device data to MongoDB if connected
+      // Check MongoDB status & save local device data to MongoDB if connected (with strict 1.2s timeout)
       async function checkAndSyncData(showUserFeedback) {
         const candidates = getApiBaseCandidates();
         let connectedData = null;
@@ -2644,7 +2661,10 @@
 
         for (const base of candidates) {
           try {
-            const res = await fetch(base + '/api/status', { cache: 'no-store' });
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 1200);
+            const res = await fetch(base + '/api/status', { cache: 'no-store', signal: controller.signal });
+            clearTimeout(tid);
             if (res.ok) {
               const data = await res.json();
               if (data.connected) {
@@ -2660,13 +2680,13 @@
           determinedApiBase = successfulBase;
           isMongoConnected = true;
           updateDbStatus(true, 'MongoDB Connected', `Database: ${connectedData.database || 'expensetracker'}`);
-          await syncLocalDataToMongo();
+          syncLocalDataToMongo().catch(() => {});
           if (showUserFeedback) showToast('MongoDB connected & synced with device storage');
           return true;
         }
 
         isMongoConnected = false;
-        updateDbStatus(false, 'Local / Offline', 'MongoDB unreachable · Operating in local device storage mode');
+        updateDbStatus(false, 'Local / Offline', 'Operating in instant local device storage mode');
         if (showUserFeedback) showToast('Working in offline local storage mode', true);
         return false;
       }
@@ -3554,47 +3574,40 @@
 
       async function storageSet(key, value) {
         const fullKey = LS_PREFIX + key;
-        // 1. Permanently persist to this device's storage
+        // 1. Permanently persist to this device's storage immediately (0ms)
         if (hasLocalStorage) {
           try { window.localStorage.setItem(fullKey, value); } catch (e) { }
         }
         memoryStore[fullKey] = value;
 
-        // 2. Persist to MongoDB API if connected
+        // 2. Persist to MongoDB API in background if connected (non-blocking)
         if (isMongoConnected) {
           try {
             if (key.startsWith('expenses:')) {
               const m = key.replace('expenses:', '');
               const parsed = JSON.parse(value);
-              const res = await apiFetch('/api/expenses/' + encodeURIComponent(m), {
+              apiFetch('/api/expenses/' + encodeURIComponent(m), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ expenses: parsed })
-              });
-              return res.ok;
+              }).catch(e => console.warn('Background sync notice', e));
             } else if (key.startsWith('budget:')) {
               const m = key.replace('budget:', '');
               const parsed = JSON.parse(value);
-              const res = await apiFetch('/api/budget/' + encodeURIComponent(m), {
+              apiFetch('/api/budget/' + encodeURIComponent(m), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: parsed })
-              });
-              return res.ok;
+              }).catch(e => console.warn('Background sync notice', e));
             } else if (key === 'udhari:records') {
               const parsed = JSON.parse(value);
-              const res = await apiFetch('/api/udhari', {
+              apiFetch('/api/udhari', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ records: parsed })
-              });
-              return res.ok;
+              }).catch(e => console.warn('Background sync notice', e));
             }
-            return true;
-          } catch (e) {
-            console.warn('API set error, saved to local device storage', e);
-            return true;
-          }
+          } catch (e) { }
         }
 
         return true;
@@ -4015,12 +4028,12 @@
         });
 
         ledgerWrap.querySelectorAll('.del-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
+          btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
             expenses = expenses.filter(e => String(e.id) !== id);
-            await saveExpenses();
             render();
             loadTrend();
+            saveExpenses();
             showToast('Expense deleted');
           });
         });
@@ -4033,7 +4046,7 @@
         const cancelBtn = ledgerWrap.querySelector('.cancel-edit');
         if (cancelBtn) cancelBtn.addEventListener('click', () => { editingId = null; render(true); });
         const saveBtn = ledgerWrap.querySelector('.save-edit');
-        if (saveBtn) saveBtn.addEventListener('click', async () => {
+        if (saveBtn) saveBtn.addEventListener('click', () => {
           const id = saveBtn.getAttribute('data-id');
           const row = saveBtn.closest('tr');
           const date = row.querySelector('.edit-date').value;
@@ -4051,7 +4064,7 @@
           const idx = expenses.findIndex(e => String(e.id) === id);
           if (idx > -1) {
             expenses[idx] = Object.assign({}, expenses[idx], { date: date, description: desc, category: cat, amount: amt });
-            await saveExpenses();
+            saveExpenses();
           }
           editingId = null;
           render();
@@ -4079,9 +4092,11 @@
         saveBudgetValue(val);
       });
 
+      let searchDebounceTimer = null;
       searchInput.addEventListener('input', (e) => {
         searchTerm = e.target.value;
-        render(true);
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => render(true), 60);
       });
 
       async function addExpense() {
@@ -4106,11 +4121,11 @@
           id: Date.now() + Math.random().toString(16).slice(2),
           date: date, category: category, description: desc, amount: amount
         });
-        await saveExpenses();
         document.getElementById('fDesc').value = '';
         document.getElementById('fAmount').value = '';
         render();
         loadTrend();
+        saveExpenses();
         showToast('Expense added');
       }
 
@@ -4330,25 +4345,25 @@
           '</table>';
 
         udhariWrap.querySelectorAll('.settle-btn, .unsettle-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
+          btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
             const item = udhariRecords.find(r => r.id === id);
             if (item) {
               item.settled = !item.settled;
               item.settledDate = item.settled ? localDateStr(new Date()) : null;
-              await saveUdhari();
               renderUdhari();
+              saveUdhari();
               showToast(item.settled ? 'Marked as settled' : 'Marked as pending');
             }
           });
         });
 
         udhariWrap.querySelectorAll('.del-u-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
+          btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
             udhariRecords = udhariRecords.filter(r => r.id !== id);
-            await saveUdhari();
             renderUdhari();
+            saveUdhari();
             showToast('Record deleted');
           });
         });
@@ -4370,7 +4385,7 @@
 
         const saveUBtn = udhariWrap.querySelector('.save-u-edit');
         if (saveUBtn) {
-          saveUBtn.addEventListener('click', async () => {
+          saveUBtn.addEventListener('click', () => {
             const id = saveUBtn.getAttribute('data-id');
             const row = saveUBtn.closest('tr');
             const person = row.querySelector('.edit-person').value.trim();
@@ -4395,7 +4410,7 @@
                 dueDate: dueDate,
                 notes: notes
               });
-              await saveUdhari();
+              saveUdhari();
             }
             udhariEditingId = null;
             renderUdhari();
@@ -4430,12 +4445,12 @@
           createdAt: new Date().toISOString()
         });
 
-        await saveUdhari();
         uPerson.value = '';
         uAmount.value = '';
         uNotes.value = '';
         if (uDueDate) uDueDate.value = '';
         renderUdhari();
+        saveUdhari();
         showToast('Record added to Khata');
       }
 
@@ -4462,9 +4477,11 @@
       });
 
       if (udhariSearchInput) {
+        let udhariSearchTimer = null;
         udhariSearchInput.addEventListener('input', (e) => {
           udhariSearch = e.target.value;
-          renderUdhari(true);
+          clearTimeout(udhariSearchTimer);
+          udhariSearchTimer = setTimeout(() => renderUdhari(true), 60);
         });
       }
 
@@ -4480,11 +4497,13 @@
         }
       });
 
-      // Startup: check MongoDB connection, sync local device data, then load views
-      (async function init() {
-        await checkAndSyncData();
-        await loadMonth();
-        await loadUdhari();
+      // Startup: Render local views immediately (0ms instant startup, zero lag), then background check MongoDB
+      (function init() {
+        loadMonth();
+        loadUdhari();
+        setTimeout(() => {
+          checkAndSyncData(false).catch(() => {});
+        }, 150);
       })();
 
       // ---------- Auto-Reload Every 1 Hour (3,600,000 ms) ----------
