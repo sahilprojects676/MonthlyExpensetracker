@@ -100,6 +100,21 @@
   }
   </script>
 
+  <!-- Instant Dark Mode Initializer (Zero Flash of Light) -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('expense-tracker:theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          var metaTheme = document.querySelector('meta[name="theme-color"]');
+          if (metaTheme) metaTheme.setAttribute('content', '#0B0F17');
+        }
+      } catch (e) { }
+    })();
+  </script>
+
   <!-- Google Fonts Preconnect & Styles -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,8 +123,10 @@
     rel="stylesheet">
   <style>
     :root {
+      color-scheme: light;
       --bg: #F4F5F7;
       --surface: #FFFFFF;
+      --surface-subtle: #F0F4FA;
       --ink: #1C2333;
       --ink-soft: #5B6472;
       --navy: #1F3A5F;
@@ -121,6 +138,48 @@
       --line: #E2E5EA;
       --line-strong: #C8CDD6;
       --danger-bg: #FBECEC;
+      --pill-bg: #EEF1F5;
+      --input-bg: #FFFFFF;
+      --card-shadow: 0 2px 14px rgba(28, 35, 51, 0.06);
+      --table-hover: #FAFBFC;
+      --edit-row-bg: #F8F9FA;
+      --badge-settled-bg: #EEF1F5;
+      --badge-pending-bg: #FFF5E5;
+      --badge-pending-color: #A06400;
+      --badge-lent-bg: #EBF7EE;
+      --badge-lent-color: #1F7343;
+      --badge-borrowed-bg: #FBECEC;
+      --badge-borrowed-color: #7A2E2E;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0B0F17;
+      --surface: #131A26;
+      --surface-subtle: #1A2436;
+      --ink: #F1F5F9;
+      --ink-soft: #94A3B8;
+      --navy: #60A5FA;
+      --navy-deep: #F8FAFC;
+      --maroon: #F87171;
+      --gold: #FBBF24;
+      --green: #34D399;
+      --brand-green: #38C776;
+      --line: #1F293D;
+      --line-strong: #2D3B54;
+      --danger-bg: rgba(248, 113, 113, 0.14);
+      --pill-bg: #1A2333;
+      --input-bg: #0E141E;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+      --table-hover: rgba(255, 255, 255, 0.035);
+      --edit-row-bg: #162030;
+      --badge-settled-bg: #1E293B;
+      --badge-pending-bg: rgba(251, 191, 36, 0.15);
+      --badge-pending-color: #FBBF24;
+      --badge-lent-bg: rgba(52, 211, 153, 0.15);
+      --badge-lent-color: #34D399;
+      --badge-borrowed-bg: rgba(248, 113, 113, 0.15);
+      --badge-borrowed-color: #F87171;
     }
 
     * {
@@ -146,6 +205,7 @@
       color: var(--ink);
       font-family: 'IBM Plex Sans', sans-serif;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     button,
@@ -1456,6 +1516,84 @@
       flex-wrap: wrap;
     }
 
+    .header-action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(10, 20, 30, 0.04);
+      text-decoration: none;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .theme-toggle-btn:hover {
+      background: #F0F4FA;
+      border-color: var(--navy);
+      color: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(21, 40, 64, 0.12);
+    }
+
+    .theme-toggle-btn:active {
+      transform: translateY(0);
+    }
+
+    .theme-icon-slot {
+      position: relative;
+      width: 15px;
+      height: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle-btn .sun-icon,
+    .theme-toggle-btn .moon-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    }
+
+    .theme-toggle-btn .moon-icon {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+      color: var(--navy);
+    }
+
+    .theme-toggle-btn .sun-icon {
+      opacity: 0;
+      transform: rotate(90deg) scale(0.5);
+      color: var(--gold);
+    }
+
+    [data-theme="dark"] .theme-toggle-btn .moon-icon {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.5);
+    }
+
+    [data-theme="dark"] .theme-toggle-btn .sun-icon {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+      color: #FBBF24;
+    }
+
     .export-btn {
       display: inline-flex;
       align-items: center;
@@ -1578,8 +1716,24 @@
         text-overflow: ellipsis;
       }
 
-      .header-actions #headerDownloadPdfBtn {
+      .header-action-buttons {
         order: 2;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 108px 1fr;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .header-action-buttons .theme-toggle-btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 42px;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
+
+      .header-action-buttons #headerDownloadPdfBtn {
         width: 100%;
         justify-content: center;
         min-height: 42px;
@@ -1598,6 +1752,11 @@
         border-bottom: none;
         margin-bottom: 20px;
         box-sizing: border-box;
+      }
+
+      [data-theme="dark"] .tab-nav {
+        background: #0E141E;
+        border: 1px solid var(--line);
       }
 
       .tab-btn {
@@ -1625,6 +1784,12 @@
         color: var(--navy-deep);
         border: none;
         box-shadow: 0 1px 4px rgba(21, 40, 64, 0.12);
+      }
+
+      [data-theme="dark"] .tab-btn.active {
+        background: #1E293B;
+        color: #F8FAFC;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
       }
 
       .grid,
@@ -2169,9 +2334,406 @@
         padding: 8px 2px;
       }
 
-      .month-label {
-        font-size: 15px;
-      }
+    /* =========================================================
+       ---------- Premium Dark Mode Styling Overrides ----------
+       ========================================================= */
+    [data-theme="dark"] body {
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    [data-theme="dark"] ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    [data-theme="dark"] ::-webkit-scrollbar-track {
+      background: #0B0F17;
+    }
+
+    [data-theme="dark"] ::-webkit-scrollbar-thumb {
+      background: #273549;
+      border-radius: 4px;
+    }
+
+    [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+      background: #3B4D68;
+    }
+
+    [data-theme="dark"] .brand:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    [data-theme="dark"] .brand:active {
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    [data-theme="dark"] .brand .brand-logo-img,
+    [data-theme="dark"] .brand .mark {
+      background: #182232;
+      border: 1px solid #28374E;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .brand h1 {
+      color: var(--navy-deep);
+    }
+
+    [data-theme="dark"] .brand:hover h1 {
+      color: #93C5FD;
+    }
+
+    [data-theme="dark"] .month-nav button {
+      background: var(--surface);
+      border-color: var(--line-strong);
+      color: #93C5FD;
+    }
+
+    [data-theme="dark"] .month-nav button:hover {
+      background: #2563EB;
+      color: #FFFFFF;
+      border-color: #2563EB;
+    }
+
+    [data-theme="dark"] .tab-btn {
+      color: var(--ink-soft);
+    }
+
+    [data-theme="dark"] .tab-btn:hover {
+      color: #93C5FD;
+    }
+
+    [data-theme="dark"] .tab-btn.active {
+      color: #FFFFFF;
+      background: var(--surface);
+      border-color: var(--navy);
+      border-bottom-color: var(--surface);
+    }
+
+    [data-theme="dark"] .stat {
+      background: var(--surface);
+      border-color: var(--line);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .stat:hover {
+      box-shadow: var(--card-shadow);
+      border-color: var(--line-strong);
+    }
+
+    [data-theme="dark"] .stat .budget-edit input {
+      background: var(--input-bg);
+      border-color: var(--line-strong);
+      color: var(--ink);
+    }
+
+    [data-theme="dark"] .stat .budget-edit button {
+      background: #2563EB;
+      border-color: #2563EB;
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .stat .budget-edit button:hover {
+      background: #1D4ED8;
+      border-color: #1D4ED8;
+    }
+
+    [data-theme="dark"] .progress-track {
+      background: #1C2638;
+    }
+
+    [data-theme="dark"] .trend-panel,
+    [data-theme="dark"] .panel {
+      background: var(--surface);
+      border-color: var(--line);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .trend-bar {
+      background: #243247;
+    }
+
+    [data-theme="dark"] .trend-bar-col:hover .trend-bar,
+    [data-theme="dark"] .trend-bar-col.active .trend-bar {
+      background: #3B82F6;
+    }
+
+    [data-theme="dark"] .trend-bar-col.current .trend-bar {
+      background: #F87171;
+    }
+
+    [data-theme="dark"] .trend-bar-col.current:hover .trend-bar,
+    [data-theme="dark"] .trend-bar-col.current.active .trend-bar {
+      background: #EF4444;
+    }
+
+    [data-theme="dark"] .field input,
+    [data-theme="dark"] .field select,
+    [data-theme="dark"] .search-box input,
+    [data-theme="dark"] .edit-row input,
+    [data-theme="dark"] .edit-row select,
+    [data-theme="dark"] .udhari-edit-grid input,
+    [data-theme="dark"] .udhari-edit-grid select {
+      background: var(--input-bg);
+      border-color: var(--line-strong);
+      color: var(--ink);
+    }
+
+    [data-theme="dark"] .field input:focus,
+    [data-theme="dark"] .field select:focus,
+    [data-theme="dark"] .search-box input:focus,
+    [data-theme="dark"] .edit-row input:focus,
+    [data-theme="dark"] .edit-row select:focus,
+    [data-theme="dark"] .udhari-edit-grid input:focus,
+    [data-theme="dark"] .udhari-edit-grid select:focus {
+      border-color: #FBBF24;
+      outline: 2px solid rgba(251, 191, 36, 0.4);
+      background: #101824;
+    }
+
+    [data-theme="dark"] .field select option,
+    [data-theme="dark"] .edit-row select option,
+    [data-theme="dark"] .udhari-edit-grid select option {
+      background: #131A26;
+      color: #F1F5F9;
+    }
+
+    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.85);
+      cursor: pointer;
+    }
+
+    [data-theme="dark"] input::placeholder {
+      color: #64748B;
+      opacity: 1;
+    }
+
+    [data-theme="dark"] .submit-btn {
+      background: #DC2626;
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .submit-btn:hover {
+      background: #B91C1C;
+    }
+
+    [data-theme="dark"] #addUdhariBtn {
+      background: #2563EB !important;
+    }
+
+    [data-theme="dark"] #addUdhariBtn:hover {
+      background: #1D4ED8 !important;
+    }
+
+    [data-theme="dark"] .legend-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .legend-row.selected {
+      background: rgba(96, 165, 250, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.3);
+    }
+
+    [data-theme="dark"] .goto-expenses {
+      color: #60A5FA;
+    }
+
+    [data-theme="dark"] .active-filter-pill {
+      background: #1A2436;
+      color: #93C5FD;
+      border: 1px solid #2B3B54;
+    }
+
+    [data-theme="dark"] .active-filter-pill button {
+      color: #93C5FD;
+    }
+
+    [data-theme="dark"] table.ledger tbody tr:hover {
+      background: var(--table-hover);
+    }
+
+    [data-theme="dark"] table.ledger td.desc .cat-tag {
+      background: rgba(96, 165, 250, 0.14);
+      color: #93C5FD;
+      border: 1px solid rgba(96, 165, 250, 0.25);
+    }
+
+    [data-theme="dark"] .row-btn:hover {
+      color: #93C5FD;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .row-btn.del-btn:hover {
+      color: #F87171;
+      background: rgba(248, 113, 113, 0.15);
+    }
+
+    [data-theme="dark"] .edit-row td {
+      background: #101723;
+    }
+
+    [data-theme="dark"] .edit-grid .cancel-edit,
+    [data-theme="dark"] .udhari-edit-grid .cancel-edit {
+      background: #273549;
+      color: #F1F5F9;
+    }
+
+    [data-theme="dark"] .type-segmented {
+      background: #0E141E;
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] .type-btn {
+      color: var(--ink-soft);
+    }
+
+    [data-theme="dark"] .type-btn:hover {
+      color: #F1F5F9;
+    }
+
+    [data-theme="dark"] .type-btn[data-type="lent"].active {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34D399;
+      border-color: rgba(52, 211, 153, 0.35);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .type-btn[data-type="borrowed"].active {
+      background: rgba(248, 113, 113, 0.15);
+      color: #F87171;
+      border-color: rgba(248, 113, 113, 0.35);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .udhari-filter-pill {
+      background: var(--surface);
+      border-color: var(--line-strong);
+      color: var(--ink-soft);
+    }
+
+    [data-theme="dark"] .udhari-filter-pill:hover {
+      border-color: #60A5FA;
+      color: #60A5FA;
+    }
+
+    [data-theme="dark"] .udhari-filter-pill.active {
+      background: #2563EB;
+      border-color: #2563EB;
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .badge-type.lent {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+
+    [data-theme="dark"] .badge-type.borrowed {
+      background: rgba(248, 113, 113, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(248, 113, 113, 0.25);
+    }
+
+    [data-theme="dark"] .badge-status.pending {
+      background: rgba(251, 191, 36, 0.15);
+      color: #FBBF24;
+      border: 1px solid rgba(251, 191, 36, 0.25);
+    }
+
+    [data-theme="dark"] .badge-status.settled {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94A3B8;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    [data-theme="dark"] .row-btn.settle-btn:hover {
+      background: rgba(52, 211, 153, 0.15);
+    }
+
+    [data-theme="dark"] .row-btn.unsettle-btn:hover {
+      background: rgba(251, 191, 36, 0.15);
+    }
+
+    [data-theme="dark"] .export-btn {
+      background: #182232;
+      color: #E2E8F0;
+      border-color: var(--line-strong);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    [data-theme="dark"] .export-btn:hover {
+      background: #1F2E45;
+      border-color: #60A5FA;
+      color: #93C5FD;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    [data-theme="dark"] .export-btn.primary {
+      background: #2563EB;
+      color: #FFFFFF;
+      border-color: #2563EB;
+    }
+
+    [data-theme="dark"] .export-btn.primary:hover {
+      background: #1D4ED8;
+      border-color: #1D4ED8;
+    }
+
+    [data-theme="dark"] .backup-bar {
+      background: var(--surface);
+      border-color: var(--line);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .backup-bar strong {
+      color: #F8FAFC !important;
+    }
+
+    [data-theme="dark"] .storage-note {
+      background: var(--surface-subtle);
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] .social-links a {
+      color: #94A3B8;
+    }
+
+    [data-theme="dark"] .social-links a:hover {
+      color: var(--brand-green);
+    }
+
+    [data-theme="dark"] .toast {
+      background: #1E293B;
+      color: #F1F5F9;
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    [data-theme="dark"] .toast.error {
+      background: #991B1B;
+      border-color: #EF4444;
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .db-status-pill {
+      background: #182232;
+      border-color: var(--line);
+      color: var(--ink-soft);
+    }
+
+    [data-theme="dark"] .user-id-pill {
+      background: #182232;
+      border-color: var(--line-strong);
+      color: #E2E8F0;
+    }
+
+    [data-theme="dark"] .user-id-pill:hover {
+      background: #1F2E45;
+      border-color: #60A5FA;
+    }
+
+    [data-theme="dark"] .user-id-pill svg {
+      color: #60A5FA;
     }
 
   </style>
@@ -2201,18 +2763,42 @@
         </div>
       </a>
       <div class="header-actions">
-        
-        <button type="button" class="export-btn primary" id="headerDownloadPdfBtn"
-          title="Download well-formatted PDF statement for this month">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="12" y1="18" x2="12" y2="12" />
-            <line x1="9" y1="15" x2="15" y2="15" />
-          </svg>
-          <span>Download PDF</span>
-        </button>
+        <div class="header-action-buttons">
+          <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Switch to Dark Mode"
+            aria-label="Toggle dark or light mode" aria-pressed="false">
+            <span class="theme-icon-slot">
+              <svg class="sun-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <svg class="moon-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </span>
+            <span class="theme-toggle-text" id="themeToggleText">Dark</span>
+          </button>
+
+          <button type="button" class="export-btn primary" id="headerDownloadPdfBtn"
+            title="Download well-formatted PDF statement for this month">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            <span>Download PDF</span>
+          </button>
+        </div>
         <div class="month-nav">
           <button id="prevMonth" aria-label="Previous month">&#8249;</button>
           <div class="month-label" id="monthLabel">—</div>
@@ -2530,6 +3116,21 @@
         "Education": "#2A6F8E", "EMI / Loan": "#4A4A4A", "Investments & Savings": "#3E7A4C",
         "Entertainment": "#B0455C", "Shopping": "#6B5B95", "Mobile & Internet": "#4E6E8E", "Other": "#8A8F98"
       };
+
+      const CATEGORY_COLORS_DARK = {
+        "Groceries": "#3B82F6", "Rent": "#EF4444", "Utilities": "#F59E0B",
+        "Transport": "#10B981", "Fuel": "#FB923C",
+        "Breakfast": "#FBBF24", "Lunch": "#F87171", "Dinner": "#A78BFA",
+        "Dining Out": "#C084FC", "Healthcare": "#FB7185",
+        "Education": "#38BDF8", "EMI / Loan": "#94A3B8", "Investments & Savings": "#4ADE80",
+        "Entertainment": "#F472B6", "Shopping": "#818CF8", "Mobile & Internet": "#60A5FA", "Other": "#A1A1AA"
+      };
+
+      function getCategoryColor(cat) {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark && CATEGORY_COLORS_DARK[cat]) return CATEGORY_COLORS_DARK[cat];
+        return CATEGORY_COLORS[cat] || (isDark ? '#94A3B8' : '#8A8F98');
+      }
 
       // ---- Device Storage Architecture: Permanent Local Device Storage & MongoDB Backup ----
       const LS_PREFIX = 'expense-tracker:';
@@ -3491,6 +4092,79 @@
       const headerDownloadPdfBtn = document.getElementById('headerDownloadPdfBtn');
       if (headerDownloadPdfBtn) headerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
 
+      // ---------- Dark / Light Mode Theme Manager ----------
+      const THEME_STORAGE_KEY = 'expense-tracker:theme';
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const themeToggleText = document.getElementById('themeToggleText');
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+
+      function applyTheme(theme, save = true) {
+        const isDark = theme === 'dark';
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          if (metaThemeColor) metaThemeColor.setAttribute('content', '#0B0F17');
+          if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('title', 'Switch to Light Mode');
+            themeToggleBtn.setAttribute('aria-label', 'Switch to Light Mode');
+            themeToggleBtn.setAttribute('aria-pressed', 'true');
+          }
+          if (themeToggleText) themeToggleText.textContent = 'Light';
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          if (metaThemeColor) metaThemeColor.setAttribute('content', '#152840');
+          if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('title', 'Switch to Dark Mode');
+            themeToggleBtn.setAttribute('aria-label', 'Switch to Dark Mode');
+            themeToggleBtn.setAttribute('aria-pressed', 'false');
+          }
+          if (themeToggleText) themeToggleText.textContent = 'Dark';
+        }
+
+        if (save) {
+          try {
+            window.localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
+          } catch (e) {}
+        }
+
+        // Re-render donut breakdown and recent transactions so category colors match active theme palette
+        if (typeof render === 'function') {
+          try { render(true); } catch (e) {}
+        }
+      }
+
+      (function initThemeManager() {
+        let currentTheme = 'light';
+        try {
+          const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+          if (stored === 'dark' || stored === 'light') {
+            currentTheme = stored;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            currentTheme = 'dark';
+          }
+        } catch (e) {}
+
+        applyTheme(currentTheme, false);
+
+        if (themeToggleBtn) {
+          themeToggleBtn.addEventListener('click', () => {
+            const activeTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const nextTheme = activeTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme, true);
+            showToast(nextTheme === 'dark' ? '🌙 Dark Mode activated' : '☀️ Light Mode activated');
+          });
+        }
+
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            try {
+              if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
+                applyTheme(e.matches ? 'dark' : 'light', false);
+              }
+            } catch (err) {}
+          });
+        }
+      })();
+
       const footerDownloadPdfBtn = document.getElementById('footerDownloadPdfBtn');
       if (footerDownloadPdfBtn) footerDownloadPdfBtn.addEventListener('click', downloadMonthlyPdfStatement);
 
@@ -3808,7 +4482,7 @@
           const ix2 = cx + rInner * Math.cos(endRad), iy2 = cy + rInner * Math.sin(endRad);
           const d = 'M ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' L ' + ix2 + ' ' + iy2 + ' A ' + rInner + ' ' + rInner + ' 0 ' + largeArc + ' 0 ' + ix1 + ' ' + iy1 + ' Z';
           angle += sweep;
-          const color = CATEGORY_COLORS[cat] || '#8A8F98';
+          const color = getCategoryColor(cat);
           const isSelected = selectedCategory === cat;
           const isDimmed = selectedCategory && selectedCategory !== cat;
           return '<path d="' + d + '" fill="' + color + '" data-cat="' + escapeHtml(cat) + '" class="' + (isSelected ? 'selected' : '') + ' ' + (isDimmed ? 'dimmed' : '') + '"><title>' + (CATEGORY_LABELS[cat] || cat) + ': ' + fmtINR(amt) + '</title></path>';
@@ -3818,7 +4492,7 @@
           const pct = Math.round((amt / total) * 100);
           const isSelected = selectedCategory === cat;
           return '<div class="legend-row ' + (isSelected ? 'selected' : '') + '" data-cat="' + escapeHtml(cat) + '">' +
-            '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[cat] || '#8A8F98') + '"></span>' +
+            '<span class="legend-dot" style="background:' + getCategoryColor(cat) + '"></span>' +
             '<span class="legend-name">' + (CATEGORY_LABELS[cat] || cat) + '</span>' +
             '<span class="legend-amt">' + fmtINR(amt) + ' · ' + pct + '%</span>' +
             '</div>';
@@ -3860,7 +4534,7 @@
           const d = new Date(e.date + 'T00:00:00');
           const dLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
           return '<div class="legend-row" style="cursor:default;">' +
-            '<span class="legend-dot" style="background:' + (CATEGORY_COLORS[e.category] || '#8A8F98') + '"></span>' +
+            '<span class="legend-dot" style="background:' + getCategoryColor(e.category) + '"></span>' +
             '<span class="legend-name">' + escapeHtml(e.description) + '<br><span style="color:var(--ink-soft); font-size:11px;">' + dLabel + ' · ' + (CATEGORY_LABELS[e.category] || e.category) + '</span></span>' +
             '<span class="legend-amt">' + fmtINR(e.amount) + '</span>' +
             '</div>';

@@ -23,6 +23,7 @@ The project focuses on providing a clean user interface, responsive design, and 
 * 🏷️ Expense categorization
 * 📅 Monthly expense tracking
 * 📈 Spending analytics
+* 🌙 Dark Mode & Light Mode with 1-click toggle and system preference detection
 * 🤝 Borrowing (Udhari) Khata to track lent & borrowed dues with settlement
 * 📱 Fully mobile-responsive design
 * 💾 Local data storage
@@ -84,7 +85,6 @@ Open **index.html** in your preferred web browser.
 * 📄 Export Reports (PDF/CSV)
 * 🎯 Budget Planning
 * 💳 Multiple Wallet Support
-* 🌙 Dark Mode
 * 🔔 Bill Payment Reminders
 * 📱 Progressive Web App (PWA)
 
